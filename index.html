@@ -16,119 +16,43 @@
     --teal: #1a5c5c;
     --mid: #5c4a2a;
     --rule: #c8b89a;
+    --save: #2d6a2d;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--cream); font-family: 'Source Serif 4', Georgia, serif; color: var(--ink); min-height: 100vh; }
 
-  body {
-    background: var(--cream);
-    font-family: 'Source Serif 4', Georgia, serif;
-    color: var(--ink);
-    min-height: 100vh;
-  }
-
-  .masthead {
-    background: var(--ink);
-    color: var(--cream);
-    text-align: center;
-    padding: 28px 20px 20px;
-    border-bottom: 4px solid var(--gold);
-  }
-  .masthead-sub {
-    font-size: 11px;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    color: var(--rule);
-    margin-bottom: 8px;
-  }
-  .masthead h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(28px, 5vw, 52px);
-    font-weight: 900;
-    letter-spacing: -1px;
-    line-height: 1;
-    color: var(--cream);
-  }
+  .masthead { background: var(--ink); color: var(--cream); text-align: center; padding: 28px 20px 20px; border-bottom: 4px solid var(--gold); }
+  .masthead-sub { font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--rule); margin-bottom: 8px; }
+  .masthead h1 { font-family: 'Playfair Display', serif; font-size: clamp(28px, 5vw, 52px); font-weight: 900; letter-spacing: -1px; line-height: 1; color: var(--cream); }
   .masthead h1 span { color: var(--gold); }
-  .dateline {
-    font-size: 12px;
-    color: var(--rule);
-    margin-top: 8px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-  }
+  .dateline { font-size: 12px; color: var(--rule); margin-top: 8px; letter-spacing: 2px; text-transform: uppercase; }
 
-  .tabs {
-    display: flex;
-    background: var(--warm);
-    border-bottom: 2px solid var(--rule);
-    overflow-x: auto;
-  }
-  .tab {
-    flex: 1;
-    padding: 12px 16px;
-    text-align: center;
-    font-family: 'Playfair Display', serif;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    cursor: pointer;
-    border: none;
-    background: none;
-    color: var(--mid);
-    border-bottom: 3px solid transparent;
-    transition: all 0.2s;
-    white-space: nowrap;
-  }
+  .tabs { display: flex; background: var(--warm); border-bottom: 2px solid var(--rule); overflow-x: auto; }
+  .tab { flex: 1; padding: 12px 16px; text-align: center; font-family: 'Playfair Display', serif; font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; border: none; background: none; color: var(--mid); border-bottom: 3px solid transparent; transition: all 0.2s; white-space: nowrap; }
   .tab:hover { background: var(--cream); color: var(--ink); }
-  .tab.active { color: var(--ink); border-bottom-color: var(--gold); background: var(--cream); }
+  .tab.active { color: var(--ink); background: var(--cream); }
   .tab.micro.active { border-bottom-color: var(--teal); }
   .tab.macro.active { border-bottom-color: var(--rust); }
   .tab.global.active { border-bottom-color: var(--gold); }
+  .tab.examples.active { border-bottom-color: var(--save); }
+  .tab-count { display: inline-block; background: var(--save); color: white; font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 8px; margin-left: 4px; vertical-align: middle; font-family: 'Source Serif 4', serif; }
 
   .container { max-width: 860px; margin: 0 auto; padding: 0 16px; }
 
   .fetch-section { text-align: center; padding: 32px 20px 24px; }
-  .fetch-btn {
-    background: var(--ink);
-    color: var(--cream);
-    border: 2px solid var(--ink);
-    padding: 14px 40px;
-    font-family: 'Playfair Display', serif;
-    font-size: 16px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
+  .fetch-btn { background: var(--ink); color: var(--cream); border: 2px solid var(--ink); padding: 14px 40px; font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; letter-spacing: 1px; cursor: pointer; transition: all 0.2s; }
   .fetch-btn:hover { background: var(--gold); border-color: var(--gold); color: var(--ink); }
   .fetch-btn:disabled { opacity: 0.5; cursor: not-allowed; }
   .fetch-hint { margin-top: 10px; font-size: 12px; color: var(--mid); letter-spacing: 1px; }
 
   .loading { display: none; text-align: center; padding: 40px; }
   .loading.show { display: block; }
-  .spinner {
-    width: 36px; height: 36px;
-    border: 3px solid var(--rule);
-    border-top-color: var(--gold);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    margin: 0 auto 16px;
-  }
+  .spinner { width: 36px; height: 36px; border: 3px solid var(--rule); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
   @keyframes spin { to { transform: rotate(360deg); } }
   .loading-text { font-family: 'Playfair Display', serif; font-size: 14px; color: var(--mid); letter-spacing: 2px; }
 
-  .error-box {
-    display: none;
-    background: #fff8f5;
-    border: 1px solid #d4856a;
-    border-left: 4px solid var(--rust);
-    padding: 16px 20px;
-    margin: 20px 0;
-    font-size: 14px;
-    color: var(--rust);
-  }
+  .error-box { display: none; background: #fff8f5; border: 1px solid #d4856a; border-left: 4px solid var(--rust); padding: 16px 20px; margin: 20px 0; font-size: 14px; color: var(--rust); }
   .error-box.show { display: block; }
 
   .digest { display: none; }
@@ -136,129 +60,86 @@
   .section-panel { display: none; }
   .section-panel.show { display: block; }
 
-  .section-intro {
-    padding: 20px 0 4px;
-    border-bottom: 2px solid var(--ink);
-    margin-bottom: 4px;
-  }
+  .section-intro { padding: 20px 0 4px; border-bottom: 2px solid var(--ink); margin-bottom: 4px; }
   .section-intro h3 { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 900; }
   .section-intro p { font-size: 12px; color: var(--mid); margin-top: 4px; letter-spacing: 0.5px; }
 
   .stories { padding: 8px 0 24px; }
-
-  .story {
-    border-bottom: 1px solid var(--rule);
-    padding: 20px 0;
-    animation: fadeUp 0.4s ease forwards;
-    opacity: 0;
-  }
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+  .story { border-bottom: 1px solid var(--rule); padding: 20px 0; animation: fadeUp 0.4s ease forwards; opacity: 0; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
   .story:nth-child(1) { animation-delay: 0.05s; }
   .story:nth-child(2) { animation-delay: 0.12s; }
   .story:nth-child(3) { animation-delay: 0.19s; }
 
-  .story-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
-  .tag {
-    font-size: 9px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    font-weight: 700;
-    padding: 3px 8px;
-    color: var(--cream);
-  }
+  .story-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+  .tag { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; padding: 3px 8px; color: var(--cream); }
   .tag.micro { background: var(--teal); }
   .tag.macro { background: var(--rust); }
   .tag.global { background: var(--gold); }
 
-  .igcse-badge {
-    font-size: 9px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    font-weight: 700;
-    padding: 2px 7px;
-    background: var(--teal);
-    color: var(--cream);
-  }
-  .ib-badge {
-    font-size: 9px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    font-weight: 700;
-    padding: 2px 7px;
-    background: var(--rust);
-    color: var(--cream);
-  }
+  .igcse-badge { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700; padding: 2px 7px; background: var(--teal); color: var(--cream); }
+  .ib-badge { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700; padding: 2px 7px; background: var(--rust); color: var(--cream); }
 
-  .story h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(17px, 2.5vw, 21px);
-    font-weight: 700;
-    line-height: 1.3;
-    margin-bottom: 8px;
-  }
-  .story h2 a {
-    color: var(--ink);
-    text-decoration: none;
-    transition: color 0.15s;
-  }
+  .story h2 { font-family: 'Playfair Display', serif; font-size: clamp(17px, 2.5vw, 21px); font-weight: 700; line-height: 1.3; margin-bottom: 8px; }
+  .story h2 a { color: var(--ink); text-decoration: none; transition: color 0.15s; }
   .story h2 a:hover { color: var(--gold); }
-  .story h2 a::after {
-    content: ' ↗';
-    font-size: 14px;
-    color: var(--rule);
-    font-family: 'Source Serif 4', serif;
-    font-weight: 400;
-  }
+  .story h2 a::after { content: ' ↗'; font-size: 14px; color: var(--rule); font-family: 'Source Serif 4', serif; font-weight: 400; }
+  .story p { font-size: 15px; line-height: 1.65; color: #2a1f0a; margin-bottom: 10px; }
 
-  .story p {
-    font-size: 15px;
-    line-height: 1.65;
-    color: #2a1f0a;
-    margin-bottom: 10px;
-  }
+  .igcse-link { font-size: 13px; color: var(--teal); font-style: italic; border-left: 2px solid var(--teal); padding-left: 10px; margin-top: 8px; }
+  .ib-link { font-size: 13px; color: var(--rust); font-style: italic; border-left: 2px solid var(--rust); padding-left: 10px; margin-top: 6px; }
 
-  .igcse-link {
-    font-size: 13px;
-    color: var(--teal);
-    font-style: italic;
-    border-left: 2px solid var(--teal);
-    padding-left: 10px;
-    margin-top: 8px;
-  }
-  .ib-link {
-    font-size: 13px;
-    color: var(--rust);
-    font-style: italic;
-    border-left: 2px solid var(--rust);
-    padding-left: 10px;
-    margin-top: 6px;
-  }
-
-  .source-link {
-    margin-top: 10px;
-    font-size: 12px;
-  }
-  .source-link a {
-    color: var(--mid);
-    text-decoration: none;
-    letter-spacing: 0.5px;
-    border-bottom: 1px dotted var(--rule);
-    transition: color 0.15s;
-  }
+  .source-link { margin-top: 10px; font-size: 12px; }
+  .source-link a { color: var(--mid); text-decoration: none; letter-spacing: 0.5px; border-bottom: 1px dotted var(--rule); transition: color 0.15s; }
   .source-link a:hover { color: var(--gold); border-bottom-color: var(--gold); }
 
-  .digest-footer {
-    text-align: center;
-    padding: 24px;
-    border-top: 2px solid var(--rule);
-    font-size: 11px;
-    color: var(--mid);
-    letter-spacing: 1px;
-    margin-top: 16px;
-  }
+  .story-actions { margin-top: 12px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .save-topic { font-family: 'Source Serif 4', serif; font-size: 12px; padding: 5px 10px; border: 1px solid var(--rule); background: var(--cream); color: var(--ink); cursor: pointer; }
+  .save-topic:focus { outline: none; border-color: var(--gold); }
+  .save-btn { font-family: 'Source Serif 4', serif; font-size: 12px; letter-spacing: 0.5px; padding: 5px 14px; border: 1px solid var(--rule); background: var(--cream); color: var(--mid); cursor: pointer; transition: all 0.2s; }
+  .save-btn:hover { border-color: var(--save); color: var(--save); }
+  .save-btn.saved { border-color: var(--save); color: var(--save); background: #f0faf0; }
+
+  /* My Examples */
+  .examples-intro { padding: 20px 0 16px; border-bottom: 2px solid var(--ink); margin-bottom: 8px; display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+  .examples-intro h3 { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 900; }
+  .clear-all-btn { font-family: 'Source Serif 4', serif; font-size: 11px; letter-spacing: 0.5px; padding: 4px 12px; border: 1px solid #d4856a; color: var(--rust); background: none; cursor: pointer; }
+  .clear-all-btn:hover { background: #fff0eb; }
+
+  .filter-bar { padding: 12px 0 8px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .filter-label { font-size: 11px; color: var(--mid); letter-spacing: 1px; text-transform: uppercase; }
+  .filter-btn { font-family: 'Source Serif 4', serif; font-size: 11px; padding: 4px 10px; border: 1px solid var(--rule); background: var(--cream); color: var(--mid); cursor: pointer; transition: all 0.15s; }
+  .filter-btn:hover { border-color: var(--ink); color: var(--ink); }
+  .filter-btn.active { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--mid); }
+  .empty-state .empty-icon { font-size: 36px; margin-bottom: 12px; }
+  .empty-state p { font-size: 15px; line-height: 1.7; }
+
+  .topic-group { margin-bottom: 28px; }
+  .topic-heading { font-family: 'Playfair Display', serif; font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--mid); padding: 10px 0 6px; border-bottom: 1px solid var(--rule); margin-bottom: 4px; }
+
+  .saved-story { padding: 14px 0; border-bottom: 1px dashed var(--rule); }
+  .saved-story-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
+  .saved-date { font-size: 10px; color: var(--mid); letter-spacing: 0.5px; }
+  .delete-btn { font-size: 11px; color: var(--rust); background: none; border: none; cursor: pointer; padding: 0; margin-left: auto; }
+  .delete-btn:hover { text-decoration: underline; }
+  .saved-story h4 { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; line-height: 1.3; margin-bottom: 6px; }
+  .saved-story h4 a { color: var(--ink); text-decoration: none; }
+  .saved-story h4 a:hover { color: var(--gold); }
+  .saved-story h4 a::after { content: ' ↗'; font-size: 12px; color: var(--rule); font-weight: 400; }
+  .saved-summary { font-size: 13px; color: #3a2a10; line-height: 1.6; margin-bottom: 5px; }
+  .saved-curriculum { font-size: 12px; font-style: italic; color: var(--teal); margin-bottom: 3px; }
+  .saved-curriculum.ib { color: var(--rust); }
+
+  .manual-entry { background: var(--warm); border: 1px solid var(--rule); padding: 16px 20px; margin: 16px 0; }
+  .manual-entry-heading { font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 700; margin-bottom: 12px; color: var(--ink); }
+  .manual-input { width: 100%; font-family: 'Source Serif 4', serif; font-size: 13px; padding: 7px 10px; border: 1px solid var(--rule); background: var(--cream); color: var(--ink); outline: none; }
+  .manual-input:focus { border-color: var(--gold); }
+  .manual-row { margin-bottom: 8px; }
+  .manual-row-selects { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .manual-row-selects .save-topic { flex: 1; min-width: 140px; }
+  .manual-row-selects .save-btn { white-space: nowrap; }
 </style>
 </head>
 <body>
@@ -270,30 +151,71 @@
 </div>
 
 <div class="tabs">
-  <button class="tab micro active" onclick="switchTab('micro')">📊 Microeconomics</button>
-  <button class="tab macro" onclick="switchTab('macro')">📈 Macroeconomics</button>
-  <button class="tab global" onclick="switchTab('global')">🌍 Global Economics</button>
+  <button class="tab micro active" onclick="switchTab('micro')">📊 Micro</button>
+  <button class="tab macro" onclick="switchTab('macro')">📈 Macro</button>
+  <button class="tab global" onclick="switchTab('global')">🌍 Global</button>
+  <button class="tab examples" onclick="switchTab('examples')">📌 My Examples <span class="tab-count" id="examplesCount" style="display:none"></span></button>
 </div>
 
 <div class="container">
 
-  <div class="fetch-section">
-    <button class="fetch-btn" id="fetchBtn" onclick="fetchDigest()">Fetch Today's Digest</button>
-    <div class="fetch-hint">Searches the web for today's economics news, filtered for IGCSE &amp; IB relevance</div>
+  <div id="main-content">
+    <div class="fetch-section">
+      <button class="fetch-btn" id="fetchBtn" onclick="fetchDigest()">Fetch Today's Digest</button>
+      <div class="fetch-hint">Searches the web for today's economics news, filtered for IGCSE &amp; IB relevance</div>
+    </div>
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <div class="loading-text">Researching today's economics news...</div>
+    </div>
+    <div class="error-box" id="errorBox"></div>
+    <div class="digest" id="digest">
+      <div class="section-panel show" id="panel-micro"></div>
+      <div class="section-panel" id="panel-macro"></div>
+      <div class="section-panel" id="panel-global"></div>
+      <div class="digest-footer">The Econ Dispatch &mdash; Curated daily for IGCSE Economics (0455) &amp; IB Economics</div>
+    </div>
   </div>
 
-  <div class="loading" id="loading">
-    <div class="spinner"></div>
-    <div class="loading-text">Researching today's economics news...</div>
-  </div>
+  <div id="panel-examples" style="display:none">
+    <div class="examples-intro">
+      <h3>📌 My Examples Bank</h3>
+      <button class="clear-all-btn" onclick="clearAll()">Clear all</button>
+    </div>
 
-  <div class="error-box" id="errorBox"></div>
+    <!-- Manual entry form -->
+    <div class="manual-entry">
+      <div class="manual-entry-heading">＋ Add your own example</div>
+      <div class="manual-row">
+        <input type="text" id="manual-headline" class="manual-input" placeholder="Headline or title" />
+      </div>
+      <div class="manual-row">
+        <input type="url" id="manual-url" class="manual-input" placeholder="https://... (optional)" />
+      </div>
+      <div class="manual-row manual-row-selects">
+        <select id="manual-section" class="save-topic" onchange="updateManualTopics()">
+          <option value="">— Section —</option>
+          <option value="micro">Unit 2 Micro</option>
+          <option value="macro">Unit 3 Macro</option>
+          <option value="global">Unit 4 Global</option>
+        </select>
+        <select id="manual-topic" class="save-topic">
+          <option value="">— Topic —</option>
+        </select>
+        <button class="save-btn" onclick="saveManual()">＋ Add to Bank</button>
+      </div>
+      <div id="manual-error" style="font-size:12px;color:var(--rust);margin-top:6px;display:none"></div>
+    </div>
 
-  <div class="digest" id="digest">
-    <div class="section-panel show" id="panel-micro"></div>
-    <div class="section-panel" id="panel-macro"></div>
-    <div class="section-panel" id="panel-global"></div>
-    <div class="digest-footer">The Econ Dispatch &mdash; Curated daily for IGCSE Economics (0455) &amp; IB Economics</div>
+    <div class="filter-bar">
+      <span class="filter-label">Filter:</span>
+      <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
+      <button class="filter-btn" onclick="setFilter('micro', this)">Micro</button>
+      <button class="filter-btn" onclick="setFilter('macro', this)">Macro</button>
+      <button class="filter-btn" onclick="setFilter('global', this)">Global</button>
+    </div>
+    <div id="examples-list"></div>
+    <div class="digest-footer">Examples are stored in your browser on this device only.</div>
   </div>
 
 </div>
@@ -305,13 +227,30 @@
   }).toUpperCase();
 
   let activeTab = 'micro';
+  let activeFilter = 'all';
+  const STORAGE_KEY = 'econ_dispatch_examples';
+
+  const topicOptions = {
+    micro: ['Demand & Supply','Elasticity','Government Intervention','Market Failure','Externalities','Public Goods','Asymmetric Information','Market Structures','Labour Markets','Distribution of Income'],
+    macro: ['Measuring Economic Activity','Aggregate Demand & Supply','Macroeconomic Objectives','Fiscal Policy','Monetary Policy','Supply-Side Policies','Unemployment','Inflation','Economic Growth','Business Cycle'],
+    global: ['International Trade','Trade Protection','Exchange Rates','Balance of Payments','Economic Integration','Terms of Trade','Development Economics','Measuring Development','Aid & Development Strategies','Sustainability']
+  };
 
   function switchTab(tab) {
     activeTab = tab;
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.querySelector('.tab.' + tab).classList.add('active');
-    document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('show'));
-    document.getElementById('panel-' + tab).classList.add('show');
+    if (tab === 'examples') {
+      document.getElementById('main-content').style.display = 'none';
+      document.getElementById('panel-examples').style.display = 'block';
+      renderExamples();
+    } else {
+      document.getElementById('main-content').style.display = 'block';
+      document.getElementById('panel-examples').style.display = 'none';
+      document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('show'));
+      const panel = document.getElementById('panel-' + tab);
+      if (panel) panel.classList.add('show');
+    }
   }
 
   async function fetchDigest() {
@@ -320,42 +259,26 @@
     document.getElementById('loading').classList.add('show');
     document.getElementById('errorBox').classList.remove('show');
     document.getElementById('digest').classList.remove('show');
-
     const today = now.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
-
     try {
       const response = await fetch('/api/digest', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ today })
       });
-
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || 'Server error ' + response.status);
-
-      const clean = (result.text || '')
-        .replace(/```json|```/g, '')
-        .replace(/<[^>]+>/g, '')
-        .trim();
-
+      const clean = (result.text || '').replace(/```json|```/g, '').replace(/<[^>]+>/g, '').trim();
       const match = clean.match(/\{[\s\S]*\}/);
       if (!match) throw new Error('No data returned. Please try again.');
-
       let digest;
-      try {
-        digest = JSON.parse(match[0]);
-      } catch (parseErr) {
+      try { digest = JSON.parse(match[0]); }
+      catch (parseErr) {
         const raw = match[0];
-        const lastBrace = raw.lastIndexOf('}');
-        try {
-          digest = JSON.parse(raw.substring(0, lastBrace + 1) + ']}]}');
-        } catch {
-          throw new Error('Could not parse response. Please try again.');
-        }
+        try { digest = JSON.parse(raw.substring(0, raw.lastIndexOf('}') + 1) + ']}]}'); }
+        catch { throw new Error('Could not parse response. Please try again.'); }
       }
-
       renderDigest(digest);
-
     } catch (err) {
       showError('Could not fetch today\'s digest. ' + err.message);
     } finally {
@@ -365,70 +288,205 @@
   }
 
   function renderDigest(data) {
-    const config = {
-      micro: { label: 'Microeconomics', desc: 'Markets, firms, prices & consumer behaviour', tag: 'micro' },
-      macro: { label: 'Macroeconomics', desc: 'Inflation, growth, employment & monetary policy', tag: 'macro' },
-      global: { label: 'Global Economics', desc: 'Trade, exchange rates & international development', tag: 'global' }
-    };
-
-    ['micro', 'macro', 'global'].forEach(section => {
+    const savedHeadlines = new Set(getSaved().map(s => s.headline));
+    ['micro','macro','global'].forEach(section => {
       const panel = document.getElementById('panel-' + section);
-      const c = config[section];
+      const labels = { micro: 'Microeconomics', macro: 'Macroeconomics', global: 'Global Economics' };
+      const descs = { micro: 'Markets, firms, prices & consumer behaviour', macro: 'Inflation, growth, employment & monetary policy', global: 'Trade, exchange rates & international development' };
       const stories = data[section] || [];
+      const topics = topicOptions[section];
 
-      let html = `<div class="section-intro"><h3>${c.label}</h3><p>${c.desc}</p></div><div class="stories">`;
-
-      stories.forEach(story => {
+      let html = `<div class="section-intro"><h3>${labels[section]}</h3><p>${descs[section]}</p></div><div class="stories">`;
+      stories.forEach((story, idx) => {
         const hasUrl = story.url && story.url.startsWith('http');
-        const headline = escHtml(story.headline);
+        const sid = 'story-' + section + '-' + idx;
+        const isSaved = savedHeadlines.has(story.headline);
+        const storyData = escAttr(JSON.stringify(story));
 
-        html += '<div class="story">';
-        html += `<div class="story-meta"><span class="tag ${c.tag}">${c.label}</span>`;
-        if (story.igcse) html += '<span class="igcse-badge">IGCSE</span>';
-        if (story.ib) html += '<span class="ib-badge">IB</span>';
-        html += '</div>';
-
-        html += '<h2>';
-        if (hasUrl) {
-          html += `<a href="${escHtml(story.url)}" target="_blank" rel="noopener">${headline}</a>`;
-        } else {
-          html += headline;
-        }
-        html += '</h2>';
-
-        html += `<p>${escHtml(story.summary)}</p>`;
-        if (story.igcse_link) html += `<div class="igcse-link">📚 IGCSE: ${escHtml(story.igcse_link)}</div>`;
-        if (story.ib_link) html += `<div class="ib-link">🎓 IB: ${escHtml(story.ib_link)}</div>`;
-
-        if (hasUrl) {
-          const domain = new URL(story.url).hostname.replace('www.', '');
-          html += `<div class="source-link"><a href="${escHtml(story.url)}" target="_blank" rel="noopener">Read full article → ${escHtml(domain)}</a></div>`;
-        }
-
-        html += '</div>';
+        html += `<div class="story" id="${sid}">
+          <div class="story-meta">
+            <span class="tag ${section}">${labels[section]}</span>
+            ${story.igcse ? '<span class="igcse-badge">IGCSE</span>' : ''}
+            ${story.ib ? '<span class="ib-badge">IB</span>' : ''}
+          </div>
+          <h2>${hasUrl ? `<a href="${escHtml(story.url)}" target="_blank" rel="noopener">${escHtml(story.headline)}</a>` : escHtml(story.headline)}</h2>
+          <p>${escHtml(story.summary)}</p>
+          ${story.igcse_link ? `<div class="igcse-link">📚 IGCSE: ${escHtml(story.igcse_link)}</div>` : ''}
+          ${story.ib_link ? `<div class="ib-link">🎓 IB: ${escHtml(story.ib_link)}</div>` : ''}
+          ${hasUrl ? `<div class="source-link"><a href="${escHtml(story.url)}" target="_blank" rel="noopener">Read full article → ${escHtml(new URL(story.url).hostname.replace('www.',''))}</a></div>` : ''}
+          <div class="story-actions">
+            <select class="save-topic" id="topic-${sid}">
+              <option value="">— Tag a syllabus topic —</option>
+              ${topics.map(t => `<option value="${escHtml(t)}">${escHtml(t)}</option>`).join('')}
+            </select>
+            <button class="save-btn${isSaved ? ' saved' : ''}" id="savebtn-${sid}"
+              onclick="saveStory('${storyData}','${section}','${sid}')">
+              ${isSaved ? '✓ Saved' : '＋ Save to My Examples'}
+            </button>
+          </div>
+        </div>`;
       });
-
       html += '</div>';
       panel.innerHTML = html;
     });
-
     document.getElementById('digest').classList.add('show');
-    switchTab(activeTab);
+    if (activeTab !== 'examples') switchTab(activeTab);
   }
 
+  function saveStory(storyJson, section, sid) {
+    let story;
+    try { story = JSON.parse(storyJson); } catch { return; }
+    const topicEl = document.getElementById('topic-' + sid);
+    const topic = topicEl ? topicEl.value : '';
+    const saved = getSaved();
+    const existing = saved.findIndex(s => s.headline === story.headline);
+    if (existing > -1) {
+      if (topic) saved[existing].topic = topic;
+      setSaved(saved);
+    } else {
+      saved.push({
+        id: Date.now(),
+        headline: story.headline,
+        summary: story.summary,
+        url: story.url || '',
+        igcse_link: story.igcse_link || '',
+        ib_link: story.ib_link || '',
+        section,
+        topic: topic || 'Unsorted',
+        savedDate: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+      });
+      setSaved(saved);
+    }
+    const btn = document.getElementById('savebtn-' + sid);
+    if (btn) { btn.textContent = '✓ Saved'; btn.classList.add('saved'); }
+  }
+
+  function updateManualTopics() {
+    const section = document.getElementById('manual-section').value;
+    const topicEl = document.getElementById('manual-topic');
+    topicEl.innerHTML = '<option value="">— Topic —</option>';
+    if (section && topicOptions[section]) {
+      topicOptions[section].forEach(t => {
+        topicEl.innerHTML += `<option value="${escHtml(t)}">${escHtml(t)}</option>`;
+      });
+    }
+  }
+
+  function saveManual() {
+    const headline = document.getElementById('manual-headline').value.trim();
+    const url = document.getElementById('manual-url').value.trim();
+    const section = document.getElementById('manual-section').value;
+    const topic = document.getElementById('manual-topic').value;
+    const errEl = document.getElementById('manual-error');
+
+    if (!headline) { errEl.textContent = 'Please enter a headline or title.'; errEl.style.display = 'block'; return; }
+    if (!section) { errEl.textContent = 'Please select a section.'; errEl.style.display = 'block'; return; }
+    errEl.style.display = 'none';
+
+    const saved = getSaved();
+    saved.push({
+      id: Date.now(),
+      headline,
+      summary: '',
+      url: url || '',
+      igcse_link: '',
+      ib_link: '',
+      section,
+      topic: topic || 'Unsorted',
+      savedDate: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
+      manual: true
+    });
+    setSaved(saved);
+
+    // Reset form
+    document.getElementById('manual-headline').value = '';
+    document.getElementById('manual-url').value = '';
+    document.getElementById('manual-section').value = '';
+    document.getElementById('manual-topic').innerHTML = '<option value="">— Topic —</option>';
+
+    renderExamples();
+  }
+    setSaved(getSaved().filter(s => s.id !== id));
+    renderExamples();
+  }
+
+  function clearAll() {
+    if (confirm('Clear all saved examples? This cannot be undone.')) {
+      setSaved([]);
+      renderExamples();
+    }
+  }
+
+  function setFilter(f, btn) {
+    activeFilter = f;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    renderExamples();
+  }
+
+  function renderExamples() {
+    const container = document.getElementById('examples-list');
+    let saved = getSaved();
+    if (activeFilter !== 'all') saved = saved.filter(s => s.section === activeFilter);
+    if (saved.length === 0) {
+      container.innerHTML = `<div class="empty-state"><div class="empty-icon">📌</div><p>No examples saved yet${activeFilter !== 'all' ? ' for this section' : ''}.<br>Fetch today's digest and click <strong>＋ Save to My Examples</strong> on any story.</p></div>`;
+      return;
+    }
+    const unitLabel = { micro: 'Unit 2 Micro', macro: 'Unit 3 Macro', global: 'Unit 4 Global' };
+    const groups = {};
+    saved.forEach(s => {
+      const key = (unitLabel[s.section] || s.section) + ' → ' + (s.topic || 'Unsorted');
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(s);
+    });
+    let html = '';
+    Object.keys(groups).sort().forEach(key => {
+      html += `<div class="topic-group"><div class="topic-heading">${escHtml(key)}</div>`;
+      groups[key].forEach(s => {
+        const hasUrl = s.url && s.url.startsWith('http');
+        html += `<div class="saved-story">
+          <div class="saved-story-meta">
+            <span class="tag ${s.section}">${s.section === 'micro' ? 'Micro' : s.section === 'macro' ? 'Macro' : 'Global'}</span>
+            <span class="saved-date">Saved ${escHtml(s.savedDate)}</span>
+            <button class="delete-btn" onclick="deleteStory(${s.id})">✕ Remove</button>
+          </div>
+          <h4>${hasUrl ? `<a href="${escHtml(s.url)}" target="_blank" rel="noopener">${escHtml(s.headline)}</a>` : escHtml(s.headline)}</h4>
+          <div class="saved-summary">${escHtml(s.summary)}</div>
+          ${s.igcse_link ? `<div class="saved-curriculum">📚 IGCSE: ${escHtml(s.igcse_link)}</div>` : ''}
+          ${s.ib_link ? `<div class="saved-curriculum ib">🎓 IB: ${escHtml(s.ib_link)}</div>` : ''}
+        </div>`;
+      });
+      html += '</div>';
+    });
+    container.innerHTML = html;
+  }
+
+  function getSaved() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; }
+  }
+  function setSaved(arr) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+    updateCount();
+  }
+  function updateCount() {
+    const n = getSaved().length;
+    const el = document.getElementById('examplesCount');
+    if (n > 0) { el.textContent = n; el.style.display = 'inline-block'; }
+    else { el.style.display = 'none'; }
+  }
   function escHtml(str) {
-    return String(str || '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
+    return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
-
+  function escAttr(str) {
+    return String(str || '').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;');
+  }
   function showError(msg) {
     const box = document.getElementById('errorBox');
     box.textContent = msg;
     box.classList.add('show');
   }
+
+  updateCount();
 </script>
 </body>
 </html>
