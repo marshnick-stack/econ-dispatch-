@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Econ Dispatch</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&display=swap');
+
+  :root {
+    --ink: #1a1208;
+    --cream: #f5f0e8;
+    --warm: #f0e8d5;
+    --gold: #b8860b;
+    --rust: #8b3a1a;
+    --teal: #1a5c5c;
+    --mid: #5c4a2a;
+    --rule: #c8b89a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--cream);
+    font-family: 'Source Serif 4', Georgia, serif;
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  .masthead {
+    background: var(--ink);
+    color: var(--cream);
+    text-align: center;
+    padding: 28px 20px 20px;
+    border-bottom: 4px solid var(--gold);
+  }
+  .masthead-sub {
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--rule);
+    margin-bottom: 8px;
+  }
+  .masthead h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 900;
+    letter-spacing: -1px;
+    line-height: 1;
+    color: var(--cream);
+  }
+  .masthead h1 span { color: var(--gold); }
+  .dateline {
+    font-size: 12px;
+    color: var(--rule);
+    margin-top: 8px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .tabs {
+    display: flex;
+    background: var(--warm);
+    border-bottom: 2px solid var(--rule);
+    overflow-x: auto;
+  }
+  .tab {
+    flex: 1;
+    padding: 12px 16px;
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: none;
+    background: none;
+    color: var(--mid);
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .tab:hover { background: var(--cream); color: var(--ink); }
+  .tab.active { color: var(--ink); border-bottom-color: var(--gold); background: var(--cream); }
+  .tab.micro.active { border-bottom-color: var(--teal); }
+  .tab.macro.active { border-bottom-color: var(--rust); }
+  .tab.global.active { border-bottom-color: var(--gold); }
+
+  .container { max-width: 860px; margin: 0 auto; padding: 0 16px; }
+
+  .fetch-section { text-align: center; padding: 32px 20px 24px; }
+  .fetch-btn {
+    background: var(--ink);
+    color: var(--cream);
+    border: 2px solid var(--ink);
+    padding: 14px 40px;
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .fetch-btn:hover { background: var(--gold); border-color: var(--gold); color: var(--ink); }
+  .fetch-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .fetch-hint { margin-top: 10px; font-size: 12px; color: var(--mid); letter-spacing: 1px; }
+
+  .loading { display: none; text-align: center; padding: 40px; }
+  .loading.show { display: block; }
+  .spinner {
+    width: 36px; height: 36px;
+    border: 3px solid var(--rule);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 16px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { font-family: 'Playfair Display', serif; font-size: 14px; color: var(--mid); letter-spacing: 2px; }
+
+  .error-box {
+    display: none;
+    background: #fff8f5;
+    border: 1px solid #d4856a;
+    border-left: 4px solid var(--rust);
+    padding: 16px 20px;
+    margin: 20px 0;
+    font-size: 14px;
+    color: var(--rust);
+  }
+  .error-box.show { display: block; }
+
+  .digest { display: none; }
+  .digest.show { display: block; }
+  .section-panel { display: none; }
+  .section-panel.show { display: block; }
+
+  .section-intro {
+    padding: 20px 0 4px;
+    border-bottom: 2px solid var(--ink);
+    margin-bottom: 4px;
+  }
+  .section-intro h3 { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 900; }
+  .section-intro p { font-size: 12px; color: var(--mid); margin-top: 4px; letter-spacing: 0.5px; }
+
+  .stories { padding: 8px 0 24px; }
+
+  .story {
+    border-bottom: 1px solid var(--rule);
+    padding: 20px 0;
+    animation: fadeUp 0.4s ease forwards;
+    opacity: 0;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .story:nth-child(1) { animation-delay: 0.05s; }
+  .story:nth-child(2) { animation-delay: 0.12s; }
+  .story:nth-child(3) { animation-delay: 0.19s; }
+
+  .story-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
+  .tag {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 3px 8px;
+    color: var(--cream);
+  }
+  .tag.micro { background: var(--teal); }
+  .tag.macro { background: var(--rust); }
+  .tag.global { background: var(--gold); }
+
+  .igcse-badge {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 2px 7px;
+    background: var(--teal);
+    color: var(--cream);
+  }
+  .ib-badge {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 2px 7px;
+    background: var(--rust);
+    color: var(--cream);
+  }
+
+  .story h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(17px, 2.5vw, 21px);
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 8px;
+  }
+  .story h2 a {
+    color: var(--ink);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .story h2 a:hover { color: var(--gold); }
+  .story h2 a::after {
+    content: ' ↗';
+    font-size: 14px;
+    color: var(--rule);
+    font-family: 'Source Serif 4', serif;
+    font-weight: 400;
+  }
+
+  .story p {
+    font-size: 15px;
+    line-height: 1.65;
+    color: #2a1f0a;
+    margin-bottom: 10px;
+  }
+
+  .igcse-link {
+    font-size: 13px;
+    color: var(--teal);
+    font-style: italic;
+    border-left: 2px solid var(--teal);
+    padding-left: 10px;
+    margin-top: 8px;
+  }
+  .ib-link {
+    font-size: 13px;
+    color: var(--rust);
+    font-style: italic;
+    border-left: 2px solid var(--rust);
+    padding-left: 10px;
+    margin-top: 6px;
+  }
+
+  .source-link {
+    margin-top: 10px;
+    font-size: 12px;
+  }
+  .source-link a {
+    color: var(--mid);
+    text-decoration: none;
+    letter-spacing: 0.5px;
+    border-bottom: 1px dotted var(--rule);
+    transition: color 0.15s;
+  }
+  .source-link a:hover { color: var(--gold); border-bottom-color: var(--gold); }
+
+  .digest-footer {
+    text-align: center;
+    padding: 24px;
+    border-top: 2px solid var(--rule);
+    font-size: 11px;
+    color: var(--mid);
+    letter-spacing: 1px;
+    margin-top: 16px;
+  }
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="masthead-sub">For the IGCSE &amp; IB economics educator</div>
+  <h1>The <span>Econ</span> Dispatch</h1>
+  <div class="dateline" id="dateline"></div>
+</div>
+
+<div class="tabs">
+  <button class="tab micro active" onclick="switchTab('micro')">📊 Microeconomics</button>
+  <button class="tab macro" onclick="switchTab('macro')">📈 Macroeconomics</button>
+  <button class="tab global" onclick="switchTab('global')">🌍 Global Economics</button>
+</div>
+
+<div class="container">
+
+  <div class="fetch-section">
+    <button class="fetch-btn" id="fetchBtn" onclick="fetchDigest()">Fetch Today's Digest</button>
+    <div class="fetch-hint">Searches the web for today's economics news, filtered for IGCSE &amp; IB relevance</div>
+  </div>
+
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <div class="loading-text">Researching today's economics news...</div>
+  </div>
+
+  <div class="error-box" id="errorBox"></div>
+
+  <div class="digest" id="digest">
+    <div class="section-panel show" id="panel-micro"></div>
+    <div class="section-panel" id="panel-macro"></div>
+    <div class="section-panel" id="panel-global"></div>
+    <div class="digest-footer">The Econ Dispatch &mdash; Curated daily for IGCSE Economics (0455) &amp; IB Economics</div>
+  </div>
+
+</div>
+
+<script>
+  const now = new Date();
+  document.getElementById('dateline').textContent = now.toLocaleDateString('en-GB', {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+  }).toUpperCase();
+
+  let activeTab = 'micro';
+
+  function switchTab(tab) {
+    activeTab = tab;
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelector('.tab.' + tab).classList.add('active');
+    document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('show'));
+    document.getElementById('panel-' + tab).classList.add('show');
+  }
+
+  async function fetchDigest() {
+    const btn = document.getElementById('fetchBtn');
+    btn.disabled = true;
+    document.getElementById('loading').classList.add('show');
+    document.getElementById('errorBox').classList.remove('show');
+    document.getElementById('digest').classList.remove('show');
+
+    const today = now.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+
+    try {
+      const response = await fetch('/api/digest', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ today })
+      });
+
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'Server error ' + response.status);
+
+      const clean = (result.text || '')
+        .replace(/```json|```/g, '')
+        .replace(/<[^>]+>/g, '')
+        .trim();
+
+      const match = clean.match(/\{[\s\S]*\}/);
+      if (!match) throw new Error('No data returned. Please try again.');
+
+      let digest;
+      try {
+        digest = JSON.parse(match[0]);
+      } catch (parseErr) {
+        const raw = match[0];
+        const lastBrace = raw.lastIndexOf('}');
+        try {
+          digest = JSON.parse(raw.substring(0, lastBrace + 1) + ']}]}');
+        } catch {
+          throw new Error('Could not parse response. Please try again.');
+        }
+      }
+
+      renderDigest(digest);
+
+    } catch (err) {
+      showError('Could not fetch today\'s digest. ' + err.message);
+    } finally {
+      document.getElementById('loading').classList.remove('show');
+      btn.disabled = false;
+    }
+  }
+
+  function renderDigest(data) {
+    const config = {
+      micro: { label: 'Microeconomics', desc: 'Markets, firms, prices & consumer behaviour', tag: 'micro' },
+      macro: { label: 'Macroeconomics', desc: 'Inflation, growth, employment & monetary policy', tag: 'macro' },
+      global: { label: 'Global Economics', desc: 'Trade, exchange rates & international development', tag: 'global' }
+    };
+
+    ['micro', 'macro', 'global'].forEach(section => {
+      const panel = document.getElementById('panel-' + section);
+      const c = config[section];
+      const stories = data[section] || [];
+
+      let html = `<div class="section-intro"><h3>${c.label}</h3><p>${c.desc}</p></div><div class="stories">`;
+
+      stories.forEach(story => {
+        const hasUrl = story.url && story.url.startsWith('http');
+        const headline = escHtml(story.headline);
+
+        html += '<div class="story">';
+        html += `<div class="story-meta"><span class="tag ${c.tag}">${c.label}</span>`;
+        if (story.igcse) html += '<span class="igcse-badge">IGCSE</span>';
+        if (story.ib) html += '<span class="ib-badge">IB</span>';
+        html += '</div>';
+
+        html += '<h2>';
+        if (hasUrl) {
+          html += `<a href="${escHtml(story.url)}" target="_blank" rel="noopener">${headline}</a>`;
+        } else {
+          html += headline;
+        }
+        html += '</h2>';
+
+        html += `<p>${escHtml(story.summary)}</p>`;
+        if (story.igcse_link) html += `<div class="igcse-link">📚 IGCSE: ${escHtml(story.igcse_link)}</div>`;
+        if (story.ib_link) html += `<div class="ib-link">🎓 IB: ${escHtml(story.ib_link)}</div>`;
+
+        if (hasUrl) {
+          const domain = new URL(story.url).hostname.replace('www.', '');
+          html += `<div class="source-link"><a href="${escHtml(story.url)}" target="_blank" rel="noopener">Read full article → ${escHtml(domain)}</a></div>`;
+        }
+
+        html += '</div>';
+      });
+
+      html += '</div>';
+      panel.innerHTML = html;
+    });
+
+    document.getElementById('digest').classList.add('show');
+    switchTab(activeTab);
+  }
+
+  function escHtml(str) {
+    return String(str || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function showError(msg) {
+    const box = document.getElementById('errorBox');
+    box.textContent = msg;
+    box.classList.add('show');
+  }
+</script>
+</body>
+</html>
