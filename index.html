@@ -406,6 +406,8 @@
 
     renderExamples();
   }
+
+  function deleteStory(id) {
     setSaved(getSaved().filter(s => s.id !== id));
     renderExamples();
   }
