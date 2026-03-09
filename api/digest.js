@@ -1,3 +1,8 @@
+bash
+
+cat /home/claude/econ-vercel/api/digest.js
+Output
+
 import { Redis } from '@upstash/redis';
 
 export default async function handler(req, res) {
