@@ -654,6 +654,7 @@
               onclick="saveVideoToExamples('${vData}','${escHtml(v.section)}',${v.id})">
               ${isSaved ? '✓ Saved' : '＋ My Examples'}
             </button>
+            <button class="delete-btn admin-only" style="display:none" onclick="adminDeleteVideo(${v.id})">✕ Delete</button>
           </div>
         </div>
       </div>`;
@@ -686,6 +687,8 @@
   function toggleAdmin() {
     const panel = document.getElementById('adminPanel');
     panel.classList.toggle('show');
+    const isOpen = panel.classList.contains('show');
+    document.querySelectorAll('.admin-only').forEach(el => el.style.display = isOpen ? 'inline-block' : 'none');
   }
 
   function updateAdminTopics() {
@@ -738,6 +741,35 @@
       setTimeout(() => { msgEl.textContent = ''; }, 3000);
     } catch (e) {
       msgEl.textContent = e.message || 'Failed to add video.';
+      msgEl.className = 'admin-msg err';
+    }
+  }
+
+  async function adminDeleteVideo(id) {
+    const pw = document.getElementById('admin-pw').value;
+    const msgEl = document.getElementById('adminMsg');
+    if (!pw) { msgEl.textContent = 'Enter your password first.'; msgEl.className = 'admin-msg err'; return; }
+    if (!confirm('Delete this video?')) return;
+    msgEl.textContent = 'Deleting...';
+    msgEl.className = 'admin-msg';
+    try {
+      const res = await fetch('/api/videos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'delete', password: pw, id })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      allVideos = data.videos || [];
+      updateVideoCount();
+      renderVideos();
+      // Re-show delete buttons since panel is still open
+      document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'inline-block');
+      msgEl.textContent = '✓ Deleted.';
+      msgEl.className = 'admin-msg ok';
+      setTimeout(() => { msgEl.textContent = ''; }, 2000);
+    } catch (e) {
+      msgEl.textContent = e.message || 'Failed to delete.';
       msgEl.className = 'admin-msg err';
     }
   }
