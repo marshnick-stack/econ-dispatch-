@@ -633,7 +633,7 @@
       const ytId = getYouTubeId(v.url);
       const thumb = ytId ? `https://img.youtube.com/vi/${ytId}/mqdefault.jpg` : '';
       const isSaved = savedHeadlines.has(v.title);
-      const vData = escAttr(JSON.stringify({ headline: v.title, summary: v.note || '', url: v.url, igcse_link: '', ib_link: '' }));
+      const vData = escAttr(JSON.stringify({ headline: v.title, summary: v.note || '', url: v.url, igcse_link: '', ib_link: '', topic: v.topic || 'Unsorted' }));
 
       return `<div class="video-card">
         <div class="video-thumb" onclick="window.open('${escHtml(v.url)}','_blank')">
@@ -673,7 +673,7 @@
         url: story.url || '',
         igcse_link: '', ib_link: '',
         section: section || 'micro',
-        topic: 'Unsorted',
+        topic: story.topic || 'Unsorted',
         savedDate: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
         manual: true
       });
