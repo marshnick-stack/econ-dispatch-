@@ -1,3 +1,5 @@
+import { kv } from '@vercel/kv';
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
@@ -8,7 +10,25 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'API key not configured on server.' });
   }
 
-  const today = req.body?.today || new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  // Use Shanghai date (UTC+8)
+  const shanghaiDate = new Date(Date.now() + 8 * 60 * 60 * 1000)
+    .toISOString().split('T')[0]; // e.g. "2026-03-09"
+  const cacheKey = `digest:${shanghaiDate}`;
+
+  // ── Check cache first ──────────────────────────────────────
+  try {
+    const cached = await kv.get(cacheKey);
+    if (cached) {
+      return res.status(200).json({ text: cached, cached: true });
+    }
+  } catch (kvErr) {
+    // If KV is unavailable, fall through to API call
+    console.warn('KV read failed, falling through to API:', kvErr.message);
+  }
+
+  // ── No cache — fetch from Anthropic ───────────────────────
+  const today = new Date(Date.now() + 8 * 60 * 60 * 1000)
+    .toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 
   const prompt = `You are an economics news researcher. Today is ${today}.
 
@@ -56,7 +76,16 @@ Rules:
       .map(b => b.text)
       .join('');
 
-    return res.status(200).json({ text: textBlocks });
+    // ── Save to cache, expires at midnight Shanghai time ─────
+    try {
+      const now = new Date(Date.now() + 8 * 60 * 60 * 1000);
+      const secondsUntilMidnight = (24 - now.getHours()) * 3600 - now.getMinutes() * 60 - now.getSeconds();
+      await kv.set(cacheKey, textBlocks, { ex: secondsUntilMidnight });
+    } catch (kvErr) {
+      console.warn('KV write failed:', kvErr.message);
+    }
+
+    return res.status(200).json({ text: textBlocks, cached: false });
 
   } catch (err) {
     return res.status(500).json({ error: err.message });
