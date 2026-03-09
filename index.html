@@ -17,6 +17,7 @@
     --mid: #5c4a2a;
     --rule: #c8b89a;
     --save: #2d6a2d;
+    --video: #4a2d6a;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -36,7 +37,9 @@
   .tab.macro.active { border-bottom-color: var(--rust); }
   .tab.global.active { border-bottom-color: var(--gold); }
   .tab.examples.active { border-bottom-color: var(--save); }
+  .tab.videos.active { border-bottom-color: var(--video); }
   .tab-count { display: inline-block; background: var(--save); color: white; font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 8px; margin-left: 4px; vertical-align: middle; font-family: 'Source Serif 4', serif; }
+  .tab-count.video-count { background: var(--video); }
 
   .container { max-width: 860px; margin: 0 auto; padding: 0 16px; }
 
@@ -76,6 +79,7 @@
   .tag.micro { background: var(--teal); }
   .tag.macro { background: var(--rust); }
   .tag.global { background: var(--gold); }
+  .tag.video-tag { background: var(--video); }
 
   .igcse-badge { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700; padding: 2px 7px; background: var(--teal); color: var(--cream); }
   .ib-badge { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700; padding: 2px 7px; background: var(--rust); color: var(--cream); }
@@ -100,7 +104,7 @@
   .save-btn:hover { border-color: var(--save); color: var(--save); }
   .save-btn.saved { border-color: var(--save); color: var(--save); background: #f0faf0; }
 
-  /* My Examples */
+  /* ── My Examples ── */
   .examples-intro { padding: 20px 0 16px; border-bottom: 2px solid var(--ink); margin-bottom: 8px; display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
   .examples-intro h3 { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 900; }
   .clear-all-btn { font-family: 'Source Serif 4', serif; font-size: 11px; letter-spacing: 0.5px; padding: 4px 12px; border: 1px solid #d4856a; color: var(--rust); background: none; cursor: pointer; }
@@ -111,6 +115,8 @@
   .filter-btn { font-family: 'Source Serif 4', serif; font-size: 11px; padding: 4px 10px; border: 1px solid var(--rule); background: var(--cream); color: var(--mid); cursor: pointer; transition: all 0.15s; }
   .filter-btn:hover { border-color: var(--ink); color: var(--ink); }
   .filter-btn.active { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+  .topic-filter-select { font-family: 'Source Serif 4', serif; font-size: 11px; padding: 4px 10px; border: 1px solid var(--rule); background: var(--cream); color: var(--ink); cursor: pointer; }
+  .topic-filter-select:focus { outline: none; border-color: var(--gold); }
 
   .empty-state { text-align: center; padding: 60px 20px; color: var(--mid); }
   .empty-state .empty-icon { font-size: 36px; margin-bottom: 12px; }
@@ -140,6 +146,52 @@
   .manual-row-selects { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
   .manual-row-selects .save-topic { flex: 1; min-width: 140px; }
   .manual-row-selects .save-btn { white-space: nowrap; }
+
+  /* ── Teacher Videos tab ── */
+  .videos-intro { padding: 20px 0 16px; border-bottom: 2px solid var(--ink); margin-bottom: 16px; }
+  .videos-intro h3 { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 900; }
+  .videos-intro p { font-size: 12px; color: var(--mid); margin-top: 4px; }
+
+  .videos-filter-bar { padding: 0 0 16px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; border-bottom: 1px solid var(--rule); margin-bottom: 16px; }
+
+  .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; padding-bottom: 32px; }
+  .video-card { background: var(--warm); border: 1px solid var(--rule); overflow: hidden; animation: fadeUp 0.3s ease forwards; opacity: 0; }
+  .video-card:nth-child(1) { animation-delay: 0.05s; }
+  .video-card:nth-child(2) { animation-delay: 0.10s; }
+  .video-card:nth-child(3) { animation-delay: 0.15s; }
+  .video-card:nth-child(4) { animation-delay: 0.20s; }
+  .video-thumb { position: relative; width: 100%; padding-top: 56.25%; background: var(--ink); cursor: pointer; overflow: hidden; }
+  .video-thumb img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+  .video-play { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 48px; height: 48px; background: rgba(0,0,0,0.75); border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+  .video-thumb:hover .video-play { background: var(--gold); }
+  .video-play::after { content: ''; border-left: 18px solid white; border-top: 11px solid transparent; border-bottom: 11px solid transparent; margin-left: 4px; }
+  .video-info { padding: 12px 14px 14px; }
+  .video-title { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700; line-height: 1.3; margin-bottom: 8px; color: var(--ink); }
+  .video-meta { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; align-items: center; }
+  .video-note { font-size: 12px; color: var(--mid); font-style: italic; margin-bottom: 10px; line-height: 1.5; }
+  .video-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .video-link { font-size: 12px; color: var(--mid); text-decoration: none; border-bottom: 1px dotted var(--rule); }
+  .video-link:hover { color: var(--gold); }
+
+  /* ── Admin panel (inside Videos tab) ── */
+  .admin-toggle { font-family: 'Source Serif 4', serif; font-size: 11px; letter-spacing: 0.5px; padding: 5px 14px; border: 1px solid var(--rule); background: none; color: var(--mid); cursor: pointer; margin-bottom: 12px; }
+  .admin-toggle:hover { border-color: var(--video); color: var(--video); }
+
+  .admin-panel { background: #f0eaf8; border: 1px solid #c4a8e0; padding: 20px; margin-bottom: 20px; display: none; }
+  .admin-panel.show { display: block; }
+  .admin-heading { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; color: var(--video); margin-bottom: 14px; }
+  .admin-input { width: 100%; font-family: 'Source Serif 4', serif; font-size: 13px; padding: 7px 10px; border: 1px solid #c4a8e0; background: white; color: var(--ink); outline: none; margin-bottom: 8px; }
+  .admin-input:focus { border-color: var(--video); }
+  .admin-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+  .admin-row .save-topic { flex: 1; min-width: 140px; font-size: 12px; }
+  .admin-submit { font-family: 'Source Serif 4', serif; font-size: 13px; padding: 8px 20px; background: var(--video); color: white; border: none; cursor: pointer; white-space: nowrap; }
+  .admin-submit:hover { opacity: 0.85; }
+  .admin-password { width: 100%; font-family: 'Source Serif 4', serif; font-size: 13px; padding: 7px 10px; border: 1px solid #c4a8e0; background: white; color: var(--ink); outline: none; margin-bottom: 8px; }
+  .admin-msg { font-size: 12px; margin-top: 6px; min-height: 18px; }
+  .admin-msg.ok { color: var(--save); }
+  .admin-msg.err { color: var(--rust); }
+
+  .digest-footer { text-align: center; font-size: 11px; color: var(--rule); letter-spacing: 1px; padding: 24px 0 32px; border-top: 1px solid var(--rule); margin-top: 8px; }
 </style>
 </head>
 <body>
@@ -154,11 +206,13 @@
   <button class="tab micro active" onclick="switchTab('micro')">📊 Micro</button>
   <button class="tab macro" onclick="switchTab('macro')">📈 Macro</button>
   <button class="tab global" onclick="switchTab('global')">🌍 Global</button>
+  <button class="tab videos" onclick="switchTab('videos')">🎬 Teacher Videos <span class="tab-count video-count" id="videoCount" style="display:none"></span></button>
   <button class="tab examples" onclick="switchTab('examples')">📌 My Examples <span class="tab-count" id="examplesCount" style="display:none"></span></button>
 </div>
 
 <div class="container">
 
+  <!-- ── News panels ── -->
   <div id="main-content">
     <div class="fetch-section">
       <button class="fetch-btn" id="fetchBtn" onclick="fetchDigest()">Fetch Today's Digest</button>
@@ -177,13 +231,60 @@
     </div>
   </div>
 
+  <!-- ── Teacher Videos ── -->
+  <div id="panel-videos" style="display:none">
+    <div class="videos-intro">
+      <h3>🎬 Teacher Videos</h3>
+      <p>Curated by your teacher — tagged to the syllabus</p>
+    </div>
+
+    <!-- Admin toggle -->
+    <button class="admin-toggle" onclick="toggleAdmin()">🔒 Add / Remove Videos (Teacher)</button>
+
+    <div class="admin-panel" id="adminPanel">
+      <div class="admin-heading">Add a Video</div>
+      <input type="password" id="admin-pw" class="admin-password" placeholder="Teacher password" />
+      <input type="url" id="admin-url" class="admin-input" placeholder="YouTube URL (e.g. https://www.youtube.com/watch?v=...)" />
+      <input type="text" id="admin-title" class="admin-input" placeholder="Title" />
+      <input type="text" id="admin-note" class="admin-input" placeholder="Teacher note (optional — e.g. 'Watch from 3:20 for the key example')" />
+      <div class="admin-row">
+        <select id="admin-section" class="save-topic" onchange="updateAdminTopics()">
+          <option value="">— Section —</option>
+          <option value="micro">Unit 2 Micro</option>
+          <option value="macro">Unit 3 Macro</option>
+          <option value="global">Unit 4 Global</option>
+        </select>
+        <select id="admin-topic" class="save-topic">
+          <option value="">— Topic —</option>
+        </select>
+        <button class="admin-submit" onclick="adminAddVideo()">＋ Add Video</button>
+      </div>
+      <div class="admin-msg" id="adminMsg"></div>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="videos-filter-bar">
+      <span class="filter-label">Filter:</span>
+      <button class="filter-btn active" onclick="setVideoFilter('all', this)">All</button>
+      <button class="filter-btn" onclick="setVideoFilter('micro', this)">Micro</button>
+      <button class="filter-btn" onclick="setVideoFilter('macro', this)">Macro</button>
+      <button class="filter-btn" onclick="setVideoFilter('global', this)">Global</button>
+      <select class="topic-filter-select" id="videoTopicFilter" onchange="renderVideos()">
+        <option value="">All Topics</option>
+      </select>
+    </div>
+
+    <div class="video-grid" id="videoGrid"></div>
+    <div class="digest-footer">Videos curated by your teacher and stored for all students.</div>
+  </div>
+
+  <!-- ── My Examples ── -->
   <div id="panel-examples" style="display:none">
     <div class="examples-intro">
       <h3>📌 My Examples Bank</h3>
       <button class="clear-all-btn" onclick="clearAll()">Clear all</button>
     </div>
 
-    <!-- Manual entry form -->
     <div class="manual-entry">
       <div class="manual-entry-heading">＋ Add your own example</div>
       <div class="manual-row">
@@ -213,6 +314,9 @@
       <button class="filter-btn" onclick="setFilter('micro', this)">Micro</button>
       <button class="filter-btn" onclick="setFilter('macro', this)">Macro</button>
       <button class="filter-btn" onclick="setFilter('global', this)">Global</button>
+      <select class="topic-filter-select" id="topicFilter" onchange="renderExamples()">
+        <option value="">All Topics</option>
+      </select>
     </div>
     <div id="examples-list"></div>
     <div class="digest-footer">Examples are stored in your browser on this device only.</div>
@@ -228,6 +332,8 @@
 
   let activeTab = 'micro';
   let activeFilter = 'all';
+  let activeVideoFilter = 'all';
+  let allVideos = [];
   const STORAGE_KEY = 'econ_dispatch_examples';
 
   const topicOptions = {
@@ -236,23 +342,30 @@
     global: ['International Trade','Trade Protection','Exchange Rates','Balance of Payments','Economic Integration','Terms of Trade','Development Economics','Measuring Development','Aid & Development Strategies','Sustainability']
   };
 
+  // ── Tab switching ──────────────────────────────────────────
   function switchTab(tab) {
     activeTab = tab;
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.querySelector('.tab.' + tab).classList.add('active');
+    document.getElementById('main-content').style.display = 'none';
+    document.getElementById('panel-examples').style.display = 'none';
+    document.getElementById('panel-videos').style.display = 'none';
+
     if (tab === 'examples') {
-      document.getElementById('main-content').style.display = 'none';
       document.getElementById('panel-examples').style.display = 'block';
       renderExamples();
+    } else if (tab === 'videos') {
+      document.getElementById('panel-videos').style.display = 'block';
+      loadVideos();
     } else {
       document.getElementById('main-content').style.display = 'block';
-      document.getElementById('panel-examples').style.display = 'none';
       document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('show'));
       const panel = document.getElementById('panel-' + tab);
       if (panel) panel.classList.add('show');
     }
   }
 
+  // ── News digest ────────────────────────────────────────────
   async function fetchDigest() {
     const btn = document.getElementById('fetchBtn');
     btn.disabled = true;
@@ -268,7 +381,8 @@
       });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || 'Server error ' + response.status);
-      const clean = (result.text || '').replace(/```json|```/g, '').replace(/<[^>]+>/g, '').trim();
+      const text = typeof result.text === 'string' ? result.text : JSON.stringify(result.text);
+      const clean = text.replace(/```json|```/g, '').replace(/<[^>]+>/g, '').trim();
       const match = clean.match(/\{[\s\S]*\}/);
       if (!match) throw new Error('No data returned. Please try again.');
       let digest;
@@ -330,9 +444,10 @@
       panel.innerHTML = html;
     });
     document.getElementById('digest').classList.add('show');
-    if (activeTab !== 'examples') switchTab(activeTab);
+    if (activeTab !== 'examples' && activeTab !== 'videos') switchTab(activeTab);
   }
 
+  // ── My Examples ────────────────────────────────────────────
   function saveStory(storyJson, section, sid) {
     let story;
     try { story = JSON.parse(storyJson); } catch { return; }
@@ -378,32 +493,23 @@
     const section = document.getElementById('manual-section').value;
     const topic = document.getElementById('manual-topic').value;
     const errEl = document.getElementById('manual-error');
-
     if (!headline) { errEl.textContent = 'Please enter a headline or title.'; errEl.style.display = 'block'; return; }
     if (!section) { errEl.textContent = 'Please select a section.'; errEl.style.display = 'block'; return; }
     errEl.style.display = 'none';
-
     const saved = getSaved();
     saved.push({
       id: Date.now(),
-      headline,
-      summary: '',
-      url: url || '',
-      igcse_link: '',
-      ib_link: '',
-      section,
-      topic: topic || 'Unsorted',
+      headline, summary: '', url: url || '',
+      igcse_link: '', ib_link: '',
+      section, topic: topic || 'Unsorted',
       savedDate: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
       manual: true
     });
     setSaved(saved);
-
-    // Reset form
     document.getElementById('manual-headline').value = '';
     document.getElementById('manual-url').value = '';
     document.getElementById('manual-section').value = '';
     document.getElementById('manual-topic').innerHTML = '<option value="">— Topic —</option>';
-
     renderExamples();
   }
 
@@ -423,13 +529,29 @@
     activeFilter = f;
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
     if (btn) btn.classList.add('active');
+    // Reset topic filter
+    document.getElementById('topicFilter').value = '';
+    updateTopicFilterOptions();
     renderExamples();
   }
 
+  function updateTopicFilterOptions() {
+    const sel = document.getElementById('topicFilter');
+    const saved = getSaved();
+    const filtered = activeFilter === 'all' ? saved : saved.filter(s => s.section === activeFilter);
+    const topics = [...new Set(filtered.map(s => s.topic || 'Unsorted'))].sort();
+    sel.innerHTML = '<option value="">All Topics</option>';
+    topics.forEach(t => sel.innerHTML += `<option value="${escHtml(t)}">${escHtml(t)}</option>`);
+  }
+
   function renderExamples() {
+    updateTopicFilterOptions();
     const container = document.getElementById('examples-list');
     let saved = getSaved();
     if (activeFilter !== 'all') saved = saved.filter(s => s.section === activeFilter);
+    const topicSel = document.getElementById('topicFilter').value;
+    if (topicSel) saved = saved.filter(s => (s.topic || 'Unsorted') === topicSel);
+
     if (saved.length === 0) {
       container.innerHTML = `<div class="empty-state"><div class="empty-icon">📌</div><p>No examples saved yet${activeFilter !== 'all' ? ' for this section' : ''}.<br>Fetch today's digest and click <strong>＋ Save to My Examples</strong> on any story.</p></div>`;
       return;
@@ -463,6 +585,170 @@
     container.innerHTML = html;
   }
 
+  // ── Teacher Videos ─────────────────────────────────────────
+  async function loadVideos() {
+    try {
+      const res = await fetch('/api/videos');
+      const data = await res.json();
+      allVideos = data.videos || [];
+      updateVideoCount();
+      renderVideos();
+    } catch (e) {
+      document.getElementById('videoGrid').innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><p>Could not load videos. Please try again.</p></div>';
+    }
+  }
+
+  function setVideoFilter(f, btn) {
+    activeVideoFilter = f;
+    document.querySelectorAll('.videos-filter-bar .filter-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    document.getElementById('videoTopicFilter').value = '';
+    updateVideoTopicOptions();
+    renderVideos();
+  }
+
+  function updateVideoTopicOptions() {
+    const sel = document.getElementById('videoTopicFilter');
+    const filtered = activeVideoFilter === 'all' ? allVideos : allVideos.filter(v => v.section === activeVideoFilter);
+    const topics = [...new Set(filtered.map(v => v.topic || 'Unsorted'))].sort();
+    sel.innerHTML = '<option value="">All Topics</option>';
+    topics.forEach(t => sel.innerHTML += `<option value="${escHtml(t)}">${escHtml(t)}</option>`);
+  }
+
+  function renderVideos() {
+    updateVideoTopicOptions();
+    const grid = document.getElementById('videoGrid');
+    let videos = activeVideoFilter === 'all' ? allVideos : allVideos.filter(v => v.section === activeVideoFilter);
+    const topicSel = document.getElementById('videoTopicFilter').value;
+    if (topicSel) videos = videos.filter(v => (v.topic || 'Unsorted') === topicSel);
+
+    if (videos.length === 0) {
+      grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🎬</div><p>No videos added yet.<br>Use the teacher panel to add your first video.</p></div>';
+      return;
+    }
+    const savedHeadlines = new Set(getSaved().map(s => s.headline));
+    const sectionLabel = { micro: 'Micro', macro: 'Macro', global: 'Global' };
+
+    grid.innerHTML = videos.map(v => {
+      const ytId = getYouTubeId(v.url);
+      const thumb = ytId ? `https://img.youtube.com/vi/${ytId}/mqdefault.jpg` : '';
+      const isSaved = savedHeadlines.has(v.title);
+      const vData = escAttr(JSON.stringify({ headline: v.title, summary: v.note || '', url: v.url, igcse_link: '', ib_link: '' }));
+
+      return `<div class="video-card">
+        <div class="video-thumb" onclick="window.open('${escHtml(v.url)}','_blank')">
+          ${thumb ? `<img src="${thumb}" alt="${escHtml(v.title)}" loading="lazy">` : '<div style="position:absolute;top:0;left:0;width:100%;height:100%;background:#2a1f0a"></div>'}
+          <div class="video-play"></div>
+        </div>
+        <div class="video-info">
+          <div class="video-title">${escHtml(v.title)}</div>
+          <div class="video-meta">
+            <span class="tag ${escHtml(v.section)}">${escHtml(sectionLabel[v.section] || v.section)}</span>
+            ${v.topic ? `<span style="font-size:10px;color:var(--mid);letter-spacing:0.5px">${escHtml(v.topic)}</span>` : ''}
+            <span style="font-size:10px;color:var(--rule);margin-left:auto">${escHtml(v.addedDate || '')}</span>
+          </div>
+          ${v.note ? `<div class="video-note">💬 ${escHtml(v.note)}</div>` : ''}
+          <div class="video-actions">
+            <a class="video-link" href="${escHtml(v.url)}" target="_blank" rel="noopener">Watch on YouTube ↗</a>
+            <button class="save-btn${isSaved ? ' saved' : ''}" id="vsavebtn-${v.id}"
+              onclick="saveVideoToExamples('${vData}','${escHtml(v.section)}',${v.id})">
+              ${isSaved ? '✓ Saved' : '＋ My Examples'}
+            </button>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function saveVideoToExamples(storyJson, section, vid) {
+    let story;
+    try { story = JSON.parse(storyJson); } catch { return; }
+    const saved = getSaved();
+    if (!saved.find(s => s.headline === story.headline)) {
+      saved.push({
+        id: Date.now(),
+        headline: story.headline,
+        summary: story.summary || '',
+        url: story.url || '',
+        igcse_link: '', ib_link: '',
+        section: section || 'micro',
+        topic: 'Unsorted',
+        savedDate: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
+        manual: true
+      });
+      setSaved(saved);
+    }
+    const btn = document.getElementById('vsavebtn-' + vid);
+    if (btn) { btn.textContent = '✓ Saved'; btn.classList.add('saved'); }
+  }
+
+  // ── Admin panel ────────────────────────────────────────────
+  function toggleAdmin() {
+    const panel = document.getElementById('adminPanel');
+    panel.classList.toggle('show');
+  }
+
+  function updateAdminTopics() {
+    const section = document.getElementById('admin-section').value;
+    const topicEl = document.getElementById('admin-topic');
+    topicEl.innerHTML = '<option value="">— Topic —</option>';
+    if (section && topicOptions[section]) {
+      topicOptions[section].forEach(t => {
+        topicEl.innerHTML += `<option value="${escHtml(t)}">${escHtml(t)}</option>`;
+      });
+    }
+  }
+
+  async function adminAddVideo() {
+    const pw = document.getElementById('admin-pw').value;
+    const url = document.getElementById('admin-url').value.trim();
+    const title = document.getElementById('admin-title').value.trim();
+    const note = document.getElementById('admin-note').value.trim();
+    const section = document.getElementById('admin-section').value;
+    const topic = document.getElementById('admin-topic').value;
+    const msgEl = document.getElementById('adminMsg');
+
+    if (!pw || !url || !title || !section) {
+      msgEl.textContent = 'Please fill in password, URL, title and section.';
+      msgEl.className = 'admin-msg err';
+      return;
+    }
+
+    msgEl.textContent = 'Adding...';
+    msgEl.className = 'admin-msg';
+
+    try {
+      const res = await fetch('/api/videos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'add', password: pw, video: { url, title, note, section, topic: topic || 'Unsorted' } })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      allVideos = data.videos || [];
+      updateVideoCount();
+      renderVideos();
+      document.getElementById('admin-url').value = '';
+      document.getElementById('admin-title').value = '';
+      document.getElementById('admin-note').value = '';
+      document.getElementById('admin-section').value = '';
+      document.getElementById('admin-topic').innerHTML = '<option value="">— Topic —</option>';
+      msgEl.textContent = '✓ Video added!';
+      msgEl.className = 'admin-msg ok';
+      setTimeout(() => { msgEl.textContent = ''; }, 3000);
+    } catch (e) {
+      msgEl.textContent = e.message || 'Failed to add video.';
+      msgEl.className = 'admin-msg err';
+    }
+  }
+
+  // ── Helpers ────────────────────────────────────────────────
+  function getYouTubeId(url) {
+    if (!url) return null;
+    const m = url.match(/(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_-]{11})/);
+    return m ? m[1] : null;
+  }
+
   function getSaved() {
     try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; }
   }
@@ -473,6 +759,12 @@
   function updateCount() {
     const n = getSaved().length;
     const el = document.getElementById('examplesCount');
+    if (n > 0) { el.textContent = n; el.style.display = 'inline-block'; }
+    else { el.style.display = 'none'; }
+  }
+  function updateVideoCount() {
+    const n = allVideos.length;
+    const el = document.getElementById('videoCount');
     if (n > 0) { el.textContent = n; el.style.display = 'inline-block'; }
     else { el.style.display = 'none'; }
   }
