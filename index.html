@@ -545,11 +545,13 @@
   }
 
   function renderExamples() {
+    const topicSel = document.getElementById('topicFilter').value;
     updateTopicFilterOptions();
+    // Restore selected value after options are rebuilt
+    if (topicSel) document.getElementById('topicFilter').value = topicSel;
     const container = document.getElementById('examples-list');
     let saved = getSaved();
     if (activeFilter !== 'all') saved = saved.filter(s => s.section === activeFilter);
-    const topicSel = document.getElementById('topicFilter').value;
     if (topicSel) saved = saved.filter(s => (s.topic || 'Unsorted') === topicSel);
 
     if (saved.length === 0) {
