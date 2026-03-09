@@ -24,7 +24,8 @@ export default async function handler(req, res) {
     });
     const cached = await redis.get(cacheKey);
     if (cached) {
-      return res.status(200).json({ text: cached, cached: true });
+      const text = typeof cached === 'string' ? cached : JSON.stringify(cached);
+      return res.status(200).json({ text, cached: true });
     }
   } catch (kvErr) {
     console.warn('Redis read failed, falling through to API:', kvErr.message);
