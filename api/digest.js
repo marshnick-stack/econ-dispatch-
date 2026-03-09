@@ -1,4 +1,4 @@
-import { kv } from '@vercel/kv';
+import { Redis } from '@upstash/redis';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -11,24 +11,29 @@ export default async function handler(req, res) {
   }
 
   // Use Shanghai date (UTC+8)
-  const shanghaiDate = new Date(Date.now() + 8 * 60 * 60 * 1000)
-    .toISOString().split('T')[0]; // e.g. "2026-03-09"
+  const shanghaiNow = new Date(Date.now() + 8 * 60 * 60 * 1000);
+  const shanghaiDate = shanghaiNow.toISOString().split('T')[0]; // e.g. "2026-03-09"
   const cacheKey = `digest:${shanghaiDate}`;
 
   // ── Check cache first ──────────────────────────────────────
+  let redis;
   try {
-    const cached = await kv.get(cacheKey);
+    redis = new Redis({
+      url: process.env.STORAGE_KV_REST_API_URL || process.env.KV_REST_API_URL,
+      token: process.env.STORAGE_KV_REST_API_TOKEN || process.env.KV_REST_API_TOKEN,
+    });
+    const cached = await redis.get(cacheKey);
     if (cached) {
       return res.status(200).json({ text: cached, cached: true });
     }
   } catch (kvErr) {
-    // If KV is unavailable, fall through to API call
-    console.warn('KV read failed, falling through to API:', kvErr.message);
+    console.warn('Redis read failed, falling through to API:', kvErr.message);
   }
 
   // ── No cache — fetch from Anthropic ───────────────────────
-  const today = new Date(Date.now() + 8 * 60 * 60 * 1000)
-    .toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  const today = shanghaiNow.toLocaleDateString('en-GB', {
+    day: 'numeric', month: 'long', year: 'numeric'
+  });
 
   const prompt = `You are an economics news researcher. Today is ${today}.
 
@@ -78,11 +83,14 @@ Rules:
 
     // ── Save to cache, expires at midnight Shanghai time ─────
     try {
-      const now = new Date(Date.now() + 8 * 60 * 60 * 1000);
-      const secondsUntilMidnight = (24 - now.getHours()) * 3600 - now.getMinutes() * 60 - now.getSeconds();
-      await kv.set(cacheKey, textBlocks, { ex: secondsUntilMidnight });
+      if (redis) {
+        const secondsUntilMidnight = (24 - shanghaiNow.getUTCHours()) * 3600
+          - shanghaiNow.getUTCMinutes() * 60
+          - shanghaiNow.getUTCSeconds();
+        await redis.set(cacheKey, textBlocks, { ex: secondsUntilMidnight });
+      }
     } catch (kvErr) {
-      console.warn('KV write failed:', kvErr.message);
+      console.warn('Redis write failed:', kvErr.message);
     }
 
     return res.status(200).json({ text: textBlocks, cached: false });
