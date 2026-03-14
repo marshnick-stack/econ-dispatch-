@@ -26,7 +26,18 @@ export default async function handler(req, res) {
 
   // POST — add or delete a video (teacher only, requires password)
   if (req.method === 'POST') {
-    const { action, password, video, id } = req.body || {};
+    const body = req.body || {};
+    // Support both nested {action, video: {url,title,...}} and flat {action, url, title,...}
+    const action = body.action;
+    const password = body.password;
+    const id = body.id;
+    const video = body.video || {
+      url: body.url,
+      title: body.title,
+      section: body.section,
+      topic: body.topic,
+      note: body.note
+    };
     const teacherPassword = process.env.TEACHER_PASSWORD;
 
     if (!teacherPassword || password !== teacherPassword) {
