@@ -44,6 +44,9 @@ export default async function handler(req, res) {
       return res.status(401).json({ error: 'Incorrect password.' });
     }
 
+    // DEBUG — remove after testing
+    return res.status(200).json({ debug: true, body, action, url: body.url, title: body.title });
+
     try {
       const redis = getRedis();
       const existing = await redis.get(VIDEOS_KEY);
