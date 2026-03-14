@@ -44,8 +44,15 @@ export default async function handler(req, res) {
       return res.status(401).json({ error: 'Incorrect password.' });
     }
 
-    // DEBUG — remove after testing
-    return res.status(200).json({ debug: true, body, action, url: body.url, title: body.title });
+    // Extract URL — iOS Shortcuts sometimes merges the key name with the value
+    // e.g. sends "url https://..." as a key instead of url: "https://..."
+    let extractedUrl = body.url;
+    if (!extractedUrl) {
+      // Find any key that starts with 'url' and contains 'http'
+      const urlKey = Object.keys(body).find(k => k.startsWith('url') && k.includes('http'));
+      if (urlKey) extractedUrl = urlKey.replace(/^url\s*/, '');
+    }
+    body.url = extractedUrl;
 
     try {
       const redis = getRedis();
