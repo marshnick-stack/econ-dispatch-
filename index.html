@@ -620,7 +620,7 @@
   function renderVideos() {
     updateVideoTopicOptions();
     const grid = document.getElementById('videoGrid');
-    let videos = activeVideoFilter === 'all' ? allVideos : allVideos.filter(v => v.section === activeVideoFilter);
+    let videos = (activeVideoFilter === 'all' ? allVideos : allVideos.filter(v => v.section === activeVideoFilter)).slice().reverse();
     const topicSel = document.getElementById('videoTopicFilter').value;
     if (topicSel) videos = videos.filter(v => (v.topic || 'Unsorted') === topicSel);
 

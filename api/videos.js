@@ -67,7 +67,7 @@ export default async function handler(req, res) {
           id: Date.now(),
           url: video.url,
           title: video.title,
-          section: video.section || 'micro',
+          section: (video.section || 'micro').toLowerCase().trim(),
           topic: video.topic || 'Unsorted',
           note: video.note || '',
           addedDate: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
