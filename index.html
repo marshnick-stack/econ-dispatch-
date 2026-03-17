@@ -381,10 +381,12 @@
       });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || 'Server error ' + response.status);
+      if (result.error) throw new Error(result.error + (result.debug ? ' | ' + JSON.stringify(result.debug) : ''));
+      if (!result.text) throw new Error('No text in response: ' + JSON.stringify(result));
       const text = typeof result.text === 'string' ? result.text : JSON.stringify(result.text);
       const clean = text.replace(/```json|```/g, '').replace(/<[^>]+>/g, '').trim();
       const match = clean.match(/\{[\s\S]*\}/);
-      if (!match) throw new Error('No data returned. Please try again.');
+      if (!match) throw new Error('Could not find JSON in: ' + clean.substring(0, 200));
       let digest;
       try { digest = JSON.parse(match[0]); }
       catch (parseErr) {
