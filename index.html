@@ -137,6 +137,8 @@
   .saved-summary { font-size: 13px; color: #3a2a10; line-height: 1.6; margin-bottom: 5px; }
   .saved-curriculum { font-size: 12px; font-style: italic; color: var(--teal); margin-bottom: 3px; }
   .saved-curriculum.ib { color: var(--rust); }
+  .exam-angle { font-size: 13px; color: var(--ink); background: #fdf8ec; border-left: 3px solid var(--gold); padding: 7px 10px; margin-top: 8px; line-height: 1.5; }
+  .exam-angle-label { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700; color: var(--gold); display: block; margin-bottom: 3px; }
 
   .manual-entry { background: var(--warm); border: 1px solid var(--rule); padding: 16px 20px; margin: 16px 0; }
   .manual-entry-heading { font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 700; margin-bottom: 12px; color: var(--ink); }
@@ -430,12 +432,24 @@
           ${story.igcse_link ? `<div class="igcse-link">📚 IGCSE: ${escHtml(story.igcse_link)}</div>` : ''}
           ${story.ib_link ? `<div class="ib-link">🎓 IB: ${escHtml(story.ib_link)}</div>` : ''}
           ${hasUrl ? `<div class="source-link"><a href="${escHtml(story.url)}" target="_blank" rel="noopener">Read full article → ${escHtml(new URL(story.url).hostname.replace('www.',''))}</a></div>` : ''}
-          <div class="story-actions">
-            <select class="save-topic" id="topic-${sid}">
-              <option value="">— Tag a syllabus topic —</option>
-              ${topics.map(t => `<option value="${escHtml(t)}">${escHtml(t)}</option>`).join('')}
-            </select>
-            <button class="save-btn${isSaved ? ' saved' : ''}" id="savebtn-${sid}"
+          <div class="story-actions" style="flex-direction:column;align-items:flex-start;">
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;width:100%">
+              <select class="save-topic" id="topic-${sid}">
+                <option value="">— Primary topic —</option>
+                ${topics.map(t => `<option value="${escHtml(t)}">${escHtml(t)}</option>`).join('')}
+              </select>
+              <select class="save-topic" id="section2-${sid}" onchange="updateExtraTopics('${sid}','${section}')">
+                <option value="">＋ Also tag to...</option>
+                <option value="micro">Unit 2 Micro</option>
+                <option value="macro">Unit 3 Macro</option>
+                <option value="global">Unit 4 Global</option>
+              </select>
+              <select class="save-topic" id="topic2-${sid}" style="display:none">
+                <option value="">— Secondary topic —</option>
+              </select>
+            </div>
+            <input type="text" class="manual-input" id="examangle-${sid}" placeholder="✏️ Exam angle (optional — e.g. 'Illustrates price inelastic demand...')" style="margin-top:6px;font-size:12px;" />
+            <button class="save-btn${isSaved ? ' saved' : ''}" id="savebtn-${sid}" style="margin-top:6px;"
               onclick="saveStory('${storyData}','${section}','${sid}')">
               ${isSaved ? '✓ Saved' : '＋ Save to My Examples'}
             </button>
@@ -450,30 +464,64 @@
   }
 
   // ── My Examples ────────────────────────────────────────────
+  function updateExtraTopics(sid, primarySection) {
+    const section2 = document.getElementById('section2-' + sid).value;
+    const topic2El = document.getElementById('topic2-' + sid);
+    if (!section2 || section2 === primarySection) {
+      topic2El.style.display = 'none';
+      return;
+    }
+    topic2El.innerHTML = '<option value="">— Secondary topic —</option>';
+    (topicOptions[section2] || []).forEach(t => {
+      topic2El.innerHTML += `<option value="${escHtml(t)}">${escHtml(t)}</option>`;
+    });
+    topic2El.style.display = 'inline-block';
+  }
+
   function saveStory(storyJson, section, sid) {
     let story;
     try { story = JSON.parse(storyJson); } catch { return; }
-    const topicEl = document.getElementById('topic-' + sid);
-    const topic = topicEl ? topicEl.value : '';
+    const topic = (document.getElementById('topic-' + sid) || {}).value || 'Unsorted';
+    const section2 = (document.getElementById('section2-' + sid) || {}).value || '';
+    const topic2 = (document.getElementById('topic2-' + sid) || {}).value || 'Unsorted';
+    const examAngle = (document.getElementById('examangle-' + sid) || {}).value || '';
+    const savedDate = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
     const saved = getSaved();
-    const existing = saved.findIndex(s => s.headline === story.headline);
-    if (existing > -1) {
-      if (topic) saved[existing].topic = topic;
-      setSaved(saved);
-    } else {
-      saved.push({
-        id: Date.now(),
+
+    // Remove existing entries for this headline to avoid duplicates on re-save
+    const filtered = saved.filter(s => s.headline !== story.headline);
+
+    // Always save primary section entry
+    filtered.push({
+      id: Date.now(),
+      headline: story.headline,
+      summary: story.summary,
+      url: story.url || '',
+      igcse_link: story.igcse_link || '',
+      ib_link: story.ib_link || '',
+      section,
+      topic,
+      examAngle,
+      savedDate
+    });
+
+    // Save secondary section entry if selected and different
+    if (section2 && section2 !== section) {
+      filtered.push({
+        id: Date.now() + 1,
         headline: story.headline,
         summary: story.summary,
         url: story.url || '',
         igcse_link: story.igcse_link || '',
         ib_link: story.ib_link || '',
-        section,
-        topic: topic || 'Unsorted',
-        savedDate: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+        section: section2,
+        topic: topic2,
+        examAngle,
+        savedDate
       });
-      setSaved(saved);
     }
+
+    setSaved(filtered);
     const btn = document.getElementById('savebtn-' + sid);
     if (btn) { btn.textContent = '✓ Saved'; btn.classList.add('saved'); }
   }
@@ -554,6 +602,7 @@
     const container = document.getElementById('examples-list');
     let saved = getSaved();
     if (activeFilter !== 'all') saved = saved.filter(s => s.section === activeFilter);
+    // Each entry appears independently (multi-section entries are stored as separate rows)
     if (topicSel) saved = saved.filter(s => (s.topic || 'Unsorted') === topicSel);
 
     if (saved.length === 0) {
@@ -582,6 +631,7 @@
           <div class="saved-summary">${escHtml(s.summary)}</div>
           ${s.igcse_link ? `<div class="saved-curriculum">📚 IGCSE: ${escHtml(s.igcse_link)}</div>` : ''}
           ${s.ib_link ? `<div class="saved-curriculum ib">🎓 IB: ${escHtml(s.ib_link)}</div>` : ''}
+          ${s.examAngle ? `<div class="exam-angle"><span class="exam-angle-label">Exam angle</span>${escHtml(s.examAngle)}</div>` : ''}
         </div>`;
       });
       html += '</div>';
