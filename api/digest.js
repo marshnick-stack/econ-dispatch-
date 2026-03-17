@@ -84,6 +84,18 @@ Rules:
       .map(b => b.text)
       .join('');
 
+    // Debug: if no text, return the full response so we can see what happened
+    if (!textBlocks) {
+      return res.status(200).json({ 
+        error: 'Empty response from API', 
+        debug: { 
+          stop_reason: data.stop_reason,
+          content_types: (data.content || []).map(b => b.type),
+          model: data.model
+        }
+      });
+    }
+
     // ── Save to cache, expires at midnight Shanghai time ─────
     try {
       if (redis) {
