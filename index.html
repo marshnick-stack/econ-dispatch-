@@ -149,7 +149,7 @@
   .manual-row-selects .save-topic { flex: 1; min-width: 140px; }
   .manual-row-selects .save-btn { white-space: nowrap; }
 
-  /* ── Teacher Videos tab ── */
+  /* ── Shared Examples tab ── */
   .videos-intro { padding: 20px 0 16px; border-bottom: 2px solid var(--ink); margin-bottom: 16px; }
   .videos-intro h3 { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 900; }
   .videos-intro p { font-size: 12px; color: var(--mid); margin-top: 4px; }
@@ -208,7 +208,7 @@
   <button class="tab micro active" onclick="switchTab('micro')">📊 Micro</button>
   <button class="tab macro" onclick="switchTab('macro')">📈 Macro</button>
   <button class="tab global" onclick="switchTab('global')">🌍 Global</button>
-  <button class="tab videos" onclick="switchTab('videos')">🎬 Teacher Videos <span class="tab-count video-count" id="videoCount" style="display:none"></span></button>
+  <button class="tab videos" onclick="switchTab('videos')">📎 Shared Examples <span class="tab-count video-count" id="videoCount" style="display:none"></span></button>
   <button class="tab examples" onclick="switchTab('examples')">📌 My Examples <span class="tab-count" id="examplesCount" style="display:none"></span></button>
 </div>
 
@@ -233,20 +233,20 @@
     </div>
   </div>
 
-  <!-- ── Teacher Videos ── -->
+  <!-- ── Shared Examples ── -->
   <div id="panel-videos" style="display:none">
     <div class="videos-intro">
-      <h3>🎬 Teacher Videos</h3>
-      <p>Curated by your teacher — tagged to the syllabus</p>
+      <h3>📎 Shared Examples</h3>
+      <p>Articles, videos and resources — tagged to the syllabus</p>
     </div>
 
     <!-- Admin toggle -->
     <button class="admin-toggle" onclick="toggleAdmin()">🔒 Add / Remove Videos (Teacher)</button>
 
     <div class="admin-panel" id="adminPanel">
-      <div class="admin-heading">Add a Video</div>
+      <div class="admin-heading">Add a Link or Video</div>
       <input type="password" id="admin-pw" class="admin-password" placeholder="Teacher password" />
-      <input type="url" id="admin-url" class="admin-input" placeholder="YouTube URL (e.g. https://www.youtube.com/watch?v=...)" />
+      <input type="url" id="admin-url" class="admin-input" placeholder="URL — YouTube video or any article/webpage" />
       <input type="text" id="admin-title" class="admin-input" placeholder="Title" />
       <input type="text" id="admin-note" class="admin-input" placeholder="Teacher note (optional — e.g. 'Watch from 3:20 for the key example')" />
       <div class="admin-row">
@@ -639,7 +639,7 @@
     container.innerHTML = html;
   }
 
-  // ── Teacher Videos ─────────────────────────────────────────
+  // ── Shared Examples ─────────────────────────────────────────
   async function loadVideos() {
     try {
       const res = await fetch('/api/videos');
@@ -669,7 +669,7 @@
     topics.forEach(t => sel.innerHTML += `<option value="${escHtml(t)}">${escHtml(t)}</option>`);
   }
 
-  function renderVideos() {
+  async function renderVideos() {
     updateVideoTopicOptions();
     const grid = document.getElementById('videoGrid');
     let videos = (activeVideoFilter === 'all' ? allVideos : allVideos.filter(v => v.section === activeVideoFilter)).slice().reverse();
@@ -677,22 +677,41 @@
     if (topicSel) videos = videos.filter(v => (v.topic || 'Unsorted') === topicSel);
 
     if (videos.length === 0) {
-      grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🎬</div><p>No videos added yet.<br>Use the teacher panel to add your first video.</p></div>';
+      grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🎬</div><p>No links added yet.<br>Use the teacher panel to add your first link.</p></div>';
       return;
     }
     const savedHeadlines = new Set(getSaved().map(s => s.headline));
     const sectionLabel = { micro: 'Micro', macro: 'Macro', global: 'Global' };
 
+    // Fetch og:images for non-YouTube links
+    const ogCache = {};
+    const articleVideos = videos.filter(v => !getYouTubeId(v.url) && v.url);
+    await Promise.all(articleVideos.map(async v => {
+      try {
+        const r = await fetch(`/api/og-image?url=${encodeURIComponent(v.url)}`);
+        const d = await r.json();
+        if (d.image) ogCache[v.url] = d.image;
+      } catch(e) {}
+    }));
+
     grid.innerHTML = videos.map(v => {
       const ytId = getYouTubeId(v.url);
-      const thumb = ytId ? `https://img.youtube.com/vi/${ytId}/mqdefault.jpg` : '';
+      const isYT = !!ytId;
+      const thumb = ytId
+        ? `https://img.youtube.com/vi/${ytId}/mqdefault.jpg`
+        : (ogCache[v.url] || '');
       const isSaved = savedHeadlines.has(v.title);
       const vData = escAttr(JSON.stringify({ headline: v.title, summary: v.note || '', url: v.url, igcse_link: '', ib_link: '', topic: v.topic || 'Unsorted' }));
+      let domain = '';
+      try { domain = new URL(v.url).hostname.replace('www.',''); } catch(e) {}
 
       return `<div class="video-card">
         <div class="video-thumb" onclick="window.open('${escHtml(v.url)}','_blank')">
-          ${thumb ? `<img src="${thumb}" alt="${escHtml(v.title)}" loading="lazy">` : '<div style="position:absolute;top:0;left:0;width:100%;height:100%;background:#2a1f0a"></div>'}
-          <div class="video-play"></div>
+          ${thumb
+            ? `<img src="${escHtml(thumb)}" alt="${escHtml(v.title)}" loading="lazy" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">`
+            : `<div style="position:absolute;top:0;left:0;width:100%;height:100%;background:var(--warm);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:12px;"><span style="font-size:11px;color:var(--mid);letter-spacing:1px;text-transform:uppercase;">${escHtml(domain)}</span><span style="font-size:11px;color:var(--ink);text-align:center;line-height:1.4;">${escHtml(v.title.substring(0,80))}</span></div>`
+          }
+          ${isYT ? '<div class="video-play"></div>' : ''}
         </div>
         <div class="video-info">
           <div class="video-title">${escHtml(v.title)}</div>
@@ -703,7 +722,7 @@
           </div>
           ${v.note ? `<div class="video-note">💬 ${escHtml(v.note)}</div>` : ''}
           <div class="video-actions">
-            <a class="video-link" href="${escHtml(v.url)}" target="_blank" rel="noopener">Watch on YouTube ↗</a>
+            <a class="video-link" href="${escHtml(v.url)}" target="_blank" rel="noopener">${isYT ? 'Watch on YouTube ↗' : 'Read article ↗'}</a>
             <button class="save-btn${isSaved ? ' saved' : ''}" id="vsavebtn-${v.id}"
               onclick="saveVideoToExamples('${vData}','${escHtml(v.section)}',${v.id})">
               ${isSaved ? '✓ Saved' : '＋ My Examples'}
