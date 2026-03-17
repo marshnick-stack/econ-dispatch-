@@ -18,17 +18,19 @@ export default async function handler(req, res) {
   // ── Check cache first ──────────────────────────────────────
   let redis;
   try {
-    redis = new Redis({
-      url: process.env.STORAGE_KV_REST_API_URL || process.env.KV_REST_API_URL,
-      token: process.env.STORAGE_KV_REST_API_TOKEN || process.env.KV_REST_API_TOKEN,
-    });
-    const cached = await redis.get(cacheKey);
-    if (cached) {
-      const text = typeof cached === 'string' ? cached : JSON.stringify(cached);
-      return res.status(200).json({ text, cached: true });
+    const redisUrl = process.env.STORAGE_KV_REST_API_URL || process.env.KV_REST_API_URL;
+    const redisToken = process.env.STORAGE_KV_REST_API_TOKEN || process.env.KV_REST_API_TOKEN;
+    if (redisUrl && redisToken) {
+      redis = new Redis({ url: redisUrl, token: redisToken });
+      const cached = await redis.get(cacheKey);
+      if (cached) {
+        const text = typeof cached === 'string' ? cached : JSON.stringify(cached);
+        return res.status(200).json({ text, cached: true });
+      }
     }
   } catch (kvErr) {
     console.warn('Redis read failed, falling through to API:', kvErr.message);
+    redis = null;
   }
 
   // ── No cache — fetch from Anthropic ───────────────────────
@@ -64,7 +66,7 @@ Rules:
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-sonnet-4-6',
         max_tokens: 4000,
         tools: [{ type: 'web_search_20250305', name: 'web_search' }],
         messages: [{ role: 'user', content: prompt }]
