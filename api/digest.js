@@ -66,9 +66,9 @@ Rules:
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
+        model: 'claude-sonnet-4-20250514',
         max_tokens: 4000,
-        tools: [{ type: 'web_search_20260209', name: 'web_search' }],
+        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
         messages: [{ role: 'user', content: prompt }]
       })
     });
@@ -84,17 +84,6 @@ Rules:
       .map(b => b.text)
       .join('');
 
-    // Debug: if no text, return the full response so we can see what happened
-    if (!textBlocks) {
-      return res.status(200).json({ 
-        error: 'Empty response from API', 
-        debug: { 
-          stop_reason: data.stop_reason,
-          content_types: (data.content || []).map(b => b.type),
-          model: data.model
-        }
-      });
-    }
 
     // ── Save to cache, expires at midnight Shanghai time ─────
     try {
