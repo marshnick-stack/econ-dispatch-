@@ -4,34 +4,44 @@ const MOONSHOT_MODEL = 'kimi-k2.6';
 const WEB_SEARCH_TOOLS = [
   { type: 'builtin_function', function: { name: '$web_search' } }
 ];
-const MAX_TOOL_TURNS = 6; // guards against a runaway tool-call loop
+const MAX_TOOL_TURNS = 4; // guards against a runaway tool-call loop
+const PER_CALL_TIMEOUT_MS = 20000; // kill a single hung Moonshot call
+const TOTAL_BUDGET_MS = 45000; // stop starting new turns past this, leaving headroom under Vercel's 60s cap
 
 async function callMoonshot(apiKey, messages) {
-  const response = await fetch('https://api.moonshot.cn/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${apiKey}`
-    },
-    body: JSON.stringify({
-      model: MOONSHOT_MODEL,
-      max_tokens: 4000,
-      messages,
-      tools: WEB_SEARCH_TOOLS,
-      // kimi-k2.6 only executes $web_search reliably with thinking mode on
-      thinking: { type: 'enabled' }
-    })
-  });
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), PER_CALL_TIMEOUT_MS);
 
-  if (!response.ok) {
-    const err = await response.json().catch(() => ({}));
-    const message = err.error?.message || `Moonshot API error ${response.status}`;
-    const httpError = new Error(message);
-    httpError.status = response.status;
-    throw httpError;
+  try {
+    const response = await fetch('https://api.moonshot.cn/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      signal: controller.signal,
+      body: JSON.stringify({
+        model: MOONSHOT_MODEL,
+        max_tokens: 4000,
+        messages,
+        tools: WEB_SEARCH_TOOLS,
+        // kimi-k2.6 only executes $web_search reliably with thinking mode on
+        thinking: { type: 'enabled' }
+      })
+    });
+
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      const message = err.error?.message || `Moonshot API error ${response.status}`;
+      const httpError = new Error(message);
+      httpError.status = response.status;
+      throw httpError;
+    }
+
+    return await response.json();
+  } finally {
+    clearTimeout(timeout);
   }
-
-  return response.json();
 }
 
 export default async function handler(req, res) {
@@ -72,7 +82,7 @@ export default async function handler(req, res) {
     day: 'numeric', month: 'long', year: 'numeric'
   });
 
-  const prompt = `You are an economics news researcher. Search the web for the latest economics news from the past 24 hours. Then respond with ONLY a raw JSON object — no explanation, no markdown, no code fences, no citations, no extra text before or after.
+  const prompt = `You are an economics news researcher. Use the $web_search tool AT MOST 3 times total — one broad search per category (micro, macro, global) is enough; do not search once per story. Search the web for the latest economics news from the past 24 hours. Then respond with ONLY a raw JSON object — no explanation, no markdown, no code fences, no citations, no extra text before or after.
 
 The JSON must have exactly this shape:
 {"micro":[{"headline":"...","summary":"...","url":"https://...","igcse_link":"...","igcse":true,"ib_link":"...","ib":true},{"headline":"...","summary":"...","url":"https://...","igcse_link":"...","igcse":true,"ib_link":"...","ib":true},{"headline":"...","summary":"...","url":"https://...","igcse_link":"...","igcse":true,"ib_link":"...","ib":true}],"macro":[...3 stories same shape...],"global":[...3 stories same shape...]}
@@ -90,11 +100,19 @@ Rules:
 - Return ONLY the JSON. Nothing else.`;
 
   const messages = [{ role: 'user', content: prompt }];
+  const startTime = Date.now();
 
   try {
     let finalText = '';
+    let completed = false;
 
     for (let turn = 0; turn < MAX_TOOL_TURNS; turn++) {
+      if (Date.now() - startTime > TOTAL_BUDGET_MS) {
+        // Bail out before Vercel's own hard timeout kills us mid-response —
+        // better a clean JSON error than an unparseable platform timeout page.
+        break;
+      }
+
       const data = await callMoonshot(apiKey, messages);
       const choice = data.choices[0];
       const message = choice.message;
@@ -114,7 +132,13 @@ Rules:
       }
 
       finalText = message.content || '';
+      completed = true;
       break;
+    }
+
+    if (!completed) {
+      // Don't cache a failure — that's how the March 2026 poisoned-cache bug happened.
+      return res.status(504).json({ error: 'Digest generation is taking longer than usual. Please try again in a moment.' });
     }
 
     // ── Save to cache, expires at midnight Shanghai time ─────
