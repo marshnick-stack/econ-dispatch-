@@ -76,7 +76,10 @@ Rules:
       body: JSON.stringify({
         model: ANTHROPIC_MODEL,
         max_tokens: 4000,
-        tools: [{ type: 'web_search_20260209', name: 'web_search' }],
+        // web_search_20250305 (not the newer _20260209 variant, which runs an extra
+        // server-side dynamic-filtering/code-execution pass and was too slow to
+        // finish inside Vercel's 60s function limit)
+        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
         messages: [{ role: 'user', content: prompt }]
       })
     });
