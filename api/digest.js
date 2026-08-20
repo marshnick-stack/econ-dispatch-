@@ -5,12 +5,12 @@ const WEB_SEARCH_TOOLS = [
   { type: 'builtin_function', function: { name: '$web_search' } }
 ];
 const MAX_TOOL_TURNS = 4; // guards against a runaway tool-call loop
-const PER_CALL_TIMEOUT_MS = 20000; // kill a single hung Moonshot call
-const TOTAL_BUDGET_MS = 45000; // stop starting new turns past this, leaving headroom under Vercel's 60s cap
+const HARD_DEADLINE_MS = 54000; // Vercel's maxDuration is 60s — stop 6s short so we can still respond in time
+const MIN_REMAINING_TO_START_MS = 8000; // don't start a call likely to be killed before it can finish
 
-async function callMoonshot(apiKey, messages) {
+async function callMoonshot(apiKey, messages, timeoutMs) {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), PER_CALL_TIMEOUT_MS);
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
   try {
     const response = await fetch('https://api.moonshot.cn/v1/chat/completions', {
@@ -107,13 +107,20 @@ Rules:
     let completed = false;
 
     for (let turn = 0; turn < MAX_TOOL_TURNS; turn++) {
-      if (Date.now() - startTime > TOTAL_BUDGET_MS) {
+      const remaining = HARD_DEADLINE_MS - (Date.now() - startTime);
+      if (remaining < MIN_REMAINING_TO_START_MS) {
         // Bail out before Vercel's own hard timeout kills us mid-response —
         // better a clean JSON error than an unparseable platform timeout page.
         break;
       }
 
-      const data = await callMoonshot(apiKey, messages);
+      let data;
+      try {
+        data = await callMoonshot(apiKey, messages, remaining);
+      } catch (callErr) {
+        if (callErr.name === 'AbortError') break; // ran out of time — treat like the budget check above
+        throw callErr;
+      }
       const choice = data.choices[0];
       const message = choice.message;
 
