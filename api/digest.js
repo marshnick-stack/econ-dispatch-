@@ -1,13 +1,13 @@
 import { Redis } from '@upstash/redis';
 
-const MOONSHOT_MODEL = 'kimi-k2.5';
+const MOONSHOT_MODEL = 'kimi-k2.6';
 const WEB_SEARCH_TOOLS = [
   { type: 'builtin_function', function: { name: '$web_search' } }
 ];
 const MAX_TOOL_TURNS = 6; // guards against a runaway tool-call loop
 
 async function callMoonshot(apiKey, messages) {
-  const response = await fetch('https://api.moonshot.ai/v1/chat/completions', {
+  const response = await fetch('https://api.moonshot.cn/v1/chat/completions', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -17,7 +17,9 @@ async function callMoonshot(apiKey, messages) {
       model: MOONSHOT_MODEL,
       max_tokens: 4000,
       messages,
-      tools: WEB_SEARCH_TOOLS
+      tools: WEB_SEARCH_TOOLS,
+      // kimi-k2.6 only executes $web_search reliably with thinking mode on
+      thinking: { type: 'enabled' }
     })
   });
 
