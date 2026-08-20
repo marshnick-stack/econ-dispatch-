@@ -1,11 +1,43 @@
 import { Redis } from '@upstash/redis';
 
+const MOONSHOT_MODEL = 'kimi-k2.5';
+const WEB_SEARCH_TOOLS = [
+  { type: 'builtin_function', function: { name: '$web_search' } }
+];
+const MAX_TOOL_TURNS = 6; // guards against a runaway tool-call loop
+
+async function callMoonshot(apiKey, messages) {
+  const response = await fetch('https://api.moonshot.ai/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`
+    },
+    body: JSON.stringify({
+      model: MOONSHOT_MODEL,
+      max_tokens: 4000,
+      messages,
+      tools: WEB_SEARCH_TOOLS
+    })
+  });
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    const message = err.error?.message || `Moonshot API error ${response.status}`;
+    const httpError = new Error(message);
+    httpError.status = response.status;
+    throw httpError;
+  }
+
+  return response.json();
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const apiKey = process.env.ANTHROPIC_API_KEY;
+  const apiKey = process.env.MOONSHOT_API_KEY;
   if (!apiKey) {
     return res.status(500).json({ error: 'API key not configured on server.' });
   }
@@ -33,7 +65,7 @@ export default async function handler(req, res) {
     redis = null;
   }
 
-  // ── No cache — fetch from Anthropic ───────────────────────
+  // ── No cache — fetch from Moonshot ────────────────────────
   const today = shanghaiNow.toLocaleDateString('en-GB', {
     day: 'numeric', month: 'long', year: 'numeric'
   });
@@ -55,33 +87,33 @@ Rules:
 - Do NOT include any citations, source tags, or markup inside the JSON strings
 - Return ONLY the JSON. Nothing else.`;
 
+  const messages = [{ role: 'user', content: prompt }];
+
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-5',
-        max_tokens: 4000,
-        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
+    let finalText = '';
 
-    if (!response.ok) {
-      const err = await response.json().catch(() => ({}));
-      return res.status(response.status).json({ error: err.error?.message || 'Anthropic API error ' + response.status });
+    for (let turn = 0; turn < MAX_TOOL_TURNS; turn++) {
+      const data = await callMoonshot(apiKey, messages);
+      const choice = data.choices[0];
+      const message = choice.message;
+
+      if (choice.finish_reason === 'tool_calls' && message.tool_calls?.length) {
+        messages.push(message);
+        for (const toolCall of message.tool_calls) {
+          // $web_search is executed by Moonshot itself — just echo the arguments back.
+          messages.push({
+            role: 'tool',
+            tool_call_id: toolCall.id,
+            name: toolCall.function.name,
+            content: toolCall.function.arguments
+          });
+        }
+        continue;
+      }
+
+      finalText = message.content || '';
+      break;
     }
-
-    const data = await response.json();
-    const textBlocks = (data.content || [])
-      .filter(b => b.type === 'text')
-      .map(b => b.text)
-      .join('');
-
 
     // ── Save to cache, expires at midnight Shanghai time ─────
     try {
@@ -89,15 +121,15 @@ Rules:
         const secondsUntilMidnight = (24 - shanghaiNow.getUTCHours()) * 3600
           - shanghaiNow.getUTCMinutes() * 60
           - shanghaiNow.getUTCSeconds();
-        await redis.set(cacheKey, textBlocks, { ex: secondsUntilMidnight });
+        await redis.set(cacheKey, finalText, { ex: secondsUntilMidnight });
       }
     } catch (kvErr) {
       console.warn('Redis write failed:', kvErr.message);
     }
 
-    return res.status(200).json({ text: textBlocks, cached: false });
+    return res.status(200).json({ text: finalText, cached: false });
 
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    return res.status(err.status || 500).json({ error: err.message });
   }
 }
