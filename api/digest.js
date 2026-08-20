@@ -1,55 +1,17 @@
 import { Redis } from '@upstash/redis';
 
-const MOONSHOT_MODEL = 'kimi-k2.6';
-const WEB_SEARCH_TOOLS = [
-  { type: 'builtin_function', function: { name: '$web_search' } }
-];
-const MAX_TOOL_TURNS = 4; // guards against a runaway tool-call loop
-const HARD_DEADLINE_MS = 54000; // Vercel's maxDuration is 60s — stop 6s short so we can still respond in time
-const MIN_REMAINING_TO_START_MS = 8000; // don't start a call likely to be killed before it can finish
-
-async function callMoonshot(apiKey, messages, timeoutMs) {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), timeoutMs);
-
-  try {
-    const response = await fetch('https://api.moonshot.cn/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
-      },
-      signal: controller.signal,
-      body: JSON.stringify({
-        model: MOONSHOT_MODEL,
-        max_tokens: 4000,
-        messages,
-        tools: WEB_SEARCH_TOOLS,
-        // kimi-k2.6 only executes $web_search reliably with thinking mode on
-        thinking: { type: 'enabled' }
-      })
-    });
-
-    if (!response.ok) {
-      const err = await response.json().catch(() => ({}));
-      const message = err.error?.message || `Moonshot API error ${response.status}`;
-      const httpError = new Error(message);
-      httpError.status = response.status;
-      throw httpError;
-    }
-
-    return await response.json();
-  } finally {
-    clearTimeout(timeout);
-  }
-}
+// claude-sonnet-5 pricing is $2.00/$10.00 per 1M tokens (input/output) as introductory
+// pricing through 2026-08-31 — after that it reverts to the standard $3.00/$15.00,
+// same as claude-sonnet-4-5 was. Re-check pricing if costs look off after that date.
+const ANTHROPIC_MODEL = 'claude-sonnet-5';
+const REQUEST_TIMEOUT_MS = 55000; // Vercel's maxDuration is 60s — leave headroom to respond in time
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const apiKey = process.env.MOONSHOT_API_KEY;
+  const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
     return res.status(500).json({ error: 'API key not configured on server.' });
   }
@@ -77,21 +39,21 @@ export default async function handler(req, res) {
     redis = null;
   }
 
-  // ── No cache — fetch from Moonshot ────────────────────────
+  // ── No cache — fetch from Anthropic ───────────────────────
   const today = shanghaiNow.toLocaleDateString('en-GB', {
     day: 'numeric', month: 'long', year: 'numeric'
   });
 
-  const prompt = `You are an economics news researcher. Use the $web_search tool AT MOST 3 times total — one broad search per category (micro, macro, global) is enough; do not search once per story. Search the web for the latest economics news from the past 24 hours. Then respond with ONLY a raw JSON object — no explanation, no markdown, no code fences, no citations, no extra text before or after.
+  const prompt = `You are an economics news researcher. Search the web for the latest economics news from the past 24 hours. Then respond with ONLY a raw JSON object — no explanation, no markdown, no code fences, no citations, no extra text before or after.
 
 The JSON must have exactly this shape:
-{"micro":[{"headline":"...","summary":"...","url":"https://...","igcse_link":"...","igcse":true,"ib_link":"...","ib":true},{"headline":"...","summary":"...","url":"https://...","igcse_link":"...","igcse":true,"ib_link":"...","ib":true},{"headline":"...","summary":"...","url":"https://...","igcse_link":"...","igcse":true,"ib_link":"...","ib":true}],"macro":[...3 stories same shape...],"global":[...3 stories same shape...]}
+{"micro":[{"headline":"...","summary":"...","url":"https://...","igcse_link":"...","igcse":true,"ib_link":"...","ib":true}],"macro":[...1 story same shape...],"global":[...1 story same shape...]}
 
 Rules:
 - micro = individual markets, firms, prices, competition, wages, consumer behaviour
 - macro = inflation, interest rates, GDP, unemployment, fiscal/monetary policy, central banks
 - global = international trade, exchange rates, globalisation, IMF/World Bank, development
-- Each section must have exactly 3 stories from the past 48 hours
+- Each section must have exactly 1 story from the past 48 hours
 - url: the direct URL of the news article you found (must be a real, working https:// link)
 - igcse_link: one sentence linking to IGCSE Economics 0455 (e.g. price elasticity, market failure)
 - ib_link: one sentence linking to IB Economics (e.g. Unit 2 Microeconomics, Unit 3 Macroeconomics, Unit 4 The Global Economy)
@@ -99,54 +61,36 @@ Rules:
 - Do NOT include any citations, source tags, or markup inside the JSON strings
 - Return ONLY the JSON. Nothing else.`;
 
-  const messages = [{ role: 'user', content: prompt }];
-  const startTime = Date.now();
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
   try {
-    let finalText = '';
-    let completed = false;
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01'
+      },
+      signal: controller.signal,
+      body: JSON.stringify({
+        model: ANTHROPIC_MODEL,
+        max_tokens: 4000,
+        tools: [{ type: 'web_search_20260209', name: 'web_search' }],
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
 
-    for (let turn = 0; turn < MAX_TOOL_TURNS; turn++) {
-      const remaining = HARD_DEADLINE_MS - (Date.now() - startTime);
-      if (remaining < MIN_REMAINING_TO_START_MS) {
-        // Bail out before Vercel's own hard timeout kills us mid-response —
-        // better a clean JSON error than an unparseable platform timeout page.
-        break;
-      }
-
-      let data;
-      try {
-        data = await callMoonshot(apiKey, messages, remaining);
-      } catch (callErr) {
-        if (callErr.name === 'AbortError') break; // ran out of time — treat like the budget check above
-        throw callErr;
-      }
-      const choice = data.choices[0];
-      const message = choice.message;
-
-      if (choice.finish_reason === 'tool_calls' && message.tool_calls?.length) {
-        messages.push(message);
-        for (const toolCall of message.tool_calls) {
-          // $web_search is executed by Moonshot itself — just echo the arguments back.
-          messages.push({
-            role: 'tool',
-            tool_call_id: toolCall.id,
-            name: toolCall.function.name,
-            content: toolCall.function.arguments
-          });
-        }
-        continue;
-      }
-
-      finalText = message.content || '';
-      completed = true;
-      break;
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      return res.status(response.status).json({ error: err.error?.message || 'Anthropic API error ' + response.status });
     }
 
-    if (!completed) {
-      // Don't cache a failure — that's how the March 2026 poisoned-cache bug happened.
-      return res.status(504).json({ error: 'Digest generation is taking longer than usual. Please try again in a moment.' });
-    }
+    const data = await response.json();
+    const textBlocks = (data.content || [])
+      .filter(b => b.type === 'text')
+      .map(b => b.text)
+      .join('');
 
     // ── Save to cache, expires at midnight Shanghai time ─────
     try {
@@ -154,15 +98,20 @@ Rules:
         const secondsUntilMidnight = (24 - shanghaiNow.getUTCHours()) * 3600
           - shanghaiNow.getUTCMinutes() * 60
           - shanghaiNow.getUTCSeconds();
-        await redis.set(cacheKey, finalText, { ex: secondsUntilMidnight });
+        await redis.set(cacheKey, textBlocks, { ex: secondsUntilMidnight });
       }
     } catch (kvErr) {
       console.warn('Redis write failed:', kvErr.message);
     }
 
-    return res.status(200).json({ text: finalText, cached: false });
+    return res.status(200).json({ text: textBlocks, cached: false });
 
   } catch (err) {
-    return res.status(err.status || 500).json({ error: err.message });
+    if (err.name === 'AbortError') {
+      return res.status(504).json({ error: 'Digest generation is taking longer than usual. Please try again in a moment.' });
+    }
+    return res.status(500).json({ error: err.message });
+  } finally {
+    clearTimeout(timeout);
   }
 }
