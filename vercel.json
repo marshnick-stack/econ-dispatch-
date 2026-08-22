@@ -10,7 +10,6 @@
   "crons": [
     {
       "path": "/api/email-digest",
-      "comment": "Vercel crons run in UTC. Shanghai is UTC+8 with no DST, so 22:00 UTC = 06:00 next day in Shanghai, and Sun-Thu UTC = Mon-Fri Shanghai. Hobby plan fires once per day and only guarantees the hour, so this lands somewhere between 06:00 and 07:00 Shanghai time.",
       "schedule": "0 22 * * 0-4"
     }
   ]
