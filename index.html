@@ -49,6 +49,8 @@
   .fetch-btn { background: var(--ink); color: var(--cream); border: 2px solid var(--ink); padding: 14px 40px; font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; letter-spacing: 1px; cursor: pointer; transition: all 0.2s; }
   .fetch-btn:hover { background: var(--gold); border-color: var(--gold); color: var(--ink); }
   .fetch-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .email-btn { background: transparent; color: var(--ink); margin-left: 10px; }
+  .email-btn:hover { background: var(--ink); color: var(--cream); border-color: var(--ink); }
   .fetch-hint { margin-top: 10px; font-size: 12px; color: var(--mid); letter-spacing: 1px; }
 
   .loading { display: none; text-align: center; padding: 40px; }
@@ -220,7 +222,9 @@
   <div id="main-content">
     <div class="fetch-section">
       <button class="fetch-btn" id="fetchBtn" onclick="fetchDigest()">Fetch Today's Digest</button>
+      <button class="fetch-btn email-btn" id="emailBtn" onclick="emailDigest()">✉️ Email It To Me</button>
       <div class="fetch-hint">Searches the web for today's economics news, filtered for IGCSE &amp; IB relevance</div>
+      <div class="fetch-hint" id="emailMsg" style="display:none"></div>
     </div>
     <div class="loading" id="loading">
       <div class="spinner"></div>
@@ -370,6 +374,28 @@
   }
 
   // ── News digest ────────────────────────────────────────────
+  async function emailDigest() {
+    const btn = document.getElementById('emailBtn');
+    const msg = document.getElementById('emailMsg');
+    const pw = sessionStorage.getItem('teacherPw') || prompt('Teacher password:');
+    if (!pw) return;
+    btn.disabled = true;
+    msg.style.display = 'block';
+    msg.textContent = 'Sending…';
+    try {
+      const r = await fetch('/api/email-digest?password=' + encodeURIComponent(pw), { method: 'POST' });
+      const result = await r.json();
+      if (!r.ok) throw new Error(result.error || 'Server error ' + r.status);
+      sessionStorage.setItem('teacherPw', pw);
+      msg.textContent = '✅ Sent to ' + result.to;
+    } catch (err) {
+      sessionStorage.removeItem('teacherPw');
+      msg.textContent = '⚠️ ' + err.message;
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
   async function fetchDigest() {
     const btn = document.getElementById('fetchBtn');
     btn.disabled = true;
