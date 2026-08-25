@@ -49,8 +49,6 @@
   .fetch-btn { background: var(--ink); color: var(--cream); border: 2px solid var(--ink); padding: 14px 40px; font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; letter-spacing: 1px; cursor: pointer; transition: all 0.2s; }
   .fetch-btn:hover { background: var(--gold); border-color: var(--gold); color: var(--ink); }
   .fetch-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-  .email-btn { background: transparent; color: var(--ink); margin-left: 10px; }
-  .email-btn:hover { background: var(--ink); color: var(--cream); border-color: var(--ink); }
   .fetch-hint { margin-top: 10px; font-size: 12px; color: var(--mid); letter-spacing: 1px; }
 
   .loading { display: none; text-align: center; padding: 40px; }
@@ -222,9 +220,7 @@
   <div id="main-content">
     <div class="fetch-section">
       <button class="fetch-btn" id="fetchBtn" onclick="fetchDigest()">Fetch Today's Digest</button>
-      <button class="fetch-btn email-btn" id="emailBtn" onclick="emailDigest()">✉️ Email It To Me</button>
       <div class="fetch-hint">Searches the web for today's economics news, filtered for IGCSE &amp; IB relevance</div>
-      <div class="fetch-hint" id="emailMsg" style="display:none"></div>
     </div>
     <div class="loading" id="loading">
       <div class="spinner"></div>
@@ -237,6 +233,84 @@
       <div class="section-panel" id="panel-global"></div>
       <div class="digest-footer">The Econ Dispatch &mdash; Curated daily for IGCSE Economics (0455) &amp; IB Economics</div>
     </div>
+
+  <!-- ── Subscribe ── -->
+  <div class="subscribe-box">
+    <style>
+      .subscribe-box { border-top: 1px solid var(--rule); margin-top: 8px; padding: 26px 0 34px; text-align: center; }
+      .subscribe-box h3 { font-family: 'Playfair Display', serif; font-size: 21px; font-weight: 700; margin: 0 0 6px; color: var(--ink); }
+      .subscribe-box .sub-blurb { font-size: 13px; color: #6a6255; line-height: 1.6; max-width: 430px; margin: 0 auto 16px; }
+      .subscribe-form { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+      .subscribe-form input[type=email] { font-family: inherit; font-size: 15px; padding: 11px 13px; border: 1px solid var(--rule); background: #fff; color: var(--ink); min-width: 240px; flex: 0 1 280px; }
+      .subscribe-form input[type=email]:focus { outline: 2px solid var(--gold); outline-offset: -1px; }
+      .subscribe-form button { font-family: inherit; font-size: 15px; padding: 11px 22px; border: none; background: var(--ink); color: var(--cream); cursor: pointer; }
+      .subscribe-form button:hover { background: var(--gold); color: var(--ink); }
+      .subscribe-form button:disabled { opacity: .5; cursor: default; }
+      .sub-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+      .sub-msg { font-size: 13px; margin-top: 12px; line-height: 1.5; display: none; }
+      .sub-msg.good { color: #2c6e49; display: block; }
+      .sub-msg.bad { color: #a33; display: block; }
+      .sub-privacy { font-size: 11px; color: #8a8070; line-height: 1.6; margin-top: 14px; }
+    </style>
+
+    <h3>Get it every weekday morning</h3>
+    <div class="sub-blurb">
+      Three economics stories &mdash; one micro, one macro, one global &mdash; with the
+      IGCSE&nbsp;0455 and IB syllabus links already drawn. Free.
+    </div>
+
+    <form class="subscribe-form" onsubmit="subscribeToDispatch(event)">
+      <!-- Hidden from people; scripted form-fillers fill it in and get silently dropped. -->
+      <input type="text" name="website" id="subWebsite" class="sub-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <input type="email" id="subEmail" placeholder="you@school.edu" required autocomplete="email">
+      <button type="submit" id="subBtn">Subscribe</button>
+    </form>
+
+    <div class="sub-msg" id="subMsg"></div>
+
+    <div class="sub-privacy">
+      Your address is used only to send this dispatch &mdash; never shared, never sold.<br>
+      Every issue has an unsubscribe link; one click deletes your address.
+    </div>
+  </div>
+
+  <script>
+  async function subscribeToDispatch(e) {
+    e.preventDefault();
+    const btn = document.getElementById('subBtn');
+    const msg = document.getElementById('subMsg');
+    const email = document.getElementById('subEmail').value.trim();
+
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+    msg.className = 'sub-msg';
+
+    try {
+      const r = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, website: document.getElementById('subWebsite').value })
+      });
+      const data = await r.json();
+
+      if (r.ok) {
+        msg.className = 'sub-msg good';
+        msg.textContent = data.message || 'Check your inbox for a confirmation link.';
+        document.getElementById('subEmail').value = '';
+      } else {
+        msg.className = 'sub-msg bad';
+        msg.textContent = data.error || 'Something went wrong. Try again shortly.';
+      }
+    } catch (err) {
+      msg.className = 'sub-msg bad';
+      msg.textContent = 'Could not reach the server. Check your connection and try again.';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Subscribe';
+    }
+  }
+  </script>
+
   </div>
 
   <!-- ── Shared Examples ── -->
@@ -374,28 +448,6 @@
   }
 
   // ── News digest ────────────────────────────────────────────
-  async function emailDigest() {
-    const btn = document.getElementById('emailBtn');
-    const msg = document.getElementById('emailMsg');
-    const pw = sessionStorage.getItem('teacherPw') || prompt('Teacher password:');
-    if (!pw) return;
-    btn.disabled = true;
-    msg.style.display = 'block';
-    msg.textContent = 'Sending…';
-    try {
-      const r = await fetch('/api/email-digest?password=' + encodeURIComponent(pw), { method: 'POST' });
-      const result = await r.json();
-      if (!r.ok) throw new Error(result.error || 'Server error ' + r.status);
-      sessionStorage.setItem('teacherPw', pw);
-      msg.textContent = '✅ Sent to ' + result.to;
-    } catch (err) {
-      sessionStorage.removeItem('teacherPw');
-      msg.textContent = '⚠️ ' + err.message;
-    } finally {
-      btn.disabled = false;
-    }
-  }
-
   async function fetchDigest() {
     const btn = document.getElementById('fetchBtn');
     btn.disabled = true;

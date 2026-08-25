@@ -11,6 +11,10 @@
 // worse than no email.
 
 import { getDigest, getRedis, shanghaiNow, shanghaiDateString } from './_lib/digest-core.js';
+import { getRecipients, unsubscribeUrl, normaliseEmail } from './_lib/subscribers.js';
+
+// Resend accepts up to 100 messages per batch call.
+const BATCH_SIZE = 100;
 
 const SECTIONS = [
   { key: 'micro',  label: 'Micro',  emoji: '📊' },
@@ -57,7 +61,7 @@ function renderStory(s) {
     </td></tr>`;
 }
 
-export function renderEmail(digest, dateLabel) {
+export function renderEmail(digest, dateLabel, unsubUrl) {
   const sections = SECTIONS.map(({ key, label, emoji }) => {
     const stories = Array.isArray(digest[key]) ? digest[key] : [];
     if (!stories.length) return '';
@@ -91,6 +95,7 @@ export function renderEmail(digest, dateLabel) {
         <p style="margin:0;font-size:11px;color:#8a8070;line-height:1.6;">
           Three stories, one per section, from the last 48 hours.<br>
           <a href="https://econ-dispatch.vercel.app" style="color:#8a6d1f;text-decoration:none;">Open the full dispatch &rarr;</a>
+          ${unsubUrl ? `<br><a href="${esc(unsubUrl)}" style="color:#8a8070;text-decoration:underline;">Unsubscribe</a>` : ''}
         </p>
       </td></tr>
     </table>
@@ -99,7 +104,7 @@ export function renderEmail(digest, dateLabel) {
 </body></html>`;
 }
 
-export function renderPlainText(digest, dateLabel) {
+export function renderPlainText(digest, dateLabel, unsubUrl) {
   const lines = [`ECON DISPATCH — ${dateLabel}`, ''];
   for (const { key, label } of SECTIONS) {
     const stories = Array.isArray(digest[key]) ? digest[key] : [];
@@ -115,6 +120,7 @@ export function renderPlainText(digest, dateLabel) {
     }
   }
   lines.push('https://econ-dispatch.vercel.app');
+  if (unsubUrl) lines.push('', `Unsubscribe: ${unsubUrl}`);
   return lines.join('\n');
 }
 
@@ -122,17 +128,29 @@ export default async function handler(req, res) {
   const via = isAuthorised(req);
   if (!via) return res.status(401).json({ error: 'Unauthorised' });
 
-  const to = process.env.DIGEST_TO_EMAIL;
   const from = process.env.DIGEST_FROM_EMAIL || 'Econ Dispatch <dispatch@getaheadsup.com>';
   const resendKey = process.env.RESEND_API_KEY;
 
   if (!resendKey) return res.status(500).json({ error: 'RESEND_API_KEY not configured.' });
-  if (!to) return res.status(500).json({ error: 'DIGEST_TO_EMAIL not configured.' });
 
   const now = shanghaiNow();
   const dateKey = shanghaiDateString(now);
   const redis = getRedis();
   const sentKey = `emailed:${dateKey}`;
+
+  // ONLY the scheduled cron sends to the subscriber list. A manual trigger goes to
+  // the owner and nobody else.
+  //
+  // This matters more than it looks: the manual path is reachable by anyone holding
+  // TEACHER_PASSWORD, and the once-a-day guard below deliberately does not apply to
+  // it. If manual sends fanned out to subscribers, one stray press would mail the
+  // whole list off-schedule, and a second press would do it again.
+  const owner = normaliseEmail(process.env.DIGEST_TO_EMAIL || '');
+  const recipients = via === 'cron' ? await getRecipients(redis) : (owner ? [owner] : []);
+
+  if (!recipients.length) {
+    return res.status(500).json({ error: 'No recipients: DIGEST_TO_EMAIL is unset and nobody has subscribed.' });
+  }
 
   // Don't send twice in a day from the cron (Vercel can retry). A manual press
   // always sends — that is the point of pressing it.
@@ -155,27 +173,55 @@ export default async function handler(req, res) {
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
   });
 
-  const resp = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${resendKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
+  // One message per person, never one message with everyone in `to:` — that would
+  // show every subscriber's address to every other subscriber.
+  const subject = `Econ Dispatch — ${dateLabel}`;
+  const messages = recipients.map(email => {
+    const unsubUrl = unsubscribeUrl(email);
+    return {
       from,
-      to: [to],
-      subject: `Econ Dispatch — ${dateLabel}`,
-      html: renderEmail(result.digest, dateLabel),
-      text: renderPlainText(result.digest, dateLabel),
-    }),
+      to: [email],
+      subject,
+      html: renderEmail(result.digest, dateLabel, unsubUrl),
+      text: renderPlainText(result.digest, dateLabel, unsubUrl),
+      headers: {
+        // Lets Gmail and Apple Mail show their own Unsubscribe button, which
+        // keeps complaints off the domain's reputation.
+        'List-Unsubscribe': `<${unsubUrl}>`,
+        'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+      },
+    };
   });
 
-  if (!resp.ok) {
-    const err = await resp.json().catch(() => ({}));
-    return res.status(502).json({ error: err.message || `Resend error ${resp.status}`, emailed: false });
+  let delivered = 0;
+  const failures = [];
+
+  for (let i = 0; i < messages.length; i += BATCH_SIZE) {
+    const batch = messages.slice(i, i + BATCH_SIZE);
+    const resp = await fetch('https://api.resend.com/emails/batch', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${resendKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(batch),
+    });
+
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({}));
+      // Don't abort: a later batch may well succeed, and a partial send beats none.
+      failures.push(err.message || `Resend error ${resp.status}`);
+      console.error(`Batch ${i / BATCH_SIZE + 1} failed:`, err);
+      continue;
+    }
+
+    const out = await resp.json().catch(() => ({}));
+    delivered += Array.isArray(out.data) ? out.data.length : batch.length;
   }
 
-  const sent = await resp.json().catch(() => ({}));
+  if (!delivered) {
+    return res.status(502).json({ error: failures[0] || 'Resend sent nothing.', emailed: false });
+  }
 
   if (redis) {
     try {
@@ -186,7 +232,13 @@ export default async function handler(req, res) {
   }
 
   return res.status(200).json({
-    ok: true, emailed: true, to, via,
-    cachedDigest: result.cached, id: sent.id || null,
+    ok: true,
+    emailed: true,
+    via,
+    recipients: recipients.length,
+    delivered,
+    failed: recipients.length - delivered,
+    errors: failures.length ? failures : undefined,
+    cachedDigest: result.cached,
   });
 }
