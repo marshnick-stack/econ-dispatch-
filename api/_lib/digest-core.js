@@ -274,6 +274,12 @@ export async function getDigest({ timeoutMs = 55000 } = {}) {
       body: JSON.stringify({
         model: ANTHROPIC_MODEL,
         max_tokens: 4000,
+        // Sonnet 5 runs ADAPTIVE THINKING when `thinking` is omitted — it is not
+        // off by default. This task is retrieval and formatting, not reasoning,
+        // and the thinking pass was costing enough latency to blow the 60s
+        // function ceiling as soon as we asked for more than one story a section.
+        thinking: { type: 'disabled' },
+        output_config: { effort: 'low' },
         // web_search_20250305 (not the newer _20260209 variant, which runs an extra
         // server-side dynamic-filtering/code-execution pass and was too slow to
         // finish inside Vercel's 60s function limit).
