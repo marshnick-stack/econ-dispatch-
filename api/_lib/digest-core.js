@@ -92,16 +92,21 @@ export function validateDigest(text) {
 }
 
 // ── Repeat protection ─────────────────────────────────────────────────────
-// Without this, the digest repeats itself. The model is asked for "the biggest
-// macro story", and the biggest macro story is often the same one for three days
-// running — it has no memory of what it sent yesterday. At one story per section
-// a repeat is not a blemish, it is the whole section.
+// Today's macro and global stories were yesterday's. The model is asked for the
+// biggest story in each section, and the biggest story is often the same one for
+// days — it has no memory of what it already sent. At one story per section, a
+// repeat is not a blemish, it is the whole section.
 //
-// Two layers, because neither alone is enough:
-//   1. the recent headlines go into the prompt, so the model avoids the same
-//      EVENT even when a different outlet's article would have a different URL;
-//   2. returned URLs are checked against recent ones in code, because a prompt
-//      instruction is a request and this needs a guarantee.
+// The obvious fix — listing recent headlines in the prompt and saying "avoid
+// these" — was tried and measured. It works, but it makes the model search under
+// a dozen avoidance constraints, and that pushed a ~33s run to 50s+, timing out
+// two runs in three against Vercel's 60s ceiling. Intermittently missing the
+// morning email is far worse than occasionally repeating a story.
+//
+// So the model does the part it is good at (find the top few stories, fast, with
+// no extra constraints) and the code does the part code is good at: pick the
+// first candidate in each section that has not been used recently. Deterministic,
+// free, and it adds no latency at all.
 
 const RECENT_KEY = 'recent:stories';
 // 4 days, not 7. Every excluded headline is another constraint the web search has
@@ -153,65 +158,60 @@ async function rememberStories(redis, digest, dateLabel) {
   }
 }
 
-/** Stories in `digest` whose URL was already used in the last RECENT_DAYS. */
-function findRepeats(digest, recent) {
-  const seen = new Map(recent.map(s => [urlFingerprint(s.url), s]));
-  const repeats = [];
-  for (const section of SECTIONS) {
-    for (const s of digest[section] || []) {
-      const hit = seen.get(urlFingerprint(s.url));
-      if (hit) repeats.push({ section, headline: s.headline, lastSent: hit.date });
-    }
-  }
-  return repeats;
-}
-
 // ── Generation ────────────────────────────────────────────────────────────
 
-function buildPrompt(recent, { insist = false } = {}) {
-  let exclusions = '';
+const CANDIDATES_PER_SECTION = 3;
 
-  if (recent.length) {
-    const lines = recent
-      .slice(-12)
-      .map(s => `- [${s.section}] ${s.headline}`)
-      .join('\n');
-
-    exclusions = `
-
-ALREADY SENT IN THE LAST ${RECENT_DAYS} DAYS — do not use any of these again:
-${lines}
-
-Do not return any of the stories above, and do not return a different article
-about the same underlying event. If the biggest story in a section is one you
-have already covered, choose the next most significant story instead. A slightly
-smaller genuinely new story is always better than repeating one.`;
-  }
-
-  if (insist) {
-    exclusions += `
-
-IMPORTANT: your previous attempt returned a story that had already been sent.
-Choose different stories. Search for developments from the last 24 hours
-specifically, rather than the biggest story of the week.`;
-  }
-
+function buildPrompt() {
   return `You are an economics news researcher. Search the web for the latest economics news from the past 24 hours. Then respond with ONLY a raw JSON object — no explanation, no markdown, no code fences, no citations, no extra text before or after.
 
 The JSON must have exactly this shape:
-{"micro":[{"headline":"...","summary":"...","url":"https://...","igcse_link":"...","igcse":true,"ib_link":"...","ib":true}],"macro":[...1 story same shape...],"global":[...1 story same shape...]}
+{"micro":[{"headline":"...","summary":"...","url":"https://...","igcse_link":"...","igcse":true,"ib_link":"...","ib":true}],"macro":[...same shape...],"global":[...same shape...]}
 
 Rules:
 - micro = individual markets, firms, prices, competition, wages, consumer behaviour
 - macro = inflation, interest rates, GDP, unemployment, fiscal/monetary policy, central banks
 - global = international trade, exchange rates, globalisation, IMF/World Bank, development
-- Each section must have exactly 1 story from the past 48 hours
+- Give exactly ${CANDIDATES_PER_SECTION} stories per section, from the past 48 hours, ordered most significant first
+- The ${CANDIDATES_PER_SECTION} stories in a section must be about genuinely different events, not the same event from different outlets
 - url: the direct URL of the news article you found (must be a real, working https:// link)
 - igcse_link: one sentence linking to IGCSE Economics 0455 (e.g. price elasticity, market failure)
 - ib_link: one sentence linking to IB Economics (e.g. Unit 2 Microeconomics, Unit 3 Macroeconomics, Unit 4 The Global Economy)
 - Keep all string values under 200 characters
 - Do NOT include any citations, source tags, or markup inside the JSON strings
-- Return ONLY the JSON. Nothing else.${exclusions}`;
+- Return ONLY the JSON. Nothing else.`;
+}
+
+/**
+ * Narrow each section's candidates down to the single story that runs today:
+ * the most significant one not used in the last RECENT_DAYS.
+ *
+ * Returns { digest, repeated } where `repeated` counts sections in which every
+ * candidate had already been sent, so the freshest available was used anyway.
+ * Running a repeat always beats running an empty section.
+ */
+function pickFreshStories(candidates, recent) {
+  const seen = new Set(recent.map(s => urlFingerprint(s.url)));
+  const digest = {};
+  let repeated = 0;
+
+  for (const section of SECTIONS) {
+    const options = Array.isArray(candidates[section]) ? candidates[section] : [];
+    const fresh = options.find(s => !seen.has(urlFingerprint(s.url)));
+
+    if (fresh) {
+      digest[section] = [fresh];
+      // Guard against the same story appearing in two sections of one digest.
+      seen.add(urlFingerprint(fresh.url));
+    } else if (options.length) {
+      digest[section] = [options[0]];
+      repeated++;
+    } else {
+      digest[section] = [];
+    }
+  }
+
+  return { digest, repeated };
 }
 
 /**
@@ -250,95 +250,68 @@ export async function getDigest({ timeoutMs = 55000 } = {}) {
   }
 
   // ── Generate ────────────────────────────────────────────────────────────
-  // One retry is budgeted for the case where the model returns a story already
-  // sent. Both attempts share `timeoutMs`, so a retry can never push the function
-  // past Vercel's 60s ceiling — the first attempt is capped at 60% of the budget
-  // to leave room for a second, and the retry is skipped if too little time remains.
-  const deadline = Date.now() + timeoutMs;
+  // A single call, with the whole budget. No retry: the picker below removes
+  // repeats without needing one, and a second generation would not fit inside
+  // Vercel's 60s ceiling anyway.
   const recent = await getRecentStories(redis);
-
-  async function attempt(insist, budgetMs) {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), budgetMs);
-    try {
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': apiKey,
-          'anthropic-version': '2023-06-01',
-        },
-        signal: controller.signal,
-        body: JSON.stringify({
-          model: ANTHROPIC_MODEL,
-          max_tokens: 4000,
-          // web_search_20250305 (not the newer _20260209 variant, which runs an extra
-          // server-side dynamic-filtering/code-execution pass and was too slow to
-          // finish inside Vercel's 60s function limit)
-          tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-          messages: [{ role: 'user', content: buildPrompt(recent, { insist }) }],
-        }),
-      });
-
-      if (!response.ok) {
-        const err = await response.json().catch(() => ({}));
-        return { ok: false, status: response.status, error: err.error?.message || 'Anthropic API error ' + response.status };
-      }
-
-      const data = await response.json();
-      const text = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
-      const check = validateDigest(text);
-      if (!check.ok) {
-        // Do NOT cache. This is the whole point.
-        console.error('Refusing to cache invalid digest:', check.reason);
-        return { ok: false, status: 502, error: `Digest failed validation (${check.reason}). Nothing was cached — try again.` };
-      }
-      return { ok: true, text, digest: check.digest };
-    } finally {
-      clearTimeout(timer);
-    }
-  }
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs - 3000);
 
   try {
-    // The first attempt gets essentially the whole budget. An earlier version
-    // reserved 40% of it for a possible retry and that starved the normal case:
-    // a healthy run takes ~33s, so a 60%-of-55s cap timed out almost every time.
-    // The exclusion list in the prompt is what actually prevents repeats; the
-    // retry is only a safety net, and a safety net must not cost a 504.
-    let result = await attempt(false, timeoutMs - 3000);
-    if (!result.ok) return result;
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+      },
+      signal: controller.signal,
+      body: JSON.stringify({
+        model: ANTHROPIC_MODEL,
+        max_tokens: 4000,
+        // web_search_20250305 (not the newer _20260209 variant, which runs an extra
+        // server-side dynamic-filtering/code-execution pass and was too slow to
+        // finish inside Vercel's 60s function limit)
+        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+        messages: [{ role: 'user', content: buildPrompt() }],
+      }),
+    });
 
-    let repeats = findRepeats(result.digest, recent);
-    if (repeats.length) {
-      const remaining = deadline - Date.now();
-      console.warn(`Repeated ${repeats.length} story/stories:`,
-        repeats.map(r => `${r.section} (last sent ${r.lastSent})`).join(', '));
-
-      // Only worth trying if a whole second generation genuinely fits. Usually it
-      // does not, and that is fine — the repeat is reported, and the story is
-      // recorded so tomorrow's prompt excludes it.
-      if (remaining > 25000) {
-        const second = await attempt(true, remaining - 2000);
-        if (second.ok) {
-          const stillRepeated = findRepeats(second.digest, recent);
-          // Keep the retry only if it actually improved matters.
-          if (stillRepeated.length < repeats.length) {
-            result = second;
-            repeats = stillRepeated;
-          }
-        }
-        // A failed retry is not fatal — the first attempt was valid, just stale.
-      } else {
-        console.warn('Not enough time left to retry; sending the digest as-is.');
-      }
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      return {
+        ok: false,
+        status: response.status,
+        error: err.error?.message || 'Anthropic API error ' + response.status,
+      };
     }
+
+    const data = await response.json();
+    const raw = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
+
+    const check = validateDigest(raw);
+    if (!check.ok) {
+      // Do NOT cache. This is the whole point.
+      console.error('Refusing to cache invalid digest:', check.reason);
+      return { ok: false, status: 502, error: `Digest failed validation (${check.reason}). Nothing was cached — try again.` };
+    }
+
+    // Several candidates per section come back; exactly one per section goes out.
+    const { digest, repeated } = pickFreshStories(check.digest, recent);
+    if (repeated) {
+      console.warn(`${repeated} section(s) had no unused candidate; used the freshest available.`);
+    }
+
+    // Cache the PICKED digest, not the raw candidate list, so a cache hit serves
+    // the same three stories the first visitor saw rather than re-picking later.
+    const text = JSON.stringify(digest);
 
     if (redis) {
       try {
         const secondsUntilMidnight = (24 - now.getUTCHours()) * 3600
           - now.getUTCMinutes() * 60
           - now.getUTCSeconds();
-        await redis.set(cacheKey, result.text, { ex: secondsUntilMidnight });
+        await redis.set(cacheKey, text, { ex: secondsUntilMidnight });
       } catch (kvErr) {
         console.warn('Redis write failed:', kvErr.message);
       }
@@ -346,15 +319,16 @@ export async function getDigest({ timeoutMs = 55000 } = {}) {
 
     // Recorded only once the digest is definitely being used, so a discarded
     // attempt never blocks its own stories from appearing tomorrow.
-    await rememberStories(redis, result.digest, shanghaiDateString(now));
+    await rememberStories(redis, digest, shanghaiDateString(now));
 
-    return { ok: true, text: result.text, digest: result.digest, cached: false, repeated: repeats.length || undefined };
+    return { ok: true, text, digest, cached: false, repeated: repeated || undefined };
 
   } catch (err) {
     if (err.name === 'AbortError') {
       return { ok: false, status: 504, error: 'Digest generation is taking longer than usual. Please try again in a moment.' };
     }
     return { ok: false, status: 500, error: err.message };
+  } finally {
+    clearTimeout(timer);
   }
-  // No clearTimeout here: each attempt() owns and clears its own timer.
 }
