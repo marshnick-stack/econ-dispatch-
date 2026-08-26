@@ -295,7 +295,12 @@ export async function getDigest({ timeoutMs = 55000 } = {}) {
   }
 
   try {
-    let result = await attempt(false, Math.floor(timeoutMs * 0.6));
+    // The first attempt gets essentially the whole budget. An earlier version
+    // reserved 40% of it for a possible retry and that starved the normal case:
+    // a healthy run takes ~33s, so a 60%-of-55s cap timed out almost every time.
+    // The exclusion list in the prompt is what actually prevents repeats; the
+    // retry is only a safety net, and a safety net must not cost a 504.
+    let result = await attempt(false, timeoutMs - 3000);
     if (!result.ok) return result;
 
     let repeats = findRepeats(result.digest, recent);
@@ -304,7 +309,10 @@ export async function getDigest({ timeoutMs = 55000 } = {}) {
       console.warn(`Repeated ${repeats.length} story/stories:`,
         repeats.map(r => `${r.section} (last sent ${r.lastSent})`).join(', '));
 
-      if (remaining > 15000) {
+      // Only worth trying if a whole second generation genuinely fits. Usually it
+      // does not, and that is fine — the repeat is reported, and the story is
+      // recorded so tomorrow's prompt excludes it.
+      if (remaining > 25000) {
         const second = await attempt(true, remaining - 2000);
         if (second.ok) {
           const stillRepeated = findRepeats(second.digest, recent);
