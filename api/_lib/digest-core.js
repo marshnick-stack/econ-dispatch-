@@ -160,7 +160,7 @@ async function rememberStories(redis, digest, dateLabel) {
 
 // ── Generation ────────────────────────────────────────────────────────────
 
-const CANDIDATES_PER_SECTION = 2;
+const CANDIDATES_PER_SECTION = 1;
 
 function buildPrompt() {
   return `You are an economics news researcher. Search the web for the latest economics news from the past 24 hours. Then respond with ONLY a raw JSON object — no explanation, no markdown, no code fences, no citations, no extra text before or after.
