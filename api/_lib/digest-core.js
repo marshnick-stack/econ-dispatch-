@@ -174,9 +174,12 @@ The JSON must have exactly this shape:
 {"micro":[{"headline":"...","summary":"...","url":"https://...","igcse_link":"...","igcse":true,"ib_link":"...","ib":true}],"macro":[...same shape...],"global":[...same shape...]}
 
 Rules:
-- micro = individual markets, firms, prices, competition, wages, consumer behaviour
-- macro = inflation, interest rates, GDP, unemployment, fiscal/monetary policy, central banks
-- global = international trade, exchange rates, globalisation, IMF/World Bank, development
+- micro = ONE firm, market or product: prices, competition, costs, consumer behaviour
+- macro = ONE economy as a whole: inflation, interest rates, GDP, unemployment, central banks, fiscal/monetary policy
+- global = BETWEEN economies: trade, tariffs, exchange rates, globalisation, IMF/World Bank, development
+- Sort by the level the story operates at, not by its subject matter. A tariff dispute
+  is global even though it affects prices; a national jobs report is macro even though
+  it concerns wages; a single company's results are micro even if the firm is huge.
 - Give exactly ${CANDIDATES_PER_SECTION} stories per section, from the past 48 hours, ordered most significant first
 - The ${CANDIDATES_PER_SECTION} stories in a section must be about genuinely different events, not the same event from different outlets
 - url: the direct URL of the news article you found (must be a real, working https:// link)
@@ -279,7 +282,7 @@ export async function getDigest({ timeoutMs = 55000 } = {}) {
         // and the thinking pass was costing enough latency to blow the 60s
         // function ceiling as soon as we asked for more than one story a section.
         thinking: { type: 'disabled' },
-        output_config: { effort: 'low' },
+        output_config: { effort: 'medium' },
         // web_search_20250305 (not the newer _20260209 variant, which runs an extra
         // server-side dynamic-filtering/code-execution pass and was too slow to
         // finish inside Vercel's 60s function limit).
