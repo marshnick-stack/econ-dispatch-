@@ -167,7 +167,19 @@ const CANDIDATES_PER_SECTION = 2;
 // per section plus retries on a thin result.
 const MAX_SEARCHES = 8;
 
-function buildPrompt() {
+function buildPrompt(recent) {
+  // A short list of what has run recently. This is the layer that catches the same
+  // EVENT reported by a different outlet — a case no URL comparison can see, since
+  // the URLs genuinely differ. It was too slow to afford when adaptive thinking was
+  // on; with thinking disabled there is room for it.
+  const avoid = recent.length
+    ? `
+
+RECENTLY COVERED — do not report these events again, even from a different outlet
+or with a new development. Choose a different story:
+${recent.slice(-9).map(s => `- ${s.headline}`).join('\n')}`
+    : '';
+
   return `You are an economics news researcher. Search the web for the latest economics news from the past 24 hours. Then respond with ONLY a raw JSON object — no explanation, no markdown, no code fences, no citations, no extra text before or after.
 
 The JSON must have exactly this shape:
@@ -187,7 +199,7 @@ Rules:
 - ib_link: one sentence linking to IB Economics (e.g. Unit 2 Microeconomics, Unit 3 Macroeconomics, Unit 4 The Global Economy)
 - Keep all string values under 200 characters
 - Do NOT include any citations, source tags, or markup inside the JSON strings
-- Return ONLY the JSON. Nothing else.`;
+- Return ONLY the JSON. Nothing else.${avoid}`;
 }
 
 /**
@@ -291,7 +303,7 @@ export async function getDigest({ timeoutMs = 55000 } = {}) {
         // latency here. Without it, asking for 2 stories per section instead of 1
         // took a 38s run to 54s and blew the 60s function ceiling every time.
         tools: [{ type: 'web_search_20250305', name: 'web_search', max_uses: MAX_SEARCHES }],
-        messages: [{ role: 'user', content: buildPrompt() }],
+        messages: [{ role: 'user', content: buildPrompt(recent) }],
       }),
     });
 
