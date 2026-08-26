@@ -104,7 +104,12 @@ export function validateDigest(text) {
 //      instruction is a request and this needs a guarantee.
 
 const RECENT_KEY = 'recent:stories';
-const RECENT_DAYS = 7;
+// 4 days, not 7. Every excluded headline is another constraint the web search has
+// to satisfy, and that costs real time: an unconstrained run takes ~33s, a run
+// against a week of exclusions was measured at 50s — close enough to the 60s
+// function ceiling to put the morning email at risk. Four days covers the actual
+// complaint (today repeating yesterday) with room to spare.
+const RECENT_DAYS = 4;
 const SECTIONS = ['micro', 'macro', 'global'];
 
 /** Compare by host+path: ignores http/https, www, trailing slash, and tracking query strings. */
@@ -168,7 +173,7 @@ function buildPrompt(recent, { insist = false } = {}) {
 
   if (recent.length) {
     const lines = recent
-      .slice(-30)
+      .slice(-12)
       .map(s => `- [${s.section}] ${s.headline}`)
       .join('\n');
 

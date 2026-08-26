@@ -163,8 +163,9 @@ export default async function handler(req, res) {
     } catch { /* if Redis is down, prefer sending over not sending */ }
   }
 
-  // Leave headroom inside the 60s function limit for the Resend call.
-  const result = await getDigest({ timeoutMs: 48000 });
+  // Leave headroom inside the 60s function limit for the Resend call, which is
+  // fast (~1s). Generation is the slow part, so give it as much room as is safe.
+  const result = await getDigest({ timeoutMs: 52000 });
   if (!result.ok) {
     return res.status(result.status || 500).json({ error: result.error, emailed: false });
   }
