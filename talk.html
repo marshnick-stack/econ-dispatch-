@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Automate, Augment, or Keep? — Nick Marsh</title>
+<meta name="description" content="Auditing the Economics teacher's week in the AI era. Talk resources from the 5th International Forum on Economics and Business Education, Shanghai, 12 September 2026.">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&display=swap');
+
+  :root {
+    --ink: #1a1208;
+    --cream: #f5f0e8;
+    --warm: #f0e8d5;
+    --gold: #b8860b;
+    --rust: #8b3a1a;
+    --teal: #1a5c5c;
+    --mid: #5c4a2a;
+    --rule: #c8b89a;
+    --save: #2d6a2d;
+    --video: #4a2d6a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--cream); font-family: 'Source Serif 4', Georgia, serif; color: var(--ink); min-height: 100vh; zoom: 1.2; }
+
+  /* ── Masthead ── */
+  .masthead { background: var(--ink); color: var(--cream); text-align: center; padding: 30px 20px 24px; border-bottom: 4px solid var(--gold); }
+  .masthead-sub { font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--rule); margin-bottom: 10px; line-height: 1.6; }
+  .masthead h1 { font-family: 'Playfair Display', serif; font-size: clamp(26px, 4.6vw, 46px); font-weight: 900; letter-spacing: -1px; line-height: 1.05; color: var(--cream); }
+  .masthead h1 span { color: var(--gold); }
+  .masthead h2 { font-family: 'Playfair Display', serif; font-size: clamp(14px, 1.9vw, 19px); font-weight: 400; font-style: italic; color: var(--rule); margin-top: 10px; line-height: 1.35; }
+  .masthead .cn-title { font-size: 13px; color: var(--rule); margin-top: 12px; line-height: 1.6; opacity: .85; }
+  .dateline { font-size: 12px; color: var(--rule); margin-top: 14px; letter-spacing: 2px; text-transform: uppercase; }
+
+  .container { max-width: 860px; margin: 0 auto; padding: 0 16px; }
+
+  /* ── Sections ── */
+  .section-intro { padding: 34px 0 6px; border-bottom: 2px solid var(--ink); margin-bottom: 6px; }
+  .section-intro h3 { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 900; }
+  .section-intro p { font-size: 12px; color: var(--mid); margin-top: 4px; letter-spacing: 0.5px; }
+  .lede { font-size: 16px; line-height: 1.7; color: #2a1f0a; padding: 16px 0 4px; }
+  .lede strong { font-weight: 600; }
+
+  /* ── The three buckets ── */
+  .buckets { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 14px; padding: 18px 0 6px; }
+  .bucket { border: 1px solid var(--rule); border-top: 4px solid var(--rule); background: #fffdf8; padding: 16px 16px 18px; }
+  .bucket.automate { border-top-color: var(--teal); }
+  .bucket.augment  { border-top-color: var(--rust); }
+  .bucket.keep     { border-top-color: var(--gold); }
+  .bucket h4 { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 700; margin-bottom: 3px; }
+  .bucket .cn { font-size: 12px; color: var(--mid); margin-bottom: 8px; }
+  .bucket p { font-size: 14px; line-height: 1.6; color: #2a1f0a; }
+  .bucket.automate h4 { color: var(--teal); }
+  .bucket.augment  h4 { color: var(--rust); }
+  .bucket.keep     h4 { color: #8a6d1f; }
+
+  .pullquote { border-left: 3px solid var(--gold); background: var(--warm); padding: 16px 20px; margin: 22px 0 6px; font-size: 16px; line-height: 1.65; font-style: italic; }
+  .pullquote strong { font-style: normal; font-weight: 600; }
+
+  /* ── Worked examples ── */
+  .examples { padding: 8px 0 6px; }
+  .ex { border-bottom: 1px solid var(--rule); padding: 18px 0; }
+  .ex:last-child { border-bottom: none; }
+  .ex-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+  .tag { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; padding: 3px 8px; color: var(--cream); white-space: nowrap; }
+  .tag.automate { background: var(--teal); }
+  .tag.augment  { background: var(--rust); }
+  .tag.keep     { background: var(--gold); }
+  .ex-note { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--mid); }
+  .ex h4 { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; line-height: 1.3; margin-bottom: 6px; }
+  .ex p { font-size: 15px; line-height: 1.65; color: #2a1f0a; }
+
+  /* ── Compliance ── */
+  .warn { border: 1px solid #d4856a; border-left: 4px solid var(--rust); background: #fff8f5; padding: 18px 20px; margin: 18px 0 6px; }
+  .warn h4 { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 700; color: var(--rust); margin-bottom: 8px; }
+  .warn p { font-size: 15px; line-height: 1.65; color: #2a1f0a; margin-bottom: 8px; }
+  .warn p:last-child { margin-bottom: 0; }
+  .toollist { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
+  .toollist span { font-size: 12px; letter-spacing: .5px; border: 1px solid var(--rule); background: var(--cream); padding: 4px 10px; }
+
+  /* ── Resources ── */
+  .res { display: block; border: 1px solid var(--rule); background: #fffdf8; padding: 15px 17px; margin-bottom: 10px; text-decoration: none; color: var(--ink); transition: all .18s; }
+  .res:hover { border-color: var(--gold); background: var(--warm); }
+  .res-title { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; margin-bottom: 3px; }
+  .res:hover .res-title { color: #8a6d1f; }
+  .res-desc { font-size: 13.5px; line-height: 1.55; color: var(--mid); }
+  .res-todo { border-style: dashed; opacity: .72; }
+
+  /* ── Subscribe ── */
+  .subscribe-box { border-top: 1px solid var(--rule); margin-top: 30px; padding: 28px 0 10px; text-align: center; }
+  .subscribe-box h3 { font-family: 'Playfair Display', serif; font-size: 21px; font-weight: 700; margin: 0 0 6px; }
+  .sub-blurb { font-size: 13.5px; color: #6a6255; line-height: 1.6; max-width: 440px; margin: 0 auto 16px; }
+  .subscribe-form { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .subscribe-form input[type=email] { font-family: inherit; font-size: 15px; padding: 11px 13px; border: 1px solid var(--rule); background: #fff; color: var(--ink); min-width: 240px; flex: 0 1 280px; }
+  .subscribe-form input[type=email]:focus { outline: 2px solid var(--gold); outline-offset: -1px; }
+  .subscribe-form button { font-family: inherit; font-size: 15px; padding: 11px 22px; border: none; background: var(--ink); color: var(--cream); cursor: pointer; }
+  .subscribe-form button:hover { background: var(--gold); color: var(--ink); }
+  .subscribe-form button:disabled { opacity: .5; cursor: default; }
+  .sub-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  .sub-msg { font-size: 13px; margin-top: 12px; line-height: 1.5; display: none; }
+  .sub-msg.good { color: var(--save); display: block; }
+  .sub-msg.bad { color: var(--rust); display: block; }
+  .sub-privacy { font-size: 11px; color: #8a8070; line-height: 1.6; margin-top: 14px; }
+
+  /* ── Bio ── */
+  .bio { border-top: 1px solid var(--rule); margin-top: 26px; padding: 26px 0 8px; }
+  .bio h3 { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+  .bio .cn-name { font-size: 13px; color: var(--mid); margin-bottom: 12px; }
+  .bio p { font-size: 15px; line-height: 1.7; color: #2a1f0a; margin-bottom: 12px; }
+  .bio p.cn { font-size: 14px; line-height: 1.85; color: var(--mid); }
+
+  .page-footer { text-align: center; font-size: 11px; color: var(--rule); letter-spacing: 1px; padding: 26px 0 34px; border-top: 1px solid var(--rule); margin-top: 22px; line-height: 1.8; }
+  .page-footer a { color: var(--mid); text-decoration: none; border-bottom: 1px dotted var(--rule); }
+  .page-footer a:hover { color: var(--gold); }
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="masthead-sub">5th International Forum on Economics &amp; Business Education</div>
+  <h1>Automate, <span>Augment</span>, or Keep?</h1>
+  <h2>Auditing the Economics Teacher's Week in the AI Era</h2>
+  <div class="cn-title">自动化、辅助化，还是保留人工？<br>——AI时代经济教师的任务清单审视</div>
+  <div class="dateline">Huili School Shanghai &middot; 12 September 2026</div>
+</div>
+
+<div class="container">
+
+  <div class="lede">
+    Thank you for coming. This page holds everything from the talk &mdash; the framework,
+    the worked examples, the compliance warnings, and the tools themselves.
+    <strong>Nothing here needs a VPN.</strong>
+  </div>
+
+  <!-- ── Framework ── -->
+  <div class="section-intro">
+    <h3>The Framework</h3>
+    <p>Sort every task in your week into one of three &mdash; before you decide on any tool</p>
+  </div>
+
+  <div class="buckets">
+    <div class="bucket automate">
+      <h4>Automate</h4>
+      <div class="cn">自动化</div>
+      <p>AI drafts it fully. A human still reads it and still sends it. The judgment is in the review, not the drafting.</p>
+    </div>
+    <div class="bucket augment">
+      <h4>Augment</h4>
+      <div class="cn">辅助化</div>
+      <p>The human decides; AI assists. The decision never leaves you &mdash; AI shortens the distance to it.</p>
+    </div>
+    <div class="bucket keep">
+      <h4>Keep</h4>
+      <div class="cn">保留人工</div>
+      <p>Stays human by design. Not because AI can't &mdash; sometimes because it shouldn't, and sometimes because it costs more than it saves.</p>
+    </div>
+  </div>
+
+  <div class="pullquote">
+    The three labels are not the point. <strong>The line between “automate” and “augment” is the point.</strong>
+    Automate means AI produces the whole draft and you still press send. Augment means you make the
+    call and AI helps you make it faster. Most disappointment with AI in teaching comes from putting
+    a task in the wrong one of those two.
+  </div>
+
+  <!-- ── Worked examples ── -->
+  <div class="section-intro">
+    <h3>The Audit, Worked Through</h3>
+    <p>Six real tasks from one Economics teacher's week, after a year of building</p>
+  </div>
+
+  <div class="examples">
+
+    <div class="ex">
+      <div class="ex-meta"><span class="tag automate">Automate</span><span class="ex-note">Most data-sensitive</span></div>
+      <h4>Daily at-risk student tracking</h4>
+      <p>A daily class pulse that surfaces the students who need attention today. The most useful
+      thing on this list &mdash; and the one that carries the most data risk, which is why it leads
+      straight into the compliance section below.</p>
+    </div>
+
+    <div class="ex">
+      <div class="ex-meta"><span class="tag automate">Automate</span><span class="ex-note">Done responsibly</span></div>
+      <h4>MCQ marking</h4>
+      <p>Scoring is pure SQL against a stored answer key &mdash; <strong>the model never marks anything</strong>.
+      Scan cells that can't be read are flagged for a human, never guessed. Verified at 59/60 accuracy.
+      The lesson generalises: when an answer is objectively checkable, check it with code, not a model.</p>
+    </div>
+
+    <div class="ex">
+      <div class="ex-meta"><span class="tag automate">Automate</span><span class="ex-note">Before &amp; after</span></div>
+      <h4>Termly report writing</h4>
+      <p>A year ago, the single biggest time sink of the term. Now a generated first draft in house
+      style, which a teacher edits and sends. The clearest before-and-after on this list.</p>
+    </div>
+
+    <div class="ex">
+      <div class="ex-meta"><span class="tag augment">Augment</span></div>
+      <h4>Essay and paper marking</h4>
+      <p>AI drafts the feedback; the teacher arbitrates the final mark. The draft saves the blank
+      page, not the decision.</p>
+    </div>
+
+    <div class="ex">
+      <div class="ex-meta"><span class="tag augment">Augment</span><span class="ex-note">Mid-build</span></div>
+      <h4>Daily lesson planning</h4>
+      <p>Still being built &mdash; deliberately included, because the framework has to hold for a
+      half-finished tool as well as a polished one. If the sort only works in hindsight, it isn't
+      a planning tool.</p>
+    </div>
+
+    <div class="ex">
+      <div class="ex-meta"><span class="tag keep">Keep</span><span class="ex-note">Tried and abandoned</span></div>
+      <h4>Slide and resource decks</h4>
+      <p>Tried it. Abandoned it. <strong>Editing the AI's output cost more time than making the deck
+      from scratch.</strong> Worth saying out loud at a conference full of AI enthusiasm: a task
+      landing in "keep" is a real result, not a failure to try hard enough.</p>
+    </div>
+
+  </div>
+
+  <!-- ── Compliance ── -->
+  <div class="section-intro">
+    <h3>If You Teach in China, Read This First</h3>
+    <p>PIPL, data residency, and where student work is allowed to go</p>
+  </div>
+
+  <div class="warn">
+    <h4>Real student data changes the calculation</h4>
+    <p>Marks, written comments and at-risk flags are personal information about minors. Putting them
+    through a foreign-hosted AI tool is a <strong>PIPL</strong> question before it is a pedagogy
+    question &mdash; and it is a question about your school's exposure, not only your own.</p>
+    <p>The practical rule that came out of a year of building: wherever <strong>real student data</strong>
+    is involved, default to a domestic tool. Save the foreign models for work that contains no
+    student information at all &mdash; planning, resource drafting, your own writing.</p>
+    <div class="toollist">
+      <span>豆包 Doubao</span><span>Kimi</span><span>智谱 GLM</span><span>通义千问 Qwen</span><span>DeepSeek</span>
+    </div>
+  </div>
+
+  <div class="lede">
+    The VPN question is part of this too. A workflow that depends on a VPN is a workflow that breaks
+    on the morning it matters &mdash; and asking colleagues to route student data through one is a
+    bigger ask than it first appears.
+  </div>
+
+  <!-- ── What stays human ── -->
+  <div class="section-intro">
+    <h3>What Stays Human</h3>
+    <p>By design, not by limitation</p>
+  </div>
+
+  <div class="lede">
+    The final judgment on a mark stays manual &mdash; and not because the models aren't accurate
+    enough. It stays manual because of what a mark is <em>for</em>: the growth-mindset conversation
+    that follows it only works if a person stands behind it. Teaching itself, pastoral care, and
+    mentoring colleagues sit in the same category. These are not the tasks waiting for a better model.
+  </div>
+
+  <!-- ── Takeaway ── -->
+  <div class="section-intro">
+    <h3>Three Places to Start</h3>
+    <p>Ranked by lowest risk and highest time saved</p>
+  </div>
+
+  <div class="lede">
+    <!-- TODO(Nick): the plan lists this as "three starting points, ranked by lowest risk /
+         highest time saved" but doesn't say which three. Tell me your three and I'll set
+         them here. Deliberately left blank rather than guessed. -->
+    <em>Coming after the talk &mdash; the three starting points, written up in full.</em>
+  </div>
+
+  <!-- ── Resources ── -->
+  <div class="section-intro">
+    <h3>The Tools</h3>
+    <p>Built for my own week, shared as they are</p>
+  </div>
+
+  <div style="padding-top:16px">
+    <a class="res" href="/">
+      <div class="res-title">The Econ Dispatch</div>
+      <div class="res-desc">Each weekday morning: three economics news stories &mdash; one micro, one
+      macro, one global &mdash; with the IGCSE 0455 and IB syllabus links already drawn. The tool this
+      page is hosted on.</div>
+    </a>
+
+    <a class="res res-todo" href="#">
+      <div class="res-title">IB Economics site &mdash; <em>link to add</em></div>
+      <div class="res-desc">One of the two China-based sites mentioned in the talk. Send me the URL
+      and I'll wire it up.</div>
+    </a>
+
+    <a class="res res-todo" href="#">
+      <div class="res-title">IGCSE Economics site &mdash; <em>link to add</em></div>
+      <div class="res-desc">The second China-based site. Same &mdash; send me the URL.</div>
+    </a>
+  </div>
+
+  <!-- ── Subscribe ── -->
+  <div class="subscribe-box">
+    <h3>Get the dispatch every weekday morning</h3>
+    <div class="sub-blurb">
+      Three economics stories, one each from micro, macro and global, with the syllabus links
+      already drawn. Free, and you can leave in one click.
+    </div>
+
+    <form class="subscribe-form" onsubmit="subscribeToDispatch(event)">
+      <input type="text" name="website" id="subWebsite" class="sub-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <input type="email" id="subEmail" placeholder="you@school.edu" required autocomplete="email">
+      <button type="submit" id="subBtn">Subscribe</button>
+    </form>
+
+    <div class="sub-msg" id="subMsg"></div>
+
+    <div class="sub-privacy">
+      Your address is used only to send this dispatch &mdash; never shared, never sold.<br>
+      Every issue has an unsubscribe link; one click deletes your address.
+    </div>
+  </div>
+
+  <!-- ── Bio ── -->
+  <div class="bio">
+    <h3>Nick Marsh</h3>
+    <div class="cn-name">马喜 &middot; YCIS Puxi, Shanghai</div>
+    <p>Nick Marsh teaches IB Diploma and IGCSE Economics at YCIS Puxi, Shanghai, where he also leads
+    the Commerce department. Over the past year he has built a suite of teaching tools &mdash;
+    including a ManageBac Chrome extension, a gradebook, reporting, tracking and lesson planning app,
+    two China-based websites for IB and IGCSE Economics, and apps for essay and MCQ feedback. These
+    have all been designed around a deliberate decision about what AI should automate, what it should
+    assist with, and what must stay entirely human.</p>
+    <p class="cn">马喜任教于上海耀中国际学校（浦西校区），教授IB Diploma与IGCSE经济学课程，同时担任商科组负责人。过去一年，他开发了一系列教学工具——包括一款ManageBac浏览器插件、一套集成绩册、报告撰写、学情追踪与课程设计于一体的应用系统、两个分别服务于IB与IGCSE经济学、面向中国本土师生的网站，以及用于论文与客观题反馈批改的应用。这些工具的设计始终遵循一个明确原则：清楚界定哪些工作应由AI自动完成、哪些应由AI辅助、哪些必须完全保留人工。</p>
+  </div>
+
+  <div class="page-footer">
+    谈经论商 &middot; 5th International Forum on Economics &amp; Business Education<br>
+    Hosted by Huili School Shanghai, co-organised with ASDAN &middot; 12 September 2026<br>
+    <a href="/">The Econ Dispatch &rarr;</a>
+  </div>
+
+</div>
+
+<script>
+async function subscribeToDispatch(e) {
+  e.preventDefault();
+  const btn = document.getElementById('subBtn');
+  const msg = document.getElementById('subMsg');
+  const email = document.getElementById('subEmail').value.trim();
+
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+  msg.className = 'sub-msg';
+
+  try {
+    const r = await fetch('/api/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, website: document.getElementById('subWebsite').value })
+    });
+    const data = await r.json();
+
+    if (r.ok) {
+      msg.className = 'sub-msg good';
+      msg.textContent = data.message || 'Check your inbox for a confirmation link.';
+      document.getElementById('subEmail').value = '';
+    } else {
+      msg.className = 'sub-msg bad';
+      msg.textContent = data.error || 'Something went wrong. Try again shortly.';
+    }
+  } catch (err) {
+    msg.className = 'sub-msg bad';
+    msg.textContent = 'Could not reach the server. Check your connection and try again.';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Subscribe';
+  }
+}
+</script>
+
+</body>
+</html>
