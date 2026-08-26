@@ -160,7 +160,12 @@ async function rememberStories(redis, digest, dateLabel) {
 
 // ── Generation ────────────────────────────────────────────────────────────
 
-const CANDIDATES_PER_SECTION = 1;
+const CANDIDATES_PER_SECTION = 2;
+
+// Bounds worst-case latency. Too low and the model cannot find enough distinct
+// stories and the response fails validation; 8 leaves room for a few searches
+// per section plus retries on a thin result.
+const MAX_SEARCHES = 8;
 
 function buildPrompt() {
   return `You are an economics news researcher. Search the web for the latest economics news from the past 24 hours. Then respond with ONLY a raw JSON object — no explanation, no markdown, no code fences, no citations, no extra text before or after.
@@ -271,8 +276,12 @@ export async function getDigest({ timeoutMs = 55000 } = {}) {
         max_tokens: 4000,
         // web_search_20250305 (not the newer _20260209 variant, which runs an extra
         // server-side dynamic-filtering/code-execution pass and was too slow to
-        // finish inside Vercel's 60s function limit)
-        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+        // finish inside Vercel's 60s function limit).
+        //
+        // max_uses caps the number of search rounds, which is what actually drives
+        // latency here. Without it, asking for 2 stories per section instead of 1
+        // took a 38s run to 54s and blew the 60s function ceiling every time.
+        tools: [{ type: 'web_search_20250305', name: 'web_search', max_uses: MAX_SEARCHES }],
         messages: [{ role: 'user', content: buildPrompt() }],
       }),
     });
