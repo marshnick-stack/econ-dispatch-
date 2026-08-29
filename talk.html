@@ -35,6 +35,20 @@
   .masthead .cn-title { font-size: 13px; color: var(--rule); margin-top: 12px; line-height: 1.6; opacity: .85; }
   .dateline { font-size: 12px; color: var(--rule); margin-top: 14px; letter-spacing: 2px; text-transform: uppercase; }
 
+  /* ── Tabs (same pattern as the dispatch) ── */
+  .tabs { display: flex; background: var(--warm); border-bottom: 2px solid var(--rule); overflow-x: auto; }
+  .tab { flex: 1; padding: 12px 14px; text-align: center; font-family: 'Playfair Display', serif; font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; border: none; background: none; color: var(--mid); border-bottom: 3px solid transparent; transition: all 0.2s; white-space: nowrap; }
+  .tab:hover { background: var(--cream); color: var(--ink); }
+  .tab.active { color: var(--ink); background: var(--cream); }
+  .tab.framework.active { border-bottom-color: var(--teal); }
+  .tab.audit.active     { border-bottom-color: var(--rust); }
+  .tab.china.active     { border-bottom-color: var(--gold); }
+  .tab.tools.active     { border-bottom-color: var(--save); }
+  .tab-count { display: inline-block; background: var(--rust); color: #fff; font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 8px; margin-left: 4px; vertical-align: middle; font-family: 'Source Serif 4', serif; }
+
+  .panel { display: none; }
+  .panel.show { display: block; }
+
   .container { max-width: 860px; margin: 0 auto; padding: 0 16px; }
 
   /* ── Sections ── */
@@ -87,7 +101,46 @@
   .res-title { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; margin-bottom: 3px; }
   .res:hover .res-title { color: #8a6d1f; }
   .res-desc { font-size: 13.5px; line-height: 1.55; color: var(--mid); }
-  .res-todo { border-style: dashed; opacity: .72; }
+  .res-flag { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; padding: 2px 7px; color: var(--cream); background: var(--save); margin-left: 7px; vertical-align: 2px; white-space: nowrap; }
+  .res-group { font-family: 'Playfair Display', serif; font-size: 13px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--mid); margin: 22px 0 10px; padding-bottom: 5px; border-bottom: 1px solid var(--rule); }
+
+  /* ── The interactive audit ── */
+  .audit-intro { font-size: 15.5px; line-height: 1.7; color: #2a1f0a; padding: 16px 0 6px; }
+  .audit-bar { position: sticky; top: 0; z-index: 5; background: var(--cream); border-bottom: 1px solid var(--rule); padding: 12px 0 10px; margin-bottom: 4px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .tally { display: flex; gap: 12px; flex-wrap: wrap; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; }
+  .tally b { font-family: 'Playfair Display', serif; font-size: 15px; }
+  .tally .t-a { color: var(--teal); }
+  .tally .t-g { color: var(--rust); }
+  .tally .t-k { color: #8a6d1f; }
+  .tally .t-n { color: #9a9080; }
+
+  .task { border-bottom: 1px solid var(--rule); padding: 12px 0; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .task-name { flex: 1 1 260px; font-size: 15px; line-height: 1.45; }
+  .task-cadence { display: block; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--mid); margin-top: 2px; }
+  .choices { display: flex; gap: 0; flex: 0 0 auto; border: 1px solid var(--rule); background: #fffdf8; }
+  .choice { font-family: inherit; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; padding: 7px 11px; border: none; background: none; color: var(--mid); cursor: pointer; border-right: 1px solid var(--rule); transition: all .15s; }
+  .choice:last-child { border-right: none; }
+  .choice:hover { background: var(--warm); }
+  .choice.on { color: var(--cream); }
+  .choice.on[data-v="automate"] { background: var(--teal); }
+  .choice.on[data-v="augment"]  { background: var(--rust); }
+  .choice.on[data-v="keep"]     { background: var(--gold); }
+  .choice.on[data-v="na"]       { background: #9a9080; }
+  .task-del { border: none; background: none; color: var(--rule); font-size: 17px; cursor: pointer; padding: 0 4px; line-height: 1; }
+  .task-del:hover { color: var(--rust); }
+
+  .add-row { display: flex; gap: 8px; padding: 16px 0 4px; flex-wrap: wrap; }
+  .add-row input { font-family: inherit; font-size: 15px; padding: 10px 12px; border: 1px solid var(--rule); background: #fff; color: var(--ink); flex: 1 1 260px; }
+  .add-row input:focus { outline: 2px solid var(--gold); outline-offset: -1px; }
+  .add-row button { font-family: inherit; font-size: 14px; padding: 10px 18px; border: 1px solid var(--ink); background: none; color: var(--ink); cursor: pointer; }
+  .add-row button:hover { background: var(--ink); color: var(--cream); }
+
+  .audit-actions { display: flex; gap: 10px; padding: 22px 0 8px; flex-wrap: wrap; border-top: 1px solid var(--rule); margin-top: 16px; }
+  .act { font-family: inherit; font-size: 14.5px; padding: 12px 20px; border: none; background: var(--ink); color: var(--cream); cursor: pointer; }
+  .act:hover { background: var(--gold); color: var(--ink); }
+  .act.ghost { background: none; color: var(--mid); border: 1px solid var(--rule); }
+  .act.ghost:hover { background: var(--warm); color: var(--ink); border-color: var(--gold); }
+  .copy-msg { font-size: 13px; color: var(--save); padding: 6px 0 0; min-height: 20px; }
 
   /* ── Subscribe ── */
   .subscribe-box { border-top: 1px solid var(--rule); margin-top: 30px; padding: 28px 0 10px; text-align: center; }
@@ -115,6 +168,15 @@
   .page-footer { text-align: center; font-size: 11px; color: var(--rule); letter-spacing: 1px; padding: 26px 0 34px; border-top: 1px solid var(--rule); margin-top: 22px; line-height: 1.8; }
   .page-footer a { color: var(--mid); text-decoration: none; border-bottom: 1px dotted var(--rule); }
   .page-footer a:hover { color: var(--gold); }
+
+  @media (max-width: 560px) {
+    /* All four tabs must fit without scrolling — a tab a phone reader has to
+       discover by swiping is a tab they will not find, and The Tools is the
+       one people came for. */
+    .tab { font-size: 10px; padding: 11px 5px; letter-spacing: 0; }
+    .tab .long { display: none; }
+    .choice { padding: 7px 7px; font-size: 10px; letter-spacing: 0; }
+  }
 </style>
 </head>
 <body>
@@ -127,156 +189,272 @@
   <div class="dateline">Huili School Shanghai &middot; 12 September 2026</div>
 </div>
 
+<div class="tabs">
+  <button class="tab framework active" onclick="switchTab('framework')"><span class="long">The </span>Framework</button>
+  <button class="tab audit" onclick="switchTab('audit')">Your Audit <span class="tab-count" id="auditCount" style="display:none"></span></button>
+  <button class="tab china" onclick="switchTab('china')"><span class="long">China &amp; </span>Compliance</button>
+  <button class="tab tools" onclick="switchTab('tools')"><span class="long">The </span>Tools</button>
+</div>
+
 <div class="container">
 
-  <div class="lede">
-    Thank you for coming. This page holds everything from the talk &mdash; the framework,
-    the worked examples, the compliance warnings, and the tools themselves.
-    <strong>Nothing here needs a VPN.</strong>
-  </div>
+  <!-- ══ TAB 1 — THE FRAMEWORK ══ -->
+  <div class="panel show" id="panel-framework">
 
-  <!-- ── Framework ── -->
-  <div class="section-intro">
-    <h3>The Framework</h3>
-    <p>Sort every task in your week into one of three &mdash; before you decide on any tool</p>
-  </div>
-
-  <div class="buckets">
-    <div class="bucket automate">
-      <h4>Automate</h4>
-      <div class="cn">自动化</div>
-      <p>AI drafts it fully. A human still reads it and still sends it. The judgment is in the review, not the drafting.</p>
-    </div>
-    <div class="bucket augment">
-      <h4>Augment</h4>
-      <div class="cn">辅助化</div>
-      <p>The human decides; AI assists. The decision never leaves you &mdash; AI shortens the distance to it.</p>
-    </div>
-    <div class="bucket keep">
-      <h4>Keep</h4>
-      <div class="cn">保留人工</div>
-      <p>Stays human by design. Not because AI can't &mdash; sometimes because it shouldn't, and sometimes because it costs more than it saves.</p>
-    </div>
-  </div>
-
-  <div class="pullquote">
-    The three labels are not the point. <strong>The line between “automate” and “augment” is the point.</strong>
-    Automate means AI produces the whole draft and you still press send. Augment means you make the
-    call and AI helps you make it faster. Most disappointment with AI in teaching comes from putting
-    a task in the wrong one of those two.
-  </div>
-
-  <!-- ── Worked examples ── -->
-  <div class="section-intro">
-    <h3>The Audit, Worked Through</h3>
-    <p>Six real tasks from one Economics teacher's week, after a year of building</p>
-  </div>
-
-  <div class="examples">
-
-    <div class="ex">
-      <div class="ex-meta"><span class="tag automate">Automate</span><span class="ex-note">Most data-sensitive</span></div>
-      <h4>Daily at-risk student tracking</h4>
-      <p>A daily class pulse that surfaces the students who need attention today. The most useful
-      thing on this list &mdash; and the one that carries the most data risk, which is why it leads
-      straight into the compliance section below.</p>
+    <div class="lede">
+      Thank you for coming. This page holds everything from the talk &mdash; the framework,
+      the worked examples, the compliance warnings, and the tools themselves.
+      <strong>Nothing here needs a VPN.</strong>
     </div>
 
-    <div class="ex">
-      <div class="ex-meta"><span class="tag automate">Automate</span><span class="ex-note">Done responsibly</span></div>
-      <h4>MCQ marking</h4>
-      <p>Scoring is pure SQL against a stored answer key &mdash; <strong>the model never marks anything</strong>.
-      Scan cells that can't be read are flagged for a human, never guessed. Verified at 59/60 accuracy.
-      The lesson generalises: when an answer is objectively checkable, check it with code, not a model.</p>
+    <div class="section-intro">
+      <h3>The Framework</h3>
+      <p>Sort every task in your week into one of three &mdash; before you decide on any tool</p>
     </div>
 
-    <div class="ex">
-      <div class="ex-meta"><span class="tag automate">Automate</span><span class="ex-note">Before &amp; after</span></div>
-      <h4>Termly report writing</h4>
-      <p>A year ago, the single biggest time sink of the term. Now a generated first draft in house
-      style, which a teacher edits and sends. The clearest before-and-after on this list.</p>
+    <div class="buckets">
+      <div class="bucket automate">
+        <h4>Automate</h4>
+        <div class="cn">自动化</div>
+        <p>AI drafts it fully. A human still reads it and still sends it. The judgment is in the review, not the drafting.</p>
+      </div>
+      <div class="bucket augment">
+        <h4>Augment</h4>
+        <div class="cn">辅助化</div>
+        <p>The human decides; AI assists. The decision never leaves you &mdash; AI shortens the distance to it.</p>
+      </div>
+      <div class="bucket keep">
+        <h4>Keep</h4>
+        <div class="cn">保留人工</div>
+        <p>Stays human by design. Not because AI can't &mdash; sometimes because it shouldn't, and sometimes because it costs more than it saves.</p>
+      </div>
     </div>
 
-    <div class="ex">
-      <div class="ex-meta"><span class="tag augment">Augment</span></div>
-      <h4>Essay and paper marking</h4>
-      <p>AI drafts the feedback; the teacher arbitrates the final mark. The draft saves the blank
-      page, not the decision.</p>
+    <div class="pullquote">
+      The three labels are not the point. <strong>The line between “automate” and “augment” is the point.</strong>
+      Automate means AI produces the whole draft and you still press send. Augment means you make the
+      call and AI helps you make it faster. Most disappointment with AI in teaching comes from putting
+      a task in the wrong one of those two.
     </div>
 
-    <div class="ex">
-      <div class="ex-meta"><span class="tag augment">Augment</span><span class="ex-note">Mid-build</span></div>
-      <h4>Daily lesson planning</h4>
-      <p>Still being built &mdash; deliberately included, because the framework has to hold for a
-      half-finished tool as well as a polished one. If the sort only works in hindsight, it isn't
-      a planning tool.</p>
+    <div class="section-intro">
+      <h3>The Audit, Worked Through</h3>
+      <p>Six real tasks from one Economics teacher's week, after a year of building</p>
     </div>
 
-    <div class="ex">
-      <div class="ex-meta"><span class="tag keep">Keep</span><span class="ex-note">Tried and abandoned</span></div>
-      <h4>Slide and resource decks</h4>
-      <p>Tried it. Abandoned it. <strong>Editing the AI's output cost more time than making the deck
-      from scratch.</strong> Worth saying out loud at a conference full of AI enthusiasm: a task
-      landing in "keep" is a real result, not a failure to try hard enough.</p>
+    <div class="examples">
+
+      <div class="ex">
+        <div class="ex-meta"><span class="tag automate">Automate</span><span class="ex-note">Most data-sensitive</span></div>
+        <h4>Daily at-risk student tracking</h4>
+        <p>A daily class pulse that surfaces the students who need attention today. The most useful
+        thing on this list &mdash; and the one that carries the most data risk, which is why it leads
+        straight into the compliance section.</p>
+      </div>
+
+      <div class="ex">
+        <div class="ex-meta"><span class="tag automate">Automate</span><span class="ex-note">Done responsibly</span></div>
+        <h4>MCQ marking</h4>
+        <p>Scoring is pure SQL against a stored answer key &mdash; <strong>the model never marks anything</strong>.
+        Scan cells that can't be read are flagged for a human, never guessed. Verified at 59/60 accuracy.
+        The lesson generalises: when an answer is objectively checkable, check it with code, not a model.</p>
+      </div>
+
+      <div class="ex">
+        <div class="ex-meta"><span class="tag automate">Automate</span><span class="ex-note">Before &amp; after</span></div>
+        <h4>Termly report writing</h4>
+        <p>A year ago, the single biggest time sink of the term. Now a generated first draft in house
+        style, which a teacher edits and sends. The clearest before-and-after on this list.</p>
+      </div>
+
+      <div class="ex">
+        <div class="ex-meta"><span class="tag augment">Augment</span></div>
+        <h4>Essay and paper marking</h4>
+        <p>AI drafts the feedback; the teacher arbitrates the final mark. The draft saves the blank
+        page, not the decision.</p>
+      </div>
+
+      <div class="ex">
+        <div class="ex-meta"><span class="tag augment">Augment</span><span class="ex-note">Mid-build</span></div>
+        <h4>Daily lesson planning</h4>
+        <p>Still being built &mdash; deliberately included, because the framework has to hold for a
+        half-finished tool as well as a polished one. If the sort only works in hindsight, it isn't
+        a planning tool.</p>
+      </div>
+
+      <div class="ex">
+        <div class="ex-meta"><span class="tag keep">Keep</span><span class="ex-note">Tried and abandoned</span></div>
+        <h4>Slide and resource decks</h4>
+        <p>Tried it. Abandoned it. <strong>Editing the AI's output cost more time than making the deck
+        from scratch.</strong> Worth saying out loud at a conference full of AI enthusiasm: a task
+        landing in "keep" is a real result, not a failure to try hard enough.</p>
+      </div>
+
+    </div>
+
+    <div class="section-intro">
+      <h3>What Stays Human</h3>
+      <p>By design, not by limitation</p>
+    </div>
+
+    <div class="lede">
+      The final judgment on a mark stays manual &mdash; and not because the models aren't accurate
+      enough. It stays manual because of what a mark is <em>for</em>: the growth-mindset conversation
+      that follows it only works if a person stands behind it. Teaching itself, pastoral care, and
+      mentoring colleagues sit in the same category. These are not the tasks waiting for a better model.
+    </div>
+
+    <div class="section-intro">
+      <h3>Three Places to Start</h3>
+      <p>Ranked by lowest risk and highest time saved</p>
+    </div>
+
+    <div class="lede">
+      <em>Coming after the talk &mdash; the three starting points, written up in full.</em>
     </div>
 
   </div>
 
-  <!-- ── Compliance ── -->
-  <div class="section-intro">
-    <h3>If You Teach in China, Read This First</h3>
-    <p>PIPL, data residency, and where student work is allowed to go</p>
-  </div>
+  <!-- ══ TAB 2 — YOUR AUDIT ══ -->
+  <div class="panel" id="panel-audit">
 
-  <div class="warn">
-    <h4>Real student data changes the calculation</h4>
-    <p>Marks, written comments and at-risk flags are personal information about minors. Putting them
-    through a foreign-hosted AI tool is a <strong>PIPL</strong> question before it is a pedagogy
-    question &mdash; and it is a question about your school's exposure, not only your own.</p>
-    <p>The practical rule that came out of a year of building: wherever <strong>real student data</strong>
-    is involved, default to a domestic tool. Save the foreign models for work that contains no
-    student information at all &mdash; planning, resource drafting, your own writing.</p>
-    <div class="toollist">
-      <span>豆包 Doubao</span><span>Kimi</span><span>智谱 GLM</span><span>通义千问 Qwen</span><span>DeepSeek</span>
+    <div class="section-intro">
+      <h3>Your Own Audit</h3>
+      <p>Sort your week, then take the list away with you</p>
     </div>
+
+    <div class="audit-intro">
+      Below is a starting list of recurring tasks in a teaching week. <strong>Sort each one the way
+      you would sort it</strong> &mdash; not the way I did. Add anything of your own that's missing,
+      and delete what doesn't apply to you.
+      <br><br>
+      When you're done, copy it out. Nothing is sent anywhere &mdash; your answers stay in this
+      browser, and they'll still be here if you come back to this page later.
+    </div>
+
+    <div class="audit-bar">
+      <div class="tally">
+        <span class="t-a"><b id="nAutomate">0</b> Automate</span>
+        <span class="t-g"><b id="nAugment">0</b> Augment</span>
+        <span class="t-k"><b id="nKeep">0</b> Keep</span>
+        <span class="t-n"><b id="nUnsorted">0</b> Unsorted</span>
+      </div>
+    </div>
+
+    <div id="taskList"></div>
+
+    <form class="add-row" onsubmit="addTask(event)">
+      <input type="text" id="newTask" placeholder="Add a task of your own…" maxlength="120">
+      <button type="submit">Add</button>
+    </form>
+
+    <div class="audit-actions">
+      <button class="act" onclick="copyAudit('list')">Copy my list</button>
+      <button class="act" onclick="copyAudit('prompt')">Copy as an AI prompt</button>
+      <button class="act ghost" onclick="resetAudit()">Start again</button>
+    </div>
+    <div class="copy-msg" id="copyMsg"></div>
+
+    <div class="warn" style="margin-top:22px">
+      <h4>Before you paste it into anything</h4>
+      <p>The list you copy contains no student information, so it is safe to paste anywhere. The
+      moment you go on to build one of these, that changes &mdash; see
+      <a href="#" onclick="switchTab('china');return false" style="color:var(--rust)">China &amp; Compliance</a>
+      before you put real marks, comments or names through a foreign-hosted tool.</p>
+    </div>
+
   </div>
 
-  <div class="lede">
-    The VPN question is part of this too. A workflow that depends on a VPN is a workflow that breaks
-    on the morning it matters &mdash; and asking colleagues to route student data through one is a
-    bigger ask than it first appears.
+  <!-- ══ TAB 3 — CHINA & COMPLIANCE ══ -->
+  <div class="panel" id="panel-china">
+
+    <div class="section-intro">
+      <h3>If You Teach in China, Read This First</h3>
+      <p>PIPL, data residency, and where student work is allowed to go</p>
+    </div>
+
+    <div class="warn">
+      <h4>Real student data changes the calculation</h4>
+      <p>Marks, written comments and at-risk flags are personal information about minors. Putting them
+      through a foreign-hosted AI tool is a <strong>PIPL</strong> question before it is a pedagogy
+      question &mdash; and it is a question about your school's exposure, not only your own.</p>
+      <p>The practical rule that came out of a year of building: wherever <strong>real student data</strong>
+      is involved, default to a domestic tool. Save the foreign models for work that contains no
+      student information at all &mdash; planning, resource drafting, your own writing.</p>
+      <div class="toollist">
+        <span>豆包 Doubao</span><span>Kimi</span><span>智谱 GLM</span><span>通义千问 Qwen</span><span>DeepSeek</span>
+      </div>
+    </div>
+
+    <div class="lede">
+      The VPN question is part of this too. A workflow that depends on a VPN is a workflow that breaks
+      on the morning it matters &mdash; and asking colleagues to route student data through one is a
+      bigger ask than it first appears.
+    </div>
+
+    <div class="section-intro">
+      <h3>Three Rules That Survived the Year</h3>
+      <p>What the compliance thinking actually reduced to</p>
+    </div>
+
+    <div class="examples">
+      <div class="ex">
+        <h4>1. If the answer is objectively checkable, check it with code</h4>
+        <p>MCQ scoring runs as a database query against a stored key. No model sees the answers, so
+        no model can be wrong about them &mdash; and nothing identifiable leaves the machine.</p>
+      </div>
+      <div class="ex">
+        <h4>2. Separate the data from the drafting</h4>
+        <p>A report generator can write in your house style without ever being told a student's name.
+        Strip the identifiers first and most of the compliance problem disappears with them.</p>
+      </div>
+      <div class="ex">
+        <h4>3. Unreadable beats wrong</h4>
+        <p>Anything the system can't read confidently gets flagged for a human rather than guessed.
+        A blank you have to fill in costs a minute; a plausible wrong mark costs a great deal more.</p>
+      </div>
+    </div>
+
   </div>
 
-  <!-- ── What stays human ── -->
-  <div class="section-intro">
-    <h3>What Stays Human</h3>
-    <p>By design, not by limitation</p>
-  </div>
+  <!-- ══ TAB 4 — THE TOOLS ══ -->
+  <div class="panel" id="panel-tools">
 
-  <div class="lede">
-    The final judgment on a mark stays manual &mdash; and not because the models aren't accurate
-    enough. It stays manual because of what a mark is <em>for</em>: the growth-mindset conversation
-    that follows it only works if a person stands behind it. Teaching itself, pastoral care, and
-    mentoring colleagues sit in the same category. These are not the tasks waiting for a better model.
-  </div>
+    <div class="section-intro">
+      <h3>The Tools</h3>
+      <p>Built for my own week, shared as they are</p>
+    </div>
 
-  <!-- ── Takeaway ── -->
-  <div class="section-intro">
-    <h3>Three Places to Start</h3>
-    <p>Ranked by lowest risk and highest time saved</p>
-  </div>
+    <div class="res-group">IB Economics</div>
 
-  <div class="lede">
-    <em>Coming after the talk &mdash; the three starting points, written up in full.</em>
-  </div>
+    <a class="res" href="https://ibecon.cn/#/" target="_blank" rel="noopener">
+      <div class="res-title">IBEcon.cn</div>
+      <div class="res-desc">The IB Diploma Economics site &mdash; notes, activities and practice
+      organised by syllabus unit. Hosted in mainland China, so it opens without a VPN.</div>
+    </a>
 
-  <!-- ── Resources ── -->
-  <div class="section-intro">
-    <h3>The Tools</h3>
-    <p>Built for my own week, shared as they are</p>
-  </div>
+    <a class="res" href="https://ibecon.cn/#/learn/4.1.1" target="_blank" rel="noopener">
+      <div class="res-title">IB Economics textbook<span class="res-flag">Free for now</span></div>
+      <div class="res-desc">The full textbook, free to read. This link opens at 4.1.1 &mdash; the
+      unit navigation is on the page, so you can move anywhere from there.</div>
+    </a>
 
-  <div style="padding-top:16px">
+    <div class="res-group">IGCSE Economics (0455)</div>
+
+    <a class="res" href="https://igecon.cn/#/" target="_blank" rel="noopener">
+      <div class="res-title">IGEcon.cn</div>
+      <div class="res-desc">The IGCSE 0455 equivalent &mdash; the same structure, built for the
+      Cambridge syllabus. Also China-hosted, also no VPN.</div>
+    </a>
+
+    <a class="res" href="https://igecon.cn/#/learn/2.6" target="_blank" rel="noopener">
+      <div class="res-title">IGCSE Economics textbook<span class="res-flag">Free for now</span></div>
+      <div class="res-desc">The full IGCSE textbook, free to read. Opens at 2.6; navigate to any
+      other unit from the contents on the page.</div>
+    </a>
+
+    <div class="res-group">Daily</div>
+
     <a class="res" href="/">
       <div class="res-title">The Econ Dispatch</div>
       <div class="res-desc">Each weekday morning: three economics news stories &mdash; one micro, one
@@ -284,19 +462,10 @@
       page is hosted on.</div>
     </a>
 
-    <a class="res res-todo" href="#">
-      <div class="res-title">IB Economics site &mdash; <em>link to add</em></div>
-      <div class="res-desc">One of the two China-based sites mentioned in the talk. Send me the URL
-      and I'll wire it up.</div>
-    </a>
-
-    <a class="res res-todo" href="#">
-      <div class="res-title">IGCSE Economics site &mdash; <em>link to add</em></div>
-      <div class="res-desc">The second China-based site. Same &mdash; send me the URL.</div>
-    </a>
   </div>
 
-  <!-- ── Subscribe ── -->
+  <!-- ══ ALWAYS VISIBLE ══ -->
+
   <div class="subscribe-box">
     <h3>Get the dispatch every weekday morning</h3>
     <div class="sub-blurb">
@@ -318,7 +487,6 @@
     </div>
   </div>
 
-  <!-- ── Bio ── -->
   <div class="bio">
     <h3>Nick Marsh</h3>
     <div class="cn-name">马喜 &middot; YCIS Puxi, Shanghai</div>
@@ -340,6 +508,229 @@
 </div>
 
 <script>
+// ── Tabs ────────────────────────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelector('.tab.' + tab).classList.add('active');
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('show'));
+  document.getElementById('panel-' + tab).classList.add('show');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── The audit ───────────────────────────────────────────────────
+const STORE_KEY = 'talkAudit.v1';
+
+// The starting list. Deliberately unsorted — the point of the exercise is that
+// the reader sorts it themselves rather than agreeing with my sort.
+const SEED_TASKS = [
+  ['Read subject news for lesson hooks', 'Daily'],
+  ['Plan individual lessons', 'Daily'],
+  ['Long-range curriculum pacing', 'Weekly'],
+  ['Make slides and resources', 'Weekly'],
+  ['Create MCQs and assessments', 'Fortnightly'],
+  ['Mark essays and extended writing', 'Weekly'],
+  ['Mark MCQ and objective work', 'Fortnightly'],
+  ['Write feedback comments', 'Weekly'],
+  ['Record grades in the school system', 'Weekly'],
+  ['Track who is falling behind', 'Daily'],
+  ['Chase late and missing homework', 'Weekly'],
+  ['Emails to parents and students', 'Daily'],
+  ['Prepare for student and parent conversations', 'Weekly'],
+  ['Write termly reports', 'Termly'],
+  ['Predicted grades', 'Termly'],
+  ['Attendance', 'Daily'],
+  ['Moderate and standardise department marking', 'Fortnightly'],
+  ['Cross-class or department data analysis', 'Termly'],
+  ['Flag students of concern', 'Termly'],
+  ['Teaching, explaining, pastoral care', 'Daily'],
+  ['Mentoring colleagues, observations, meetings', 'Weekly'],
+  ['Final judgment on a mark', 'Every mark'],
+];
+
+const LABELS = { automate: 'Automate', augment: 'Augment', keep: 'Keep', na: 'N/A' };
+
+let tasks = [];
+
+function defaultTasks() {
+  return SEED_TASKS.map(([name, cadence], i) => ({ id: 's' + i, name, cadence, choice: null }));
+}
+
+function load() {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (raw) {
+      const saved = JSON.parse(raw);
+      if (Array.isArray(saved) && saved.length) { tasks = saved; return; }
+    }
+  } catch (e) { /* private browsing, or storage disabled — carry on with defaults */ }
+  tasks = defaultTasks();
+}
+
+function save() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(tasks)); } catch (e) { /* not fatal */ }
+}
+
+function esc(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function render() {
+  const list = document.getElementById('taskList');
+  list.innerHTML = tasks.map(t => `
+    <div class="task">
+      <div class="task-name">${esc(t.name)}
+        ${t.cadence ? `<span class="task-cadence">${esc(t.cadence)}</span>` : ''}
+      </div>
+      <div class="choices">
+        ${['automate', 'augment', 'keep', 'na'].map(v =>
+          `<button class="choice ${t.choice === v ? 'on' : ''}" data-v="${v}"
+             onclick="setChoice('${t.id}','${v}')">${LABELS[v]}</button>`).join('')}
+      </div>
+      <button class="task-del" onclick="removeTask('${t.id}')" title="Remove this task">&times;</button>
+    </div>`).join('');
+  updateTally();
+}
+
+function updateTally() {
+  const n = v => tasks.filter(t => t.choice === v).length;
+  document.getElementById('nAutomate').textContent = n('automate');
+  document.getElementById('nAugment').textContent = n('augment');
+  document.getElementById('nKeep').textContent = n('keep');
+  document.getElementById('nUnsorted').textContent = tasks.filter(t => !t.choice).length;
+
+  const sorted = tasks.filter(t => t.choice).length;
+  const badge = document.getElementById('auditCount');
+  badge.textContent = sorted;
+  badge.style.display = sorted ? 'inline-block' : 'none';
+}
+
+function setChoice(id, v) {
+  const t = tasks.find(x => x.id === id);
+  if (!t) return;
+  t.choice = (t.choice === v) ? null : v;   // press again to clear
+  save();
+  render();
+}
+
+function removeTask(id) {
+  tasks = tasks.filter(t => t.id !== id);
+  save();
+  render();
+}
+
+function addTask(e) {
+  e.preventDefault();
+  const input = document.getElementById('newTask');
+  const name = input.value.trim();
+  if (!name) return;
+  tasks.push({ id: 'u' + Date.now(), name, cadence: '', choice: null });
+  input.value = '';
+  save();
+  render();
+}
+
+function resetAudit() {
+  if (!confirm('Clear your answers and start from the original list?')) return;
+  tasks = defaultTasks();
+  save();
+  render();
+  flash('Reset to the starting list.');
+}
+
+function buildText(mode) {
+  const group = v => tasks.filter(t => t.choice === v)
+    .map(t => '  - ' + t.name + (t.cadence ? ' (' + t.cadence + ')' : ''));
+  const unsorted = tasks.filter(t => !t.choice).map(t => '  - ' + t.name);
+
+  const a = group('automate'), g = group('augment'), k = group('keep'), na = group('na');
+  const L = [];
+
+  if (mode === 'prompt') {
+    L.push('I am a teacher. I have audited my recurring tasks and sorted them into three groups:');
+    L.push('');
+    L.push('  AUTOMATE = AI produces the whole draft; I still read it and still send it.');
+    L.push('  AUGMENT  = I make the decision; AI helps me reach it faster.');
+    L.push('  KEEP     = stays human by design.');
+    L.push('');
+    L.push('Here is my sort.');
+    L.push('');
+  } else {
+    L.push('MY TEACHING TASK AUDIT');
+    L.push('Automate, Augment, or Keep? — sorted ' + new Date().toLocaleDateString('en-GB',
+      { day: 'numeric', month: 'long', year: 'numeric' }));
+    L.push('');
+  }
+
+  L.push('AUTOMATE — AI drafts it fully, I still read and send it (' + a.length + ')');
+  L.push(a.length ? a.join('\n') : '  (none)');
+  L.push('');
+  L.push('AUGMENT — I decide, AI helps me decide faster (' + g.length + ')');
+  L.push(g.length ? g.join('\n') : '  (none)');
+  L.push('');
+  L.push('KEEP HUMAN — stays with me by design (' + k.length + ')');
+  L.push(k.length ? k.join('\n') : '  (none)');
+  if (na.length) { L.push(''); L.push('NOT APPLICABLE TO ME (' + na.length + ')'); L.push(na.join('\n')); }
+  if (unsorted.length) { L.push(''); L.push('STILL UNSORTED (' + unsorted.length + ')'); L.push(unsorted.join('\n')); }
+
+  if (mode === 'prompt') {
+    L.push('');
+    L.push('Please help me with the following, in this order:');
+    L.push('');
+    L.push('1. Challenge my sort. Tell me which items you think are in the wrong group and why —');
+    L.push('   particularly anything I have put in AUTOMATE that involves a judgement about a person.');
+    L.push('2. Of the items in AUTOMATE, pick the single one with the best ratio of time saved to');
+    L.push('   risk taken, and explain your choice.');
+    L.push('3. Walk me through building just that one thing. Ask me questions before proposing a');
+    L.push('   design; do not write any code until you have.');
+    L.push('');
+    L.push('One constraint you must respect throughout: I teach real students, so their marks,');
+    L.push('written comments and any at-risk flags are personal data about minors. If you are');
+    L.push('proposing anything that would send that data to a third-party service, say so');
+    L.push('explicitly and offer a design that keeps identifiable data out of it instead.');
+  }
+
+  L.push('');
+  L.push('---');
+  L.push('Framework from "Automate, Augment, or Keep? Auditing the Economics Teacher\'s Week');
+  L.push('in the AI Era" — Nick Marsh, 5th International Forum on Economics & Business');
+  L.push('Education, Shanghai, 12 September 2026.');
+  // Follows the page wherever it is hosted, so the link is right after any
+  // domain change. Falls back only when there is no http origin to read.
+  L.push(location.protocol.indexOf('http') === 0
+    ? location.origin + '/talk'
+    : 'https://econ-dispatch.vercel.app/talk');
+
+  return L.join('\n');
+}
+
+function flash(msg) {
+  const el = document.getElementById('copyMsg');
+  el.textContent = msg;
+  setTimeout(() => { if (el.textContent === msg) el.textContent = ''; }, 4000);
+}
+
+async function copyAudit(mode) {
+  const text = buildText(mode);
+  const what = mode === 'prompt' ? 'AI prompt' : 'list';
+  try {
+    await navigator.clipboard.writeText(text);
+    flash('Copied your ' + what + ' to the clipboard.');
+  } catch (err) {
+    // Clipboard blocked (older browser, or an in-app browser like WeChat).
+    // Select it instead so the reader can copy by hand.
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.cssText = 'width:100%;height:220px;font-size:12px;margin-top:10px;padding:10px;border:1px solid var(--rule)';
+    const msg = document.getElementById('copyMsg');
+    msg.textContent = 'Your browser blocked the clipboard — select the text below and copy it:';
+    msg.after(ta);
+    ta.focus();
+    ta.select();
+  }
+}
+
+// ── Subscribe ───────────────────────────────────────────────────
 async function subscribeToDispatch(e) {
   e.preventDefault();
   const btn = document.getElementById('subBtn');
@@ -369,11 +760,13 @@ async function subscribeToDispatch(e) {
   } catch (err) {
     msg.className = 'sub-msg bad';
     msg.textContent = 'Could not reach the server. Check your connection and try again.';
-  } finally {
-    btn.disabled = false;
-    btn.textContent = 'Subscribe';
   }
+  btn.disabled = false;
+  btn.textContent = 'Subscribe';
 }
+
+load();
+render();
 </script>
 
 </body>
