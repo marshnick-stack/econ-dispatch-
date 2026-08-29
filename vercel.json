@@ -1,5 +1,13 @@
 {
   "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/",
+      "has": [{ "type": "host", "value": "event.getaheadsup.com" }],
+      "destination": "/talk"
+    },
+    { "source": "/dispatch", "destination": "/index.html" }
+  ],
   "functions": {
     "api/digest.js": {
       "maxDuration": 60
