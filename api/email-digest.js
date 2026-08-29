@@ -165,7 +165,10 @@ export default async function handler(req, res) {
 
   // Leave headroom inside the 60s function limit for the Resend call, which is
   // fast (~1s). Generation is the slow part, so give it as much room as is safe.
-  const result = await getDigest({ timeoutMs: 52000 });
+  // trusted: this endpoint already required CRON_SECRET or TEACHER_PASSWORD to
+  // get here, and the morning email must never be refused by the public
+  // endpoint's daily generation ceiling.
+  const result = await getDigest({ timeoutMs: 52000, trusted: true });
   if (!result.ok) {
     return res.status(result.status || 500).json({ error: result.error, emailed: false });
   }

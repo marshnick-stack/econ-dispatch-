@@ -165,7 +165,23 @@ const CANDIDATES_PER_SECTION = 2;
 // Bounds worst-case latency. Too low and the model cannot find enough distinct
 // stories and the response fails validation; 8 leaves room for a few searches
 // per section plus retries on a thin result.
-const MAX_SEARCHES = 8;
+// Each search costs $0.01, and with the basic (non-filtering) search tool every
+// result is loaded into context and accumulates across rounds — so this number
+// drives BOTH the search charge and the input-token bill. 8 was picked for
+// thoroughness without measuring whether 4 was enough; the usage line logged
+// below is how we now find out.
+const MAX_SEARCHES = 4;
+
+// Hard ceiling on generations per day for untrusted callers (see getDigest).
+// Worst case cost is this × the per-run figure in the usage log.
+const MAX_GENERATIONS_PER_DAY = Number(process.env.MAX_GENERATIONS_PER_DAY) || 5;
+
+// For the cost line in the logs. Intro pricing runs through 2026-08-31, after
+// which Sonnet 5 reverts to $3.00 / $15.00 — update these then or the estimate
+// silently under-reports by a third.
+const PRICE_IN_PER_MTOK = 2.00;
+const PRICE_OUT_PER_MTOK = 10.00;
+const PRICE_PER_SEARCH = 0.01; // $10 per 1,000 searches
 
 function buildPrompt(recent) {
   // A short list of what has run recently. This is the layer that catches the same
@@ -242,7 +258,7 @@ function pickFreshStories(candidates, recent) {
  * @param {number} opts.timeoutMs  abort the Anthropic call after this long
  * @returns {Promise<{ok: boolean, text?: string, digest?: object, cached?: boolean, status?: number, error?: string}>}
  */
-export async function getDigest({ timeoutMs = 55000 } = {}) {
+export async function getDigest({ timeoutMs = 55000, trusted = false } = {}) {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) return { ok: false, status: 500, error: 'API key not configured on server.' };
 
@@ -266,6 +282,42 @@ export async function getDigest({ timeoutMs = 55000 } = {}) {
       }
     } catch (kvErr) {
       console.warn('Redis read failed, falling through to API:', kvErr.message);
+    }
+  }
+
+  // ── Generation guard ────────────────────────────────────────────────────
+  // Past this point every path spends money, so untrusted callers are bounded
+  // here. `trusted` is for the weekday cron: it is authenticated, runs once on
+  // a schedule, and must never be turned away. /api/digest is open to anyone.
+  //
+  // Counting ATTEMPTS rather than successes is deliberate — a run that fails
+  // validation is billed in full, so it has to count against the ceiling.
+  if (!trusted) {
+    if (!redis) {
+      // No Redis means no cache and no counter: nothing would bound how often
+      // this generates. Refusing is the cheap failure; generating is not.
+      return {
+        ok: false, status: 503,
+        error: 'The digest is temporarily unavailable. Please try again shortly.',
+      };
+    }
+    try {
+      const genKey = `gen:${shanghaiDateString(now)}`;
+      const used = await redis.incr(genKey);
+      if (used === 1) await redis.expire(genKey, 26 * 3600);
+      if (used > MAX_GENERATIONS_PER_DAY) {
+        console.warn(`Generation ceiling hit: ${used} attempts today (max ${MAX_GENERATIONS_PER_DAY}).`);
+        return {
+          ok: false, status: 429,
+          error: "Today's digest could not be prepared. Please try again later.",
+        };
+      }
+    } catch (kvErr) {
+      console.warn('Generation counter unavailable, refusing to generate:', kvErr.message);
+      return {
+        ok: false, status: 503,
+        error: 'The digest is temporarily unavailable. Please try again shortly.',
+      };
     }
   }
 
@@ -317,6 +369,25 @@ export async function getDigest({ timeoutMs = 55000 } = {}) {
     }
 
     const data = await response.json();
+
+    // ── What this run actually cost ─────────────────────────────────────
+    // Logged on EVERY generation, including ones that fail validation below —
+    // a failed run is billed in full, so a cost line that only appeared on
+    // success would hide exactly the runs worth knowing about.
+    // Read it in Vercel → Logs, filter for "[digest] usage".
+    const u = data.usage || {};
+    const searches = u.server_tool_use?.web_search_requests ?? 0;
+    const estUSD = (u.input_tokens || 0) / 1e6 * PRICE_IN_PER_MTOK
+                 + (u.output_tokens || 0) / 1e6 * PRICE_OUT_PER_MTOK
+                 + searches * PRICE_PER_SEARCH;
+    console.log('[digest] usage ' + JSON.stringify({
+      searches,
+      input_tokens: u.input_tokens ?? null,
+      output_tokens: u.output_tokens ?? null,
+      est_usd: Number(estUSD.toFixed(4)),
+      max_searches: MAX_SEARCHES,
+    }));
+
     const raw = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
 
     const check = validateDigest(raw);
