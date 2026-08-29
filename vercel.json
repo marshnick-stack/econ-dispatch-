@@ -1,12 +1,5 @@
 {
   "cleanUrls": true,
-  "_comment_rewrites": [
-    "Vercel checks the filesystem BEFORE rewrites, so a rule for '/' can never",
-    "fire while an index.html exists. The dispatch therefore lives at",
-    "dispatch.html (served at /dispatch by cleanUrls) and nothing sits at the",
-    "root, which lets these two rules decide what each domain shows.",
-    "Order matters: the host-specific rule must come first."
-  ],
   "rewrites": [
     {
       "source": "/",
