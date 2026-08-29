@@ -11,7 +11,7 @@
 // worse than no email.
 
 import { getDigest, getRedis, shanghaiNow, shanghaiDateString } from './_lib/digest-core.js';
-import { getRecipients, unsubscribeUrl, normaliseEmail } from './_lib/subscribers.js';
+import { getRecipients, unsubscribeUrl, normaliseEmail, siteUrl } from './_lib/subscribers.js';
 
 // Resend accepts up to 100 messages per batch call.
 const BATCH_SIZE = 100;
@@ -94,7 +94,7 @@ export function renderEmail(digest, dateLabel, unsubUrl) {
       <tr><td style="padding:28px 0 0;border-top:1px solid #e0dbd0;">
         <p style="margin:0;font-size:11px;color:#8a8070;line-height:1.6;">
           Three stories, one per section, from the last 48 hours.<br>
-          <a href="https://econ-dispatch.vercel.app" style="color:#8a6d1f;text-decoration:none;">Open the full dispatch &rarr;</a>
+          <a href="${siteUrl()}" style="color:#8a6d1f;text-decoration:none;">Open the full dispatch &rarr;</a>
           ${unsubUrl ? `<br><a href="${esc(unsubUrl)}" style="color:#8a8070;text-decoration:underline;">Unsubscribe</a>` : ''}
         </p>
       </td></tr>
@@ -119,7 +119,7 @@ export function renderPlainText(digest, dateLabel, unsubUrl) {
       lines.push('');
     }
   }
-  lines.push('https://econ-dispatch.vercel.app');
+  lines.push(siteUrl());
   if (unsubUrl) lines.push('', `Unsubscribe: ${unsubUrl}`);
   return lines.join('\n');
 }

@@ -28,8 +28,13 @@ export const MAX_SUBSCRIBERS = Number(process.env.MAX_SUBSCRIBERS) || 90;
 
 const SIGNUPS_PER_IP_PER_HOUR = 5;
 
+// Every reader-facing link in an email goes through here, so this is the one
+// place that decides which domain subscribers are sent to. The fallback is the
+// custom domain, not *.vercel.app, because vercel.app is DNS-blocked in
+// mainland China — if SITE_URL ever goes missing, failing over to a domain most
+// of these readers cannot open is the worst possible default.
 export function siteUrl() {
-  return (process.env.SITE_URL || 'https://econ-dispatch.vercel.app').replace(/\/+$/, '');
+  return (process.env.SITE_URL || 'https://event.getaheadsup.com').replace(/\/+$/, '');
 }
 
 export function normaliseEmail(raw) {
