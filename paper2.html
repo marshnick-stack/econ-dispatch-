@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paper 2 — Built From a News Story</title>
+<meta name="description" content="A worked IB Economics Paper 2 data response built from a real policy story, showing how to turn news into assessment material without any student data involved.">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Automate, Augment, or Keep?">
+<meta property="og:url" content="https://event.getaheadsup.com/paper2">
+<meta property="og:title" content="Paper 2 — Built From a News Story">
+<meta property="og:description" content="A worked data response, and the method behind it: turning real policy into assessment material. No student data involved, so it is the safest place to start.">
+<meta property="og:image" content="https://event.getaheadsup.com/og-talk-v3.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://event.getaheadsup.com/og-talk-v3.png">
+
+<link rel="icon" type="image/png" href="/talk-icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/talk-icon.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&display=swap');
+
+  :root {
+    --ink: #1a1208; --cream: #f5f0e8; --warm: #f0e8d5; --gold: #b8860b;
+    --rust: #8b3a1a; --teal: #1a5c5c; --mid: #5c4a2a; --rule: #c8b89a; --save: #2d6a2d;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--cream); font-family: 'Source Serif 4', Georgia, serif; color: var(--ink); min-height: 100vh; zoom: 1.2; }
+
+  .masthead { background: var(--ink); color: var(--cream); text-align: center; padding: 28px 20px 22px; border-bottom: 4px solid var(--gold); }
+  .masthead-sub { font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--rule); margin-bottom: 10px; }
+  .masthead h1 { font-family: 'Playfair Display', serif; font-size: clamp(24px, 3.8vw, 38px); font-weight: 900; letter-spacing: -0.5px; line-height: 1.08; color: var(--cream); }
+  .masthead h1 span { color: var(--gold); }
+  .masthead h2 { font-family: 'Playfair Display', serif; font-size: clamp(13px, 1.7vw, 17px); font-weight: 400; font-style: italic; color: var(--rule); margin-top: 10px; }
+
+  .backbar { background: var(--warm); border-bottom: 2px solid var(--rule); padding: 9px 16px; text-align: center; }
+  .backbar a { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--mid); text-decoration: none; font-family: 'Playfair Display', serif; font-weight: 700; }
+  .backbar a:hover { color: var(--gold); }
+
+  .container { max-width: 800px; margin: 0 auto; padding: 0 16px; }
+
+  .section-intro { padding: 32px 0 6px; border-bottom: 2px solid var(--ink); margin-bottom: 6px; }
+  .section-intro h3 { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 900; }
+  .section-intro p { font-size: 12px; color: var(--mid); margin-top: 4px; letter-spacing: 0.5px; }
+
+  p.body { font-size: 15.5px; line-height: 1.7; color: #2a1f0a; margin: 14px 0; }
+  p.body strong { font-weight: 600; }
+
+  .warn { border: 1px solid #d4856a; border-left: 4px solid var(--rust); background: #fff8f5; padding: 16px 19px; margin: 18px 0; }
+  .warn h4 { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; color: var(--rust); margin-bottom: 7px; }
+  .warn p { font-size: 15px; line-height: 1.65; color: #2a1f0a; margin-bottom: 8px; }
+  .warn p:last-child { margin-bottom: 0; }
+
+  .note { border: 1px solid var(--rule); background: #fffdf8; padding: 16px 19px; margin: 18px 0; }
+  .note h4 { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; margin-bottom: 7px; color: var(--mid); }
+  .note p, .note li { font-size: 15px; line-height: 1.65; color: #2a1f0a; }
+  .note ul { margin: 8px 0 0 20px; }
+  .note li { margin-bottom: 6px; }
+
+  /* ── The paper ── */
+  .paper { border: 2px solid var(--ink); background: #fffdf8; margin: 22px 0; }
+  .paper-head { background: var(--ink); color: var(--cream); padding: 14px 20px; }
+  .paper-head .code { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--rule); }
+  .paper-head h3 { font-family: 'Playfair Display', serif; font-size: 21px; font-weight: 700; margin-top: 4px; }
+  .paper-head .marks { font-size: 12px; color: var(--gold); letter-spacing: 1.5px; margin-top: 5px; }
+  .paper-body { padding: 20px 22px 24px; }
+
+  .extract { border-left: 3px solid var(--gold); background: var(--warm); padding: 15px 18px; margin: 4px 0 18px; }
+  .extract .label { font-family: 'Playfair Display', serif; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--mid); margin-bottom: 8px; }
+  .extract p { font-size: 15px; line-height: 1.68; color: #2a1f0a; margin-bottom: 10px; }
+  .extract p:last-child { margin-bottom: 0; }
+  .extract .para-no { color: var(--mid); font-size: 12px; margin-right: 7px; vertical-align: 1px; }
+
+  .tablewrap { overflow-x: auto; margin: 16px 0; border: 1px solid var(--rule); }
+  table { border-collapse: collapse; width: 100%; min-width: 420px; background: #fff; }
+  caption { text-align: left; font-family: 'Playfair Display', serif; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--mid); padding: 9px 12px; background: var(--warm); border-bottom: 1px solid var(--rule); }
+  th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--rule); font-size: 14px; }
+  th { background: #fbf8f1; font-family: 'Playfair Display', serif; font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tr:last-child td { border-bottom: none; }
+
+  ol.qs { list-style: none; margin: 18px 0 0; }
+  ol.qs > li { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--rule); align-items: baseline; }
+  ol.qs > li:last-child { border-bottom: none; }
+  .qlab { font-family: 'Playfair Display', serif; font-weight: 700; min-width: 34px; color: var(--teal); }
+  .qtext { flex: 1; font-size: 15.5px; line-height: 1.65; }
+  .qmark { font-family: 'Playfair Display', serif; font-size: 14px; color: var(--mid); white-space: nowrap; }
+
+  .res { display: block; border: 1px solid var(--rule); background: #fffdf8; padding: 15px 17px; margin: 12px 0; text-decoration: none; color: var(--ink); transition: all .18s; }
+  .res:hover { border-color: var(--gold); background: var(--warm); }
+  .res-title { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; margin-bottom: 3px; }
+  .res:hover .res-title { color: #8a6d1f; }
+  .res-desc { font-size: 13.5px; line-height: 1.55; color: var(--mid); }
+
+  .page-footer { text-align: center; font-size: 11.5px; color: var(--mid); letter-spacing: .5px; padding: 26px 0 34px; border-top: 1px solid var(--rule); margin-top: 30px; line-height: 1.9; }
+  .page-footer a { color: var(--mid); text-decoration: none; border-bottom: 1px dotted var(--rule); }
+  .page-footer a:hover { color: var(--gold); }
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="masthead-sub">Starting point one &middot; no student data involved</div>
+  <h1>Paper 2, Built From <span>a News Story</span></h1>
+  <h2>Turning real policy into assessment material &mdash; the safest place to begin</h2>
+</div>
+
+<div class="backbar">
+  <a href="/tools">&larr; Back to Three Places to Start</a>
+</div>
+
+<div class="container">
+
+  <p class="body" style="padding-top:22px">
+    Textbook data is out of date the day it prints. A policy story from this month is not, and
+    students notice the difference &mdash; particularly when the policy is one they can see from the
+    classroom window.
+  </p>
+
+  <p class="body">
+    This is a worked example of the method: take a real policy, build the stimulus and the questions
+    around it, and you have assessment material that is current, local, and involves
+    <strong>no student data whatsoever</strong>. Nothing to consent to, nobody to ask, nothing that
+    can go wrong beyond a question that needed rewording.
+  </p>
+
+  <div class="paper">
+    <div class="paper-head">
+      <div class="code">IB Diploma Programme &middot; Economics &middot; Paper 2</div>
+      <h3>Data response</h3>
+      <div class="marks">Answer all parts &middot; 30 marks</div>
+    </div>
+
+    <div class="paper-body">
+
+      <div class="extract">
+        <div class="label">Text A &mdash; Shanghai's licence plate auction</div>
+        <p><span class="para-no">1</span> Shanghai controls the number of private cars on its roads by
+        limiting how many new licence plates may be issued each month. Plates are not sold at a fixed
+        price. They are auctioned, and the number available is fixed in advance by the city
+        government, independently of how many people want one.</p>
+        <p><span class="para-no">2</span> Demand consistently exceeds the quota by a wide margin. Only
+        a small proportion of bidders succeed in any given month, and the average winning bid has
+        remained high enough that the plate can cost a significant fraction of the price of the car
+        itself.</p>
+        <p><span class="para-no">3</span> The policy is defended on the grounds of congestion and air
+        quality. Each additional car imposes costs on people other than its driver &mdash; slower
+        journeys for everyone else, and worse air for those who do not drive at all. Critics argue
+        that the auction favours wealthier households, who can absorb the cost of a plate more easily,
+        and that it has pushed some buyers towards registering vehicles in neighbouring provinces.</p>
+        <p><span class="para-no">4</span> Plates for battery electric vehicles have been treated
+        differently, with the city issuing them under far less restrictive conditions in order to
+        encourage a shift away from petrol engines.</p>
+      </div>
+
+      <div class="tablewrap">
+        <table>
+          <caption>Table 1 &mdash; Monthly licence plate auction (illustrative figures)</caption>
+          <thead>
+            <tr><th>Month</th><th class="num">Plates available</th><th class="num">Bidders</th><th class="num">Average winning bid (RMB)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>January</td><td class="num">10,000</td><td class="num">168,000</td><td class="num">92,300</td></tr>
+            <tr><td>February</td><td class="num">10,000</td><td class="num">174,500</td><td class="num">93,100</td></tr>
+            <tr><td>March</td><td class="num">12,000</td><td class="num">191,200</td><td class="num">91,800</td></tr>
+            <tr><td>April</td><td class="num">12,000</td><td class="num">203,600</td><td class="num">92,600</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ol class="qs">
+        <li><span class="qlab">(a)</span><span class="qtext">Define the following terms indicated in bold in the text:<br>
+          (i) <strong>quota</strong> (paragraph 1)<br>
+          (ii) <strong>costs on people other than its driver</strong> (paragraph 3)</span><span class="qmark">[2 + 2]</span></li>
+
+        <li><span class="qlab">(b)</span><span class="qtext">Using a demand and supply diagram, explain how
+          fixing the number of plates available affects the price paid by successful bidders.</span><span class="qmark">[4]</span></li>
+
+        <li><span class="qlab">(c)</span><span class="qtext">Using a negative externality of consumption
+          diagram, explain why the market for private car use in a large city may result in a welfare
+          loss.</span><span class="qmark">[4]</span></li>
+
+        <li><span class="qlab">(d)</span><span class="qtext">Using information from Table 1, calculate the
+          percentage change in the number of bidders between January and April.</span><span class="qmark">[3]</span></li>
+
+        <li><span class="qlab">(e)</span><span class="qtext">Using information from the text and table and
+          your knowledge of economics, <strong>evaluate</strong> the use of a licence plate quota, rather
+          than a tax on fuel, as a means of reducing the external costs of car use in a large
+          city.</span><span class="qmark">[15]</span></li>
+      </ol>
+
+    </div>
+  </div>
+
+  <!-- ── The method ── -->
+  <div class="section-intro">
+    <h3>How This Was Made</h3>
+    <p>The transferable part &mdash; roughly twenty minutes</p>
+  </div>
+
+  <p class="body">
+    <strong>Start with a policy, not a topic.</strong> "Externalities" produces a generic paper.
+    A specific policy with a real mechanism produces one with something to argue about. The best
+    stimulus is one where reasonable economists disagree &mdash; here, whether a quota or a tax is the
+    better instrument, which is the entire fifteen-mark question.
+  </p>
+
+  <p class="body">
+    <strong>Make the local example the default, not the treat.</strong> This one is visible from any
+    Shanghai classroom window. Students who have watched a parent bid for a plate arrive with an
+    intuition the textbook cannot give them, and evaluation is where that intuition pays.
+  </p>
+
+  <p class="body">
+    <strong>Write the command terms last.</strong> Build the stimulus first, then ask what it can
+    genuinely support. A table with four rows can support a calculation; it cannot support a question
+    about trends over a decade. Most weak practice questions are ones the data cannot actually answer.
+  </p>
+
+  <p class="body">
+    <strong>Then check it yourself.</strong> Every question here has to be answerable from the text and
+    table alone. That check is the part that stays human &mdash; and it is quick, because you wrote the
+    stimulus and you know what is in it.
+  </p>
+
+  <div class="warn">
+    <h4>Two honest notes on this example</h4>
+    <p>The figures in Table 1 are <strong>illustrative</strong>, in the ordinary way of practice
+    materials &mdash; they are the right shape for the policy but should not be quoted as data. For a
+    real sitting, drop in the current published figures; the questions do not change.</p>
+    <p>And check the mark allocations against the current subject guide before you use it. The
+    structure follows the familiar 30-mark data response shape, but the guide is the authority and I
+    am not.</p>
+  </div>
+
+  <div class="note">
+    <h4>Why this is the safest starting point</h4>
+    <p>Nothing on this page involves a single student. There is no personal information, so there is
+    no cross-border transfer question, no consent to obtain, and nobody who can be harmed if the
+    output is poor. The worst case is a question you rewrite.</p>
+    <p>That is exactly why it is first. You will learn what these tools are genuinely good at on work
+    where being wrong costs you nothing &mdash; and by the time you reach the tasks that do involve
+    student data, you will already know which parts to keep for yourself.
+    <a href="/tools#start" style="color:var(--teal)">The other two starting points &rarr;</a></p>
+  </div>
+
+  <!-- ── More ── -->
+  <div class="section-intro">
+    <h3>More Papers</h3>
+    <p>The real ones, on the IB site</p>
+  </div>
+
+  <a class="res" href="https://ibecon.cn/#/student/exams" target="_blank" rel="noopener">
+    <div class="res-title">📝 Exam Room &mdash; IBEcon.cn</div>
+    <div class="res-desc">The full paper library on the IB Economics site: Paper 1, Paper 2 and
+    Paper 3 practice built this way over a summer. China-hosted, so it opens without a VPN.</div>
+  </a>
+
+  <a class="res" href="https://igecon.cn/#/" target="_blank" rel="noopener">
+    <div class="res-title">IGEcon.cn &mdash; the IGCSE 0455 equivalent</div>
+    <div class="res-desc">The same approach for Cambridge IGCSE Economics.</div>
+  </a>
+
+  <div class="page-footer">
+    <strong>Paper 2, built from a news story</strong> &middot; Starting point one<br>
+    Nick Marsh &middot; 5th International Forum on Economics &amp; Business Education<br>
+    Huili School Shanghai &middot; 12 September 2026<br><br>
+    <em>A worked demonstration of the method. Figures illustrative; check mark allocations against the
+    current subject guide.</em><br><br>
+    <a href="/">&larr; Automate, Augment, or Keep?</a> &nbsp;&middot;&nbsp;
+    <a href="/tools">Three Places to Start &rarr;</a>
+  </div>
+
+</div>
+
+</body>
+</html>
