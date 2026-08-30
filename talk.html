@@ -268,6 +268,15 @@
       a task in the wrong one of those two.
     </div>
 
+    <div class="pullquote" style="border-left-color: var(--teal)">
+      And <strong>“automate” does not mean “AI”.</strong> The most reliable automations on
+      this list have no model anywhere near them: multiple-choice scoring runs as a database
+      query against a stored answer key, and so does checking your teaching against the full
+      syllabus. If a task has an objectively checkable answer, check it with code &mdash;
+      reaching for a model turns a solved problem back into a probabilistic one.
+      Seating plans are the clearest case: keep them away from AI, and automate them properly.
+    </div>
+
     <div class="section-intro">
       <h3>The Audit, Worked Through</h3>
       <p>Six real tasks from one Economics teacher's week, after a year of building</p>
@@ -487,10 +496,26 @@
     <div class="res-group">Daily</div>
 
     <a class="res" href="/dispatch">
-      <div class="res-title">The Econ Dispatch</div>
+      <div class="res-title">The Econ Dispatch<span class="res-flag">No VPN</span></div>
       <div class="res-desc">Each weekday morning: three economics news stories &mdash; one micro, one
       macro, one global &mdash; with the IGCSE 0455 and IB syllabus links already drawn. The tool this
-      page is hosted on.</div>
+      page is hosted on. Subscribe at the bottom of any tab.</div>
+    </a>
+
+    <a class="res" href="https://econ-dispatch.vercel.app" target="_blank" rel="noopener">
+      <div class="res-title">The Econ Dispatch &mdash; original address</div>
+      <div class="res-desc">The same dispatch on its <code>vercel.app</code> address. Included for
+      completeness, but <strong>this one is blocked in mainland China</strong> &mdash; which is
+      exactly why the link above exists. Use it if you are reading this from outside.</div>
+    </a>
+
+    <div class="res-group">Building your own</div>
+
+    <a class="res" href="https://bolt.diy" target="_blank" rel="noopener">
+      <div class="res-title">bolt.diy</div>
+      <div class="res-desc">Open-source, run-it-yourself version of Bolt: describe what you want and
+      it builds a working web app. You choose which model sits behind it, which means you can point
+      it at a domestic one and keep the whole loop inside China.</div>
     </a>
 
   </div>
@@ -591,7 +616,6 @@ const SEED_TASKS = [
 
   ['Track who is falling behind', 'Daily', 3],
   ['Chase late and missing homework', 'Weekly', 3],
-  ['Attendance', 'Daily', 3],
   ['Flag students of concern', 'Termly', 3],
   ['Cross-class or department data analysis', 'Termly', 3],
 
