@@ -547,11 +547,13 @@ const STORE_KEY = 'talkAudit.v1';
 // the reader sorts it themselves rather than agreeing with my sort.
 const SEED_TASKS = [
   ['Read subject news for lesson hooks', 'Daily'],
+  ['Forward news and articles on to students', 'Weekly'],
   ['Plan individual lessons', 'Daily'],
   ['Long-range curriculum pacing', 'Weekly'],
   ['Make slides and resources', 'Weekly'],
   ['Create MCQs and assessments', 'Fortnightly'],
   ['Mark essays and extended writing', 'Weekly'],
+  ['Vet article choices for student coursework', 'Weekly'],
   ['Mark MCQ and objective work', 'Fortnightly'],
   ['Write feedback comments', 'Weekly'],
   ['Record grades in the school system', 'Weekly'],
@@ -583,7 +585,27 @@ function load() {
     const raw = localStorage.getItem(STORE_KEY);
     if (raw) {
       const saved = JSON.parse(raw);
-      if (Array.isArray(saved) && saved.length) { tasks = saved; return; }
+      if (Array.isArray(saved) && saved.length) {
+        // Seed tasks added since this reader last visited get appended rather
+        // than replacing their list. Bumping the storage key instead would be
+        // simpler, but it would silently throw away a sort someone had already
+        // made — and the sort is the only thing of value they have here.
+        // Deletions stick: a task they removed stays removed.
+        const seenNames = new Set(saved.map(t => t.name));
+        const seenIds = new Set(saved.map(t => t.id));
+        let n = 0;
+        const freshId = () => {
+          let id;
+          do { id = 'm' + (n++); } while (seenIds.has(id));
+          seenIds.add(id);
+          return id;
+        };
+        for (const [name, cadence] of SEED_TASKS) {
+          if (!seenNames.has(name)) saved.push({ id: freshId(), name, cadence, choice: null });
+        }
+        tasks = saved;
+        return;
+      }
     }
   } catch (e) { /* private browsing, or storage disabled — carry on with defaults */ }
   tasks = defaultTasks();
