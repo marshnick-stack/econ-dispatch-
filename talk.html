@@ -343,15 +343,6 @@
       mentoring colleagues sit in the same category. These are not the tasks waiting for a better model.
     </div>
 
-    <div class="section-intro">
-      <h3>Three Places to Start</h3>
-      <p>Ranked by lowest risk and highest time saved</p>
-    </div>
-
-    <div class="lede">
-      <em>Coming after the talk &mdash; the three starting points, written up in full.</em>
-    </div>
-
     <!-- ── The audit tool follows straight on from the framework: read the sort,
          then do the sort, without changing tab. ── -->
 
@@ -554,6 +545,87 @@
       <a href="https://www.mindstudio.ai/blog/how-to-set-up-deepseek-harness" target="_blank" rel="noopener"
          style="color:#8a6d1f">A walkthrough of setting it up &rarr;</a></div>
     </a>
+
+    <!-- ── Closing takeaway. Lives at the end of Tools because by this point the
+         reader has the framework, has sorted their own week, and is looking for
+         what to actually do on Monday. ── -->
+
+    <div class="section-intro" id="start">
+      <h3>Three Places to Start</h3>
+      <p>Ranked by lowest risk and highest time saved &mdash; each step adds exactly one risk</p>
+    </div>
+
+    <div class="lede">
+      These are in order for a reason. The first involves no student data at all. The second involves
+      student data but no AI. The third involves both. <strong>Don't take the next step until the last
+      one is working</strong> &mdash; that sequence is more useful to remember than any of the three
+      individually.
+    </div>
+
+    <div class="examples">
+
+      <div class="ex">
+        <div class="ex-meta"><span class="tag automate">Start here</span><span class="ex-note">No student data &middot; no permission needed</span></div>
+        <h4>1. Build teaching material out of real-world data</h4>
+        <p>Nothing about a student is involved, so there is no PIPL question, nothing to ask
+        permission for, and no way to cause harm. You can start this afternoon.</p>
+        <p>Two things I do here. <strong>The dispatch</strong> on this site finds three economics
+        stories every weekday and draws the syllabus links &mdash; it runs on a schedule and I read
+        it with my coffee. And over one summer I built <strong>Paper 2 and Paper 3 practice</strong>
+        for both my sites by taking real news articles and generating data-response questions from
+        them. Textbook data is out of date the day it prints; a story from this week is not, and
+        students notice the difference.</p>
+        <p>The same move covers rewriting a textbook example for where you actually teach &mdash; the
+        UK petrol-duty example becoming a Shanghai congestion-policy example.</p>
+      </div>
+
+      <div class="ex">
+        <div class="ex-meta"><span class="tag automate">Then</span><span class="ex-note">Student data &middot; but no model touches it</span></div>
+        <h4>2. Automate something objectively checkable &mdash; with code, not AI</h4>
+        <p>Now real student data is involved, so it stays on your machine. But no model goes near it,
+        which means the things that can go wrong are ordinary bugs rather than confident wrong answers.</p>
+        <p>This one is on the list because of a failure. I once ran a multiple-choice analysis for a
+        class through an AI chat and got back a tidy, confident report that listed a student as wrong
+        on four questions the mark scheme &mdash; and that student's own answers &mdash; showed as
+        <strong>correct</strong>. Nothing about the output looked wrong. Now the answer key is parsed
+        by pattern-matching, never by a model, and every score is a database query. The model only
+        transcribes handwriting, and unreadable cells get flagged rather than guessed: hand-checked at
+        <strong>59 out of 60</strong> on real scans, with the one miss coming back flagged.</p>
+        <p>You do not have to build what I built. The transferable part is the rule:
+        <strong>if an answer is objectively checkable, check it with code.</strong> Reaching for a
+        model turns a solved problem back into a probabilistic one.
+        <a href="/platform#rules" style="color:var(--teal)">How that works &rarr;</a></p>
+      </div>
+
+      <div class="ex">
+        <div class="ex-meta"><span class="tag augment">Last</span><span class="ex-note">Student data &middot; and a model &middot; and a human sending</span></div>
+        <h4>3. Draft the writing you do every term &mdash; and never let it send</h4>
+        <p>The biggest single time saving, and the one that needs the most care, because now a model
+        does see student work. So it must be a domestic model, and a person must press send.</p>
+        <p>Report comments are the clearest case. My generator has the school's house style written
+        into it as rules rather than hoped for in a prompt: exactly <strong>three strengths and two to
+        three areas for development</strong>; no name, no gender, no pronouns standing for the pupil;
+        every target in two parts joined by "by" &mdash; <em>what to improve</em> <strong>by</strong>
+        <em>concrete action</em>; British spelling; "Home Learning", not "homework". It generates
+        around eight candidates of each, I tick the best, and it exports to Word.</p>
+        <p>A compliance checker runs over the output, and it has <strong>two tiers on purpose</strong>.
+        A gendered pronoun or a target missing its "by" half is an error. Plural pronouns and US
+        spellings are only warnings &mdash; because the first real test flagged "policies and
+        <em>their</em> implications", which is correct English and perfectly compliant. Flagging that
+        as an error would have trained me to ignore the warnings, and a checker you ignore is worse
+        than no checker.</p>
+        <p>The same shape covers feedback comments and messages about missing work. In every case the
+        app drafts and copies to the clipboard. <strong>There is no send button anywhere in it</strong>,
+        and the credentials that would make one possible are not in the app.</p>
+      </div>
+
+    </div>
+
+    <div class="pullquote">
+      If you only take one thing: <strong>start where no student data is involved.</strong> You will
+      learn what these tools are actually good at on work where being wrong costs you nothing &mdash;
+      and by the time you reach the third step you will know which parts to keep for yourself.
+    </div>
 
   </div>
 
