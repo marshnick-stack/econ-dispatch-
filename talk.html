@@ -147,6 +147,9 @@
 
   .task { border-bottom: 1px solid var(--rule); padding: 12px 0; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
   .task-name { flex: 1 1 260px; font-size: 15px; line-height: 1.45; }
+  .task-cn { display: block; font-size: 12.5px; color: var(--mid); margin-top: 2px; line-height: 1.4; }
+  .section-intro h3 .h-cn { font-family: 'Source Serif 4', serif; font-size: 15px; font-weight: 400; color: var(--mid); margin-left: 9px; }
+  .tab-cn { display: block; font-family: 'Source Serif 4', serif; font-size: 10px; font-weight: 400; letter-spacing: 1px; margin-top: 2px; opacity: .85; }
   .task-cadence { display: block; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--mid); margin-top: 2px; }
   .choices { display: flex; gap: 0; flex: 0 0 auto; border: 1px solid var(--rule); background: #fffdf8; }
   .choice { font-family: inherit; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; padding: 7px 11px; border: none; background: none; color: var(--mid); cursor: pointer; border-right: 1px solid var(--rule); transition: all .15s; }
@@ -259,9 +262,9 @@
 </div>
 
 <div class="tabs">
-  <button class="tab framework active" onclick="switchTab('framework')">Framework <span class="long">&amp; Audit</span><span class="tab-count" id="auditCount" style="display:none"></span></button>
-  <button class="tab china" onclick="switchTab('china')"><span class="long">China &amp; </span>Compliance</button>
-  <button class="tab tools" onclick="switchTab('tools')"><span class="long">The </span>Tools</button>
+  <button class="tab framework active" onclick="switchTab('framework')">Framework <span class="long">&amp; Audit</span><span class="tab-cn">框架与审视</span><span class="tab-count" id="auditCount" style="display:none"></span></button>
+  <button class="tab china" onclick="switchTab('china')"><span class="long">China &amp; </span>Compliance<span class="tab-cn">中国与合规</span></button>
+  <button class="tab tools" onclick="switchTab('tools')"><span class="long">The </span>Tools<span class="tab-cn">工具</span></button>
 </div>
 
 <div class="container">
@@ -276,7 +279,7 @@
     </div>
 
     <div class="section-intro">
-      <h3>The Framework</h3>
+      <h3>The Framework<span class="h-cn">框架</span></h3>
       <p>Sort every task in your week into one of three &mdash; before you decide on any tool</p>
     </div>
 
@@ -303,6 +306,7 @@
       Automate means AI produces the whole draft and you still press send. Augment means you make the
       call and AI helps you make it faster. Most disappointment with AI in teaching comes from putting
       a task in the wrong one of those two.
+      <div style="font-style:normal;font-size:14.5px;color:var(--mid);margin-top:10px;line-height:1.7">真正的关键不是这三个标签，而是“自动化”与“辅助化”之间的界线：自动化指 AI 完成整份初稿，但仍由人来审阅并发送；辅助化指由你作判断，AI 只是帮你更快抵达判断。大多数对 AI 的失望，都源于把任务放错了这两者之一。</div>
     </div>
 
     <div class="pullquote" style="border-left-color: var(--teal)">
@@ -315,7 +319,7 @@
     </div>
 
     <div class="section-intro">
-      <h3>The Audit, Worked Through</h3>
+      <h3>The Audit, Worked Through<span class="h-cn">审视示例</span></h3>
       <p>Six real tasks from one Economics teacher's week, after a year of building</p>
     </div>
 
@@ -370,7 +374,7 @@
     </div>
 
     <div class="section-intro">
-      <h3>What Stays Human</h3>
+      <h3>What Stays Human<span class="h-cn">必须保留人工的部分</span></h3>
       <p>By design, not by limitation</p>
     </div>
 
@@ -385,7 +389,7 @@
          then do the sort, without changing tab. ── -->
 
     <div class="section-intro" id="your-audit">
-      <h3>Now Do Your Own</h3>
+      <h3>Now Do Your Own<span class="h-cn">动手审视你自己的一周</span></h3>
       <p>Sort your week, then take the list away with you</p>
     </div>
 
@@ -394,12 +398,21 @@
       you would sort it</strong> &mdash; not the way I did. Add anything of your own that's missing,
       and delete what doesn't apply to you.
       <br><br>
+      <span style="color:var(--mid);font-size:14.5px;line-height:1.75;display:block">
+      下面是教师一周中经常重复的任务清单。<strong>请按你自己的判断分类</strong>，而不是照搬我的分类。
+      可以添加你自己的任务，也可以删除不适用的项目。四个选项分别是：
+      <b style="color:var(--teal)">Automate 自动化</b>、
+      <b style="color:var(--rust)">Augment 辅助化</b>、
+      <b style="color:#8a6d1f">Keep 保留人工</b>、
+      <b>N/A 不适用</b>。完成后可一键复制；所有选择只保存在你的浏览器中，不会上传到任何地方。
+      </span>
+      <br>
       When you're done, copy it out. Nothing is sent anywhere &mdash; your answers stay in this
       browser, and they'll still be here if you come back to this page later.
     </div>
 
     <div class="audit-bar">
-      <div class="tally">
+      <div class="tally" title="Automate 自动化 · Augment 辅助化 · Keep 保留人工 · N/A 不适用">
         <span class="t-a"><b id="nAutomate">0</b> Automate</span>
         <span class="t-g"><b id="nAugment">0</b> Augment</span>
         <span class="t-k"><b id="nKeep">0</b> Keep</span>
@@ -435,7 +448,7 @@
   <div class="panel" id="panel-china">
 
     <div class="section-intro">
-      <h3>If You Teach in China, Read This First</h3>
+      <h3>If You Teach in China, Read This First<span class="h-cn">在中国任教请先读这一节</span></h3>
       <p>PIPL, data residency, and where student work is allowed to go</p>
     </div>
 
@@ -459,7 +472,7 @@
     </div>
 
     <div class="section-intro">
-      <h3>Three Rules That Survived the Year</h3>
+      <h3>Three Rules That Survived the Year<span class="h-cn">经得起一年检验的三条原则</span></h3>
       <p>What the compliance thinking actually reduced to</p>
     </div>
 
@@ -482,7 +495,7 @@
     </div>
 
     <div class="section-intro">
-      <h3>The Full Guide</h3>
+      <h3>The Full Guide<span class="h-cn">完整指南</span></h3>
       <p>Everything above, at length &mdash; and how to check your own school</p>
     </div>
 
@@ -532,19 +545,19 @@
     rather than uninformed ones.
   </p>
 
-  <h4 class="sub">PIPL &mdash; Personal Information Protection Law</h4>
+  <h4 class="sub">PIPL &mdash; Personal Information Protection Law 《个人信息保护法》</h4>
   <p class="body">China's principal data privacy law, broadly comparable to the EU's GDPR. In force
   since November 2021. Sets the rules for collecting, storing and transferring personal data.</p>
 
-  <h4 class="sub">CSL &mdash; Cybersecurity Law</h4>
+  <h4 class="sub">CSL &mdash; Cybersecurity Law 《网络安全法》</h4>
   <p class="body">The foundational network security framework, in force since 2017. Requires important
   data collected in China to be stored in China.</p>
 
-  <h4 class="sub">Law on Protection of Minors</h4>
+  <h4 class="sub">Law on Protection of Minors 《未成年人保护法》</h4>
   <p class="body">Extra protection for anyone under 18. Processing a minor's data requires explicit
   consent from a parent or guardian &mdash; not from the student.</p>
 
-  <h4 class="sub">Interim Measures for Generative AI (2023)</h4>
+  <h4 class="sub">Interim Measures for Generative AI (2023) 《生成式人工智能服务管理暂行办法》</h4>
   <p class="body">Covers AI services operating in China. Directly relevant whenever staff put student
   work through an AI tool.</p>
 
@@ -560,7 +573,7 @@
   </ul>
 
   <p class="body">
-    The regulator is the <strong>Cyberspace Administration of China (CAC)</strong>. Enforcement has so
+    The regulator is the <strong>Cyberspace Administration of China (CAC) 国家互联网信息办公室</strong>. Enforcement has so
     far concentrated on large technology platforms rather than schools &mdash; but the obligation exists
     regardless of who is currently being pursued, and enforcement priorities move. Penalties run to
     &yen;50 million or 5% of annual turnover, with personal liability possible in serious cases.
@@ -920,7 +933,7 @@
   <div class="panel" id="panel-tools">
 
     <div class="section-intro">
-      <h3>The Tools</h3>
+      <h3>The Tools<span class="h-cn">工具</span></h3>
       <p>Built for my own week, shared as they are</p>
     </div>
 
@@ -1007,7 +1020,7 @@
          what to actually do on Monday. ── -->
 
     <div class="section-intro" id="start">
-      <h3>Three Places to Start</h3>
+      <h3>Three Places to Start<span class="h-cn">三个起点</span></h3>
       <p>Ranked by lowest risk and highest time saved &mdash; each step adds exactly one risk</p>
     </div>
 
@@ -1176,51 +1189,51 @@ const STORE_KEY = 'talkAudit.v1';
 // thirty-odd identical rows and gives up before the end; the groups let them
 // work through it a section at a time and see where they are.
 const GROUPS = [
-  'Planning and preparing',
-  'Assessment and marking',
-  'Feedback, grades and reports',
-  'Tracking students',
-  'People and communication',
-  'Your own',                       // anything the reader adds lands here
+  'Planning and preparing 备课与准备',
+  'Assessment and marking 测评与批改',
+  'Feedback, grades and reports 反馈、成绩与报告',
+  'Tracking students 学生追踪',
+  'People and communication 沟通与人际',
+  'Your own 自行添加',              // anything the reader adds lands here
 ];
 
 // The starting list. Deliberately unsorted — the point of the exercise is that
 // the reader sorts it themselves rather than agreeing with my sort.
 const SEED_TASKS = [
-  ['Read subject news for lesson hooks', 'Daily', 0],
-  ['Forward news and articles on to students', 'Weekly', 0],
-  ['Plan individual lessons', 'Daily', 0],
-  ['Long-range curriculum pacing', 'Weekly', 0],
-  ['Make slides and resources', 'Weekly', 0],
-  ['Redesign worksheets for EAL and lower-ability students', 'Weekly', 0],
-  ['Extension work for high achievers', 'Weekly', 0],
-  ['Map coverage against the full syllabus', 'Termly', 0],
-  ['Write cover work for classes when away', 'When absent', 0],
+  ['Read subject news for lesson hooks', 'Daily 每天', 0, '阅读学科新闻，寻找课堂切入点'],
+  ['Forward news and articles on to students', 'Weekly 每周', 0, '把新闻与文章转发给学生'],
+  ['Plan individual lessons', 'Daily 每天', 0, '备课（单节课）'],
+  ['Long-range curriculum pacing', 'Weekly 每周', 0, '长期课程进度规划'],
+  ['Make slides and resources', 'Weekly 每周', 0, '制作课件与教学资源'],
+  ['Redesign worksheets for EAL and lower-ability students', 'Weekly 每周', 0, '为英语学习者与学习困难学生改编学习单'],
+  ['Extension work for high achievers', 'Weekly 每周', 0, '为学优生设计拓展任务'],
+  ['Map coverage against the full syllabus', 'Termly 每学期', 0, '对照考纲检查教学覆盖'],
+  ['Write cover work for classes when away', 'When absent 缺勤时', 0, '缺勤时编写代课任务'],
 
-  ['Create MCQs and assessments', 'Fortnightly', 1],
-  ['Build practice papers from real data and news', 'Termly', 1],
-  ['Vet article choices for student coursework', 'Weekly', 1],
-  ['Mark MCQ and objective work', 'Fortnightly', 1],
-  ['Mark essays and extended writing', 'Weekly', 1],
-  ['Moderate and standardise department marking', 'Fortnightly', 1],
+  ['Create MCQs and assessments', 'Fortnightly 每两周', 1, '编写选择题与测评'],
+  ['Build practice papers from real data and news', 'Termly 每学期', 1, '用真实数据与新闻编写练习卷'],
+  ['Vet article choices for student coursework', 'Weekly 每周', 1, '审核学生课业选用的文章'],
+  ['Mark MCQ and objective work', 'Fortnightly 每两周', 1, '批改选择题与客观题'],
+  ['Mark essays and extended writing', 'Weekly 每周', 1, '批改论述题与长文写作'],
+  ['Moderate and standardise department marking', 'Fortnightly 每两周', 1, '组内评分标准化与复核'],
 
-  ['Write feedback comments', 'Weekly', 2],
-  ['Record grades in the school system', 'Weekly', 2],
-  ['Predicted grades', 'Termly', 2],
-  ['Write termly reports', 'Termly', 2],
-  ['Final judgment on a mark', 'Every mark', 2],
+  ['Write feedback comments', 'Weekly 每周', 2, '撰写反馈评语'],
+  ['Record grades in the school system', 'Weekly 每周', 2, '在校务系统录入成绩'],
+  ['Predicted grades', 'Termly 每学期', 2, '预估成绩'],
+  ['Write termly reports', 'Termly 每学期', 2, '撰写学期报告'],
+  ['Final judgment on a mark', 'Every mark 每次评分', 2, '对分数作出最终判断'],
 
-  ['Track who is falling behind', 'Daily', 3],
-  ['Chase late and missing homework', 'Weekly', 3],
-  ['Flag students of concern', 'Termly', 3],
-  ['Cross-class or department data analysis', 'Termly', 3],
+  ['Track who is falling behind', 'Daily 每天', 3, '追踪学习落后的学生'],
+  ['Chase late and missing homework', 'Weekly 每周', 3, '催交迟交与缺交的作业'],
+  ['Flag students of concern', 'Termly 每学期', 3, '标记需要关注的学生'],
+  ['Cross-class or department data analysis', 'Termly 每学期', 3, '跨班级／学科组数据分析'],
 
-  ['Emails to parents and students', 'Daily', 4],
-  ['Prepare for student and parent conversations', 'Weekly', 4],
-  ['Write university reference letters', 'Annually', 4],
-  ['Write up meeting minutes and actions', 'Fortnightly', 4],
-  ['Mentoring colleagues, observations, meetings', 'Weekly', 4],
-  ['Teaching, explaining, pastoral care', 'Daily', 4],
+  ['Emails to parents and students', 'Daily 每天', 4, '给家长与学生写邮件'],
+  ['Prepare for student and parent conversations', 'Weekly 每周', 4, '准备与学生及家长的谈话'],
+  ['Write university reference letters', 'Annually 每年', 4, '撰写大学推荐信'],
+  ['Write up meeting minutes and actions', 'Fortnightly 每两周', 4, '整理会议纪要与行动项'],
+  ['Mentoring colleagues, observations, meetings', 'Weekly 每周', 4, '指导同事、听课与会议'],
+  ['Teaching, explaining, pastoral care', 'Daily 每天', 4, '教学、讲解与学生关怀'],
 ];
 
 const OWN_GROUP = GROUPS.length - 1;
@@ -1230,7 +1243,7 @@ const LABELS = { automate: 'Automate', augment: 'Augment', keep: 'Keep', na: 'N/
 let tasks = [];
 
 function defaultTasks() {
-  return SEED_TASKS.map(([name, cadence, group], i) => ({ id: 's' + i, name, cadence, group, choice: null }));
+  return SEED_TASKS.map(([name, cadence, group, cn], i) => ({ id: 's' + i, name, cadence, group, cn, choice: null }));
 }
 
 // Lists saved before grouping existed have no group on their tasks. Recover it
@@ -1261,10 +1274,13 @@ function load() {
           seenIds.add(id);
           return id;
         };
-        for (const [name, cadence, group] of SEED_TASKS) {
-          if (!seenNames.has(name)) saved.push({ id: freshId(), name, cadence, group, choice: null });
+        for (const [name, cadence, group, cn] of SEED_TASKS) {
+          if (!seenNames.has(name)) saved.push({ id: freshId(), name, cadence, group, cn, choice: null });
         }
-        for (const t of saved) t.group = groupOf(t);
+        for (const t of saved) {
+          t.group = groupOf(t);
+          if (!t.cn) { const s = SEED_TASKS.find(([n]) => n === t.name); if (s) t.cn = s[3]; }
+        }
         tasks = saved;
         return;
       }
@@ -1286,6 +1302,7 @@ function taskRow(t) {
   return `
     <div class="task">
       <div class="task-name">${esc(t.name)}
+        ${t.cn ? `<span class="task-cn">${esc(t.cn)}</span>` : ''}
         ${t.cadence ? `<span class="task-cadence">${esc(t.cadence)}</span>` : ''}
       </div>
       <div class="choices">
