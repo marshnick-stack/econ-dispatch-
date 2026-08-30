@@ -6,7 +6,11 @@
       "has": [{ "type": "host", "value": "event.getaheadsup.com" }],
       "destination": "/talk"
     },
-    { "source": "/", "destination": "/dispatch" }
+    { "source": "/", "destination": "/dispatch" },
+
+    { "source": "/audit", "destination": "/talk" },
+    { "source": "/china", "destination": "/talk" },
+    { "source": "/tools", "destination": "/talk" }
   ],
   "functions": {
     "api/digest.js": {

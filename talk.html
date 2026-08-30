@@ -221,8 +221,7 @@
 </div>
 
 <div class="tabs">
-  <button class="tab framework active" onclick="switchTab('framework')"><span class="long">The </span>Framework</button>
-  <button class="tab audit" onclick="switchTab('audit')">Your Audit <span class="tab-count" id="auditCount" style="display:none"></span></button>
+  <button class="tab framework active" onclick="switchTab('framework')">Framework <span class="long">&amp; Audit</span><span class="tab-count" id="auditCount" style="display:none"></span></button>
   <button class="tab china" onclick="switchTab('china')"><span class="long">China &amp; </span>Compliance</button>
   <button class="tab tools" onclick="switchTab('tools')"><span class="long">The </span>Tools</button>
 </div>
@@ -353,13 +352,11 @@
       <em>Coming after the talk &mdash; the three starting points, written up in full.</em>
     </div>
 
-  </div>
+    <!-- ── The audit tool follows straight on from the framework: read the sort,
+         then do the sort, without changing tab. ── -->
 
-  <!-- ══ TAB 2 — YOUR AUDIT ══ -->
-  <div class="panel" id="panel-audit">
-
-    <div class="section-intro">
-      <h3>Your Own Audit</h3>
+    <div class="section-intro" id="your-audit">
+      <h3>Now Do Your Own</h3>
       <p>Sort your week, then take the list away with you</p>
     </div>
 
@@ -605,12 +602,34 @@
 
 <script>
 // ── Tabs ────────────────────────────────────────────────────────
-function switchTab(tab) {
+// Each tab has its own address, so a tab can be shared, bookmarked and reopened.
+// Vercel rewrites these paths to this page; the browser keeps the URL, and the
+// path decides which tab opens.
+const TAB_PATHS = { framework: '/audit', china: '/china', tools: '/tools' };
+const PATH_TABS = { '/audit': 'framework', '/china': 'china', '/tools': 'tools' };
+
+function switchTab(tab, opts = {}) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelector('.tab.' + tab).classList.add('active');
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('show'));
   document.getElementById('panel-' + tab).classList.add('show');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  if (!opts.silent) {
+    try { history.replaceState(null, '', TAB_PATHS[tab] || '/'); } catch (e) { /* file:// */ }
+  }
+  if (opts.scrollTo) {
+    const el = document.getElementById(opts.scrollTo);
+    if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+  }
+  window.scrollTo({ top: 0, behavior: opts.silent ? 'auto' : 'smooth' });
+}
+
+function openFromPath() {
+  const path = location.pathname.replace(/\/+$/, '') || '/';
+  const tab = PATH_TABS[path];
+  if (!tab) return;                                  // "/" and "/talk" keep the default
+  // /audit promises the tool, so land on it rather than at the top of the framework.
+  switchTab(tab, { silent: true, scrollTo: path === '/audit' ? 'your-audit' : null });
 }
 
 // ── The audit ───────────────────────────────────────────────────
@@ -932,6 +951,7 @@ async function subscribeToDispatch(e) {
 
 load();
 render();
+openFromPath();
 </script>
 
 </body>
