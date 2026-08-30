@@ -137,6 +137,14 @@
   .tally .t-k { color: #8a6d1f; }
   .tally .t-n { color: #9a9080; }
 
+  .group-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+                font-family: 'Playfair Display', serif; font-size: 13px; font-weight: 700;
+                letter-spacing: 2px; text-transform: uppercase; color: var(--mid);
+                margin: 26px 0 2px; padding-bottom: 6px; border-bottom: 2px solid var(--ink); }
+  .group-head:first-child { margin-top: 10px; }
+  .group-count { font-family: 'Source Serif 4', serif; font-size: 12px; font-weight: 400;
+                 letter-spacing: 1px; color: #9a9080; white-space: nowrap; }
+
   .task { border-bottom: 1px solid var(--rule); padding: 12px 0; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
   .task-name { flex: 1 1 260px; font-size: 15px; line-height: 1.45; }
   .task-cadence { display: block; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--mid); margin-top: 2px; }
@@ -543,41 +551,74 @@ function switchTab(tab) {
 // ── The audit ───────────────────────────────────────────────────
 const STORE_KEY = 'talkAudit.v1';
 
+// Grouped because the list is long. Ungrouped, a reader on a phone scrolls
+// thirty-odd identical rows and gives up before the end; the groups let them
+// work through it a section at a time and see where they are.
+const GROUPS = [
+  'Planning and preparing',
+  'Assessment and marking',
+  'Feedback, grades and reports',
+  'Tracking students',
+  'People and communication',
+  'Your own',                       // anything the reader adds lands here
+];
+
 // The starting list. Deliberately unsorted — the point of the exercise is that
 // the reader sorts it themselves rather than agreeing with my sort.
 const SEED_TASKS = [
-  ['Read subject news for lesson hooks', 'Daily'],
-  ['Forward news and articles on to students', 'Weekly'],
-  ['Plan individual lessons', 'Daily'],
-  ['Long-range curriculum pacing', 'Weekly'],
-  ['Make slides and resources', 'Weekly'],
-  ['Create MCQs and assessments', 'Fortnightly'],
-  ['Mark essays and extended writing', 'Weekly'],
-  ['Vet article choices for student coursework', 'Weekly'],
-  ['Mark MCQ and objective work', 'Fortnightly'],
-  ['Write feedback comments', 'Weekly'],
-  ['Record grades in the school system', 'Weekly'],
-  ['Track who is falling behind', 'Daily'],
-  ['Chase late and missing homework', 'Weekly'],
-  ['Emails to parents and students', 'Daily'],
-  ['Prepare for student and parent conversations', 'Weekly'],
-  ['Write termly reports', 'Termly'],
-  ['Predicted grades', 'Termly'],
-  ['Attendance', 'Daily'],
-  ['Moderate and standardise department marking', 'Fortnightly'],
-  ['Cross-class or department data analysis', 'Termly'],
-  ['Flag students of concern', 'Termly'],
-  ['Teaching, explaining, pastoral care', 'Daily'],
-  ['Mentoring colleagues, observations, meetings', 'Weekly'],
-  ['Final judgment on a mark', 'Every mark'],
+  ['Read subject news for lesson hooks', 'Daily', 0],
+  ['Forward news and articles on to students', 'Weekly', 0],
+  ['Plan individual lessons', 'Daily', 0],
+  ['Long-range curriculum pacing', 'Weekly', 0],
+  ['Make slides and resources', 'Weekly', 0],
+  ['Redesign worksheets for EAL and lower-ability students', 'Weekly', 0],
+  ['Extension work for high achievers', 'Weekly', 0],
+  ['Map coverage against the full syllabus', 'Termly', 0],
+  ['Write cover work for classes when away', 'When absent', 0],
+
+  ['Create MCQs and assessments', 'Fortnightly', 1],
+  ['Build practice papers from real data and news', 'Termly', 1],
+  ['Vet article choices for student coursework', 'Weekly', 1],
+  ['Mark MCQ and objective work', 'Fortnightly', 1],
+  ['Mark essays and extended writing', 'Weekly', 1],
+  ['Moderate and standardise department marking', 'Fortnightly', 1],
+
+  ['Write feedback comments', 'Weekly', 2],
+  ['Record grades in the school system', 'Weekly', 2],
+  ['Predicted grades', 'Termly', 2],
+  ['Write termly reports', 'Termly', 2],
+  ['Final judgment on a mark', 'Every mark', 2],
+
+  ['Track who is falling behind', 'Daily', 3],
+  ['Chase late and missing homework', 'Weekly', 3],
+  ['Attendance', 'Daily', 3],
+  ['Flag students of concern', 'Termly', 3],
+  ['Cross-class or department data analysis', 'Termly', 3],
+
+  ['Emails to parents and students', 'Daily', 4],
+  ['Prepare for student and parent conversations', 'Weekly', 4],
+  ['Write university reference letters', 'Annually', 4],
+  ['Write up meeting minutes and actions', 'Fortnightly', 4],
+  ['Mentoring colleagues, observations, meetings', 'Weekly', 4],
+  ['Teaching, explaining, pastoral care', 'Daily', 4],
 ];
+
+const OWN_GROUP = GROUPS.length - 1;
 
 const LABELS = { automate: 'Automate', augment: 'Augment', keep: 'Keep', na: 'N/A' };
 
 let tasks = [];
 
 function defaultTasks() {
-  return SEED_TASKS.map(([name, cadence], i) => ({ id: 's' + i, name, cadence, choice: null }));
+  return SEED_TASKS.map(([name, cadence, group], i) => ({ id: 's' + i, name, cadence, group, choice: null }));
+}
+
+// Lists saved before grouping existed have no group on their tasks. Recover it
+// from the seed list by name; anything unrecognised is the reader's own.
+function groupOf(t) {
+  if (Number.isInteger(t.group)) return t.group;
+  const seed = SEED_TASKS.find(([name]) => name === t.name);
+  return seed ? seed[2] : OWN_GROUP;
 }
 
 function load() {
@@ -600,9 +641,10 @@ function load() {
           seenIds.add(id);
           return id;
         };
-        for (const [name, cadence] of SEED_TASKS) {
-          if (!seenNames.has(name)) saved.push({ id: freshId(), name, cadence, choice: null });
+        for (const [name, cadence, group] of SEED_TASKS) {
+          if (!seenNames.has(name)) saved.push({ id: freshId(), name, cadence, group, choice: null });
         }
+        for (const t of saved) t.group = groupOf(t);
         tasks = saved;
         return;
       }
@@ -620,9 +662,8 @@ function esc(s) {
     .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-function render() {
-  const list = document.getElementById('taskList');
-  list.innerHTML = tasks.map(t => `
+function taskRow(t) {
+  return `
     <div class="task">
       <div class="task-name">${esc(t.name)}
         ${t.cadence ? `<span class="task-cadence">${esc(t.cadence)}</span>` : ''}
@@ -633,7 +674,22 @@ function render() {
              onclick="setChoice('${t.id}','${v}')">${LABELS[v]}</button>`).join('')}
       </div>
       <button class="task-del" onclick="removeTask('${t.id}')" title="Remove this task">&times;</button>
-    </div>`).join('');
+    </div>`;
+}
+
+function render() {
+  const list = document.getElementById('taskList');
+  let html = '';
+  GROUPS.forEach((label, g) => {
+    const inGroup = tasks.filter(t => groupOf(t) === g);
+    if (!inGroup.length) return;                 // "Your own" stays hidden until used
+    const done = inGroup.filter(t => t.choice).length;
+    html += `<div class="group-head">
+               <span>${esc(label)}</span>
+               <span class="group-count">${done}/${inGroup.length}</span>
+             </div>` + inGroup.map(taskRow).join('');
+  });
+  list.innerHTML = html;
   updateTally();
 }
 
@@ -669,7 +725,7 @@ function addTask(e) {
   const input = document.getElementById('newTask');
   const name = input.value.trim();
   if (!name) return;
-  tasks.push({ id: 'u' + Date.now(), name, cadence: '', choice: null });
+  tasks.push({ id: 'u' + Date.now(), name, cadence: '', group: OWN_GROUP, choice: null });
   input.value = '';
   save();
   render();
