@@ -196,6 +196,44 @@
   .bio p { font-size: 15px; line-height: 1.7; color: #2a1f0a; margin-bottom: 12px; }
   .bio p.cn { font-size: 14px; line-height: 1.85; color: var(--mid); }
 
+  /* ── Styles for the full compliance guide, inlined below the China tab ── */
+  p.body { font-size: 15.5px; line-height: 1.7; color: #2a1f0a; margin: 14px 0; }
+  p.body strong { font-weight: 600; }
+  h4.sub { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 700; margin: 22px 0 4px; }
+
+  ul.body, ol.body { margin: 12px 0 12px 22px; }
+  ul.body li, ol.body li { font-size: 15.5px; line-height: 1.65; color: #2a1f0a; margin-bottom: 7px; }
+
+  .good { border: 1px solid #9dbf9d; border-left: 4px solid var(--save); background: #f6fbf6; padding: 16px 19px; margin: 18px 0; }
+  .good h4 { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; color: var(--save); margin-bottom: 7px; }
+  .good p, .good li { font-size: 15px; line-height: 1.65; color: #2a1f0a; }
+  .good ul { margin: 8px 0 0 20px; }
+
+  .note { border: 1px solid var(--rule); background: #fffdf8; padding: 16px 19px; margin: 18px 0; }
+  .note h4 { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; margin-bottom: 7px; color: var(--mid); }
+  .note p, .note li { font-size: 15px; line-height: 1.65; color: #2a1f0a; }
+  .note ul, .note ol { margin: 8px 0 0 20px; }
+
+  .tablewrap { overflow-x: auto; margin: 18px 0; border: 1px solid var(--rule); }
+  table { border-collapse: collapse; width: 100%; min-width: 520px; background: #fffdf8; }
+  th, td { text-align: left; padding: 10px 13px; border-bottom: 1px solid var(--rule); font-size: 14px; line-height: 1.5; vertical-align: top; }
+  th { background: var(--warm); font-family: 'Playfair Display', serif; font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700; }
+  tr:last-child td { border-bottom: none; }
+  td.yes { color: var(--save); font-weight: 600; white-space: nowrap; }
+  td.no  { color: var(--rust); font-weight: 600; white-space: nowrap; }
+  td.maybe { color: #8a6d1f; font-weight: 600; white-space: nowrap; }
+
+  .toc { border: 1px solid var(--rule); background: #fffdf8; padding: 18px 20px; margin: 22px 0 6px; }
+  .toc h4 { font-family: 'Playfair Display', serif; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: var(--mid); margin-bottom: 10px; }
+  .toc ol { margin-left: 18px; }
+  .toc li { font-size: 15px; line-height: 1.8; }
+  .toc a { color: var(--ink); text-decoration: none; border-bottom: 1px dotted var(--rule); }
+  .toc a:hover { color: var(--gold); }
+
+  .checklist { list-style: none; margin: 12px 0 12px 0; }
+  .checklist li { font-size: 15.5px; line-height: 1.6; color: #2a1f0a; margin-bottom: 10px; padding-left: 26px; position: relative; }
+  .checklist li::before { content: "☐"; position: absolute; left: 0; font-size: 16px; color: var(--mid); }
+
   .page-footer { text-align: center; font-size: 11px; color: var(--rule); letter-spacing: 1px; padding: 26px 0 34px; border-top: 1px solid var(--rule); margin-top: 22px; line-height: 1.8; }
   .page-footer a { color: var(--mid); text-decoration: none; border-bottom: 1px dotted var(--rule); }
   .page-footer a:hover { color: var(--gold); }
@@ -448,15 +486,433 @@
       <p>Everything above, at length &mdash; and how to check your own school</p>
     </div>
 
-    <div style="padding-top:16px">
-      <a class="res" href="/compliance">
-        <div class="res-title">Student Data &amp; China's Privacy Laws</div>
-        <div class="res-desc">A plain-English guide for international school staff: the four laws
-        that apply, what counts as personal data, the ten-second check on your own office suite,
-        AI and marking, student sign-ups, tools you build yourself, and a quick-reference table of
-        what is and isn't allowed. Written to be forwarded to a colleague or a head of school.</div>
-      </a>
-    </div>
+  <p class="body" style="padding-top:22px">
+    This is a plain-English guide to how China's data protection laws apply to the ordinary
+    work of teaching &mdash; marking, sharing files, asking students to sign up to a website,
+    building your own tools. It is written for teachers and school leaders, not lawyers.
+  </p>
+
+  <div class="warn">
+    <h4>Before you read any further</h4>
+    <p>This guide is for <strong>staff awareness</strong>. It is not legal advice. It sets out how
+    the law is generally understood and how to check your own situation &mdash; but for any formal
+    decision, your school should take advice from someone qualified in Chinese data protection law.</p>
+    <p>Nothing here is an assessment of any particular school. Where it describes a common finding,
+    it is describing a pattern across international schools in China, and giving you the means to
+    check whether it applies to yours.</p>
+  </div>
+
+  <div class="toc">
+    <h4>What's in here</h4>
+    <ol>
+      <li><a href="#laws">The four laws that matter</a></li>
+      <li><a href="#personal">What counts as personal data</a></li>
+      <li><a href="#crossborder">Cross-border transfers &mdash; the core problem</a></li>
+      <li><a href="#check">Checking your own school in ten seconds</a></li>
+      <li><a href="#myths">Four things people get wrong</a></li>
+      <li><a href="#ai">AI, marking and feedback</a></li>
+      <li><a href="#edtech">EdTech websites and student sign-ups</a></li>
+      <li><a href="#apps">Tools you build yourself</a></li>
+      <li><a href="#action">Where to start</a></li>
+      <li><a href="#quickref">Quick reference &mdash; is this allowed?</a></li>
+    </ol>
+  </div>
+
+  <!-- ── 1 ── -->
+  <div class="section-intro" id="laws">
+    <h3>1 &middot; The Four Laws That Matter</h3>
+    <p>Why this applies to schools, and not only to tech companies</p>
+  </div>
+
+  <p class="body">
+    China has strict national law about how personal data &mdash; including student data &mdash; is
+    collected, stored and moved. Since 2021 it applies fully to international schools operating in
+    the mainland. The gap between common practice and legal requirement is one most international
+    schools share, so this is not about blame. It is about making <strong>informed decisions</strong>
+    rather than uninformed ones.
+  </p>
+
+  <h4 class="sub">PIPL &mdash; Personal Information Protection Law</h4>
+  <p class="body">China's principal data privacy law, broadly comparable to the EU's GDPR. In force
+  since November 2021. Sets the rules for collecting, storing and transferring personal data.</p>
+
+  <h4 class="sub">CSL &mdash; Cybersecurity Law</h4>
+  <p class="body">The foundational network security framework, in force since 2017. Requires important
+  data collected in China to be stored in China.</p>
+
+  <h4 class="sub">Law on Protection of Minors</h4>
+  <p class="body">Extra protection for anyone under 18. Processing a minor's data requires explicit
+  consent from a parent or guardian &mdash; not from the student.</p>
+
+  <h4 class="sub">Interim Measures for Generative AI (2023)</h4>
+  <p class="body">Covers AI services operating in China. Directly relevant whenever staff put student
+  work through an AI tool.</p>
+
+  <h4 class="sub">What PIPL actually requires</h4>
+  <ul class="body">
+    <li><strong>Lawful basis</strong> &mdash; a legal reason to process the data. For schools, usually consent.</li>
+    <li><strong>Informed, explicit consent</strong> &mdash; for minors, written parental consent. Not implied, not a pre-ticked box.</li>
+    <li><strong>Purpose limitation</strong> &mdash; use it only for what you collected it for.</li>
+    <li><strong>Data minimisation</strong> &mdash; collect only what is strictly necessary.</li>
+    <li><strong>Data localisation</strong> &mdash; if the person is in China, their data stays in China unless a formal transfer mechanism exists.</li>
+    <li><strong>Records</strong> &mdash; keep processing records for at least three years.</li>
+    <li><strong>Breach notification</strong> &mdash; notify affected individuals and the regulator within a reasonable time.</li>
+  </ul>
+
+  <p class="body">
+    The regulator is the <strong>Cyberspace Administration of China (CAC)</strong>. Enforcement has so
+    far concentrated on large technology platforms rather than schools &mdash; but the obligation exists
+    regardless of who is currently being pursued, and enforcement priorities move. Penalties run to
+    &yen;50 million or 5% of annual turnover, with personal liability possible in serious cases.
+  </p>
+
+  <!-- ── 2 ── -->
+  <div class="section-intro" id="personal">
+    <h3>2 &middot; What Counts as Personal Data</h3>
+    <p>More than most people assume</p>
+  </div>
+
+  <p class="body">
+    Under PIPL, personal information is anything that can identify a specific individual &mdash; alone,
+    or combined with other information you hold. In a school that is a wide category.
+  </p>
+
+  <div class="warn">
+    <h4>Treated as sensitive, requiring the highest protection</h4>
+    <p>Grades and assessment results &middot; health and medical records &middot; disciplinary records
+    &middot; and <strong>any data belonging to a student under 18</strong>, which is automatically
+    classed as sensitive in its entirety.</p>
+  </div>
+
+  <p class="body">
+    Standard personal information includes full names, school email addresses, student ID numbers,
+    class or group IDs, and parent contact details. All of it is covered, however harmless it looks.
+  </p>
+
+  <div class="note">
+    <h4>The initials misconception</h4>
+    <p>Using initials instead of full names does not change the legal position. In a classroom, where
+    you can identify which student "W.Z." is, initials <strong>are still personal information</strong>.
+    The test is whether a reasonable person <em>in your position</em> could identify the individual —
+    not whether a stranger could.</p>
+  </div>
+
+  <div class="pullquote">
+    <strong>The golden rule.</strong> Any processing of personal information belonging to people
+    located in China must happen on infrastructure physically located in mainland China, unless a
+    specific, state-approved cross-border transfer mechanism is in place.
+  </div>
+
+  <!-- ── 3 ── -->
+  <div class="section-intro" id="crossborder">
+    <h3>3 &middot; Cross-Border Transfers</h3>
+    <p>The single largest source of non-compliance in international schools</p>
+  </div>
+
+  <p class="body">
+    Any time personal data belonging to someone in China reaches a server, company or individual
+    outside the mainland, that is a cross-border transfer &mdash; <strong>including when it merely
+    routes through Hong Kong</strong>. That covers saving a student's name to a database hosted abroad,
+    uploading student work to a foreign AI, students creating accounts on foreign websites, and any
+    app syncing to a foreign cloud service.
+  </p>
+
+  <p class="body">
+    To do it lawfully a school generally needs specific parental consent, a documented impact
+    assessment, and often a CAC-approved standard contract with the foreign recipient.
+    <strong>Parental consent on its own is not sufficient</strong> &mdash; that catches many schools out.
+  </p>
+
+  <!-- ── 4 ── -->
+  <div class="section-intro" id="check">
+    <h3>4 &middot; Checking Your Own School</h3>
+    <p>The first thing to look at, and it takes ten seconds</p>
+  </div>
+
+  <p class="body">
+    For most international schools in China the largest single exposure is not an EdTech platform. It
+    is the <strong>office suite</strong> &mdash; because it touches every teacher and every student,
+    not one class or one department.
+  </p>
+
+  <p class="body">
+    Microsoft 365 comes in two forms. The <strong>global</strong> version stores files in Hong Kong,
+    Singapore, Japan or the United States &mdash; outside mainland China, and therefore non-compliant
+    without a transfer mechanism. The version <strong>operated by 21Vianet</strong>, a licensed Chinese
+    partner, stores data in Beijing and Shanghai and is compliant. Most international schools are on the
+    global version, because it was easier to set up, cheaper, and deployed before PIPL existed.
+  </p>
+
+  <div class="note">
+    <h4>How to tell which one you are on</h4>
+    <ol>
+      <li><strong>Check the login URL.</strong> Sign in and look at the address bar.
+        <code>login.microsoftonline.com</code> means your data is outside China.
+        <code>login.partner.microsoftonline.cn</code> means it is inside.</li>
+      <li><strong>Check OneDrive settings</strong> &rarr; Options &rarr; look for Data location or Region.
+        "China" or "21Vianet" is inside; "Asia Pacific", "Hong Kong", "Singapore", "US" or "Global" is outside.</li>
+      <li><strong>Check the desktop app.</strong> "OneDrive for Business" is the global version;
+        "OneDrive for Business operated by 21Vianet" is the China one.</li>
+      <li><strong>Ask IT directly:</strong> "Is our Microsoft 365 tenant the global version or the
+        21Vianet-operated China version?" If they are not sure, that uncertainty is itself the finding.</li>
+    </ol>
+  </div>
+
+  <p class="body">
+    If it turns out to be the global version, then every spreadsheet of grades, every document with a
+    student name, every Teams chat and every SharePoint folder is sitting outside China. The point of
+    checking is not to produce alarm &mdash; it is that a school cannot make a decision about a risk it
+    has not measured. The available responses are to migrate to 21Vianet, to adopt China-hosted document
+    platforms such as Tencent Docs or Alibaba Docs for anything containing student data, or to
+    <strong>formally and knowingly accept the risk in writing</strong>. All three are legitimate. Not
+    knowing is not.
+  </p>
+
+  <div class="good">
+    <h4>A worked example of doing this properly</h4>
+    <p>ManageBac is a case where the question has a documented answer. Faria have confirmed that school
+    environments on the <code>.cn</code> domain are hosted on servers within China, under ICP licence
+    17051512, with an Information Classified Security Protection Certificate. Their security
+    documentation is published at <a href="https://faria.org/secure/" target="_blank" rel="noopener">faria.org/secure</a>.</p>
+    <p>Two caveats worth copying as a method. This applies <strong>only</strong> to the <code>.cn</code>
+    domain &mdash; a school on the global domain is in a different position. And you should ask for a
+    Data Processing Agreement in writing and keep it. That is what a verified vendor looks like: a
+    named legal entity, a licence number, a written confirmation, and a document in your file.</p>
+  </div>
+
+  <!-- ── 5 ── -->
+  <div class="section-intro" id="myths">
+    <h3>5 &middot; Four Things People Get Wrong</h3>
+    <p>Each of these is a common and confident mistake</p>
+  </div>
+
+  <div class="warn">
+    <h4>"We route through Hong Kong, so we're fine"</h4>
+    <p>Under Article 38 what matters is the <strong>final destination</strong> of the data, not the route
+    it takes. A Hong Kong proxy is a connectivity workaround, not a legal safeguard.</p>
+  </div>
+
+  <div class="warn">
+    <h4>"It's a .cn domain, so the data is in China"</h4>
+    <p>A <code>.cn</code> address is a web address. A foreign company can use one for a CDN node or a
+    localised login page while its databases stay abroad. To be satisfied, ask three questions: are the
+    core databases physically in the mainland, is a licensed Chinese entity the data controller, and is
+    there a PIPL-compliant Data Processing Agreement? Without documented answers to all three, assume not.</p>
+  </div>
+
+  <div class="warn">
+    <h4>"I did it on my own laptop, on my own VPN"</h4>
+    <p>If the work is school work, the school's obligations follow it. Using a personal VPN to put
+    student work through a foreign AI service on a personal device is still processing student data
+    through a foreign service. The device and the network are not the deciding factor.</p>
+  </div>
+
+  <div class="warn">
+    <h4>"We were audited a few years ago and we were fine"</h4>
+    <p>Any audit predating November 2021 reflects the law before PIPL came into force. PIPL changed the
+    requirements substantially. An older audit provides no ongoing cover.</p>
+  </div>
+
+  <!-- ── 6 ── -->
+  <div class="section-intro" id="ai">
+    <h3>6 &middot; AI, Marking and Feedback</h3>
+    <p>Where this touches teaching most directly</p>
+  </div>
+
+  <p class="body">
+    The rule here is simple. <strong>Putting student work through a foreign AI service is a cross-border
+    transfer.</strong> ChatGPT, Claude, Gemini and Copilot all run on servers outside China, and reaching
+    them through a VPN does not change that. There is no data processing agreement, no parental consent
+    for that specific transfer, and generally no way to have the data deleted afterwards.
+  </p>
+
+  <p class="body">
+    Domestic services &mdash; Baidu Wenxin Yiyan, Alibaba Tongyi Qianwen, Tencent Hunyuan, Moonshot's
+    Kimi, DeepSeek and other CAC-registered providers &mdash; keep the processing inside the mainland,
+    so no transfer occurs. A useful shorthand: if the API endpoint is a <code>.cn</code> domain and the
+    service expects Chinese ID verification and payment in CNY, it is operating inside the domestic
+    framework.
+  </p>
+
+  <div class="good">
+    <h4>The part most people miss, in their favour</h4>
+    <p>Using a foreign AI tool to write <strong>lesson plans, worksheets or teaching materials</strong>
+    &mdash; with no student data in the prompt &mdash; raises no PIPL issue at all. The obligation
+    attaches to the student's personal information, not to the tool.</p>
+    <p>So the practical line is not "foreign AI is banned". It is: <strong>foreign models for your own
+    work, domestic models the moment a student's name, work or grade is involved.</strong></p>
+  </div>
+
+  <p class="body">
+    One further distinction worth knowing: an <strong>enterprise API plan</strong> from a domestic
+    provider usually carries data protection terms that the consumer chatbot does not. For anything
+    school-wide, the API route is the one to take.
+  </p>
+
+  <!-- ── 7 ── -->
+  <div class="section-intro" id="edtech">
+    <h3>7 &middot; EdTech Websites and Student Sign-Ups</h3>
+    <p>When you direct students to a platform, the data flow becomes the school's responsibility</p>
+  </div>
+
+  <p class="body">
+    A student "choosing" to sign up does not shift the obligation. For each platform students are
+    directed to use, the school is expected to carry out an impact assessment beforehand, tell parents
+    what the platform is and where the data goes, obtain separate explicit consent for the transfer,
+    have a lawful transfer mechanism in place, and record the platform in a data register.
+  </p>
+
+  <p class="body">
+    School email addresses are personal information, so a student signing up with one is itself a
+    transfer. Single sign-on is no different &mdash; it passes the student's unique identifier to the
+    third party.
+  </p>
+
+  <div class="note">
+    <h4>"But every international school uses these tools"</h4>
+    <p>True, and it does not change the legal position. Widespread non-compliance is not permission, and
+    regulators have a habit of tolerating a grey area and then making an example of one case.</p>
+    <p>The realistic path is not to switch everything off tomorrow. It is to start a documented process:
+    audit what is already in use, get proper consent for the tools that matter most, and review anything
+    new before students are pointed at it.</p>
+  </div>
+
+  <h4 class="sub">Two things that genuinely reduce the risk</h4>
+  <ul class="body">
+    <li><strong>Student-initiated use.</strong> If a student finds and uses a site entirely on their own,
+    the school's exposure is much lower. The question is whether the school created the context in which
+    they encountered it. If you linked it, set it, or built it into the course, you own it.</li>
+    <li><strong>Username-only sign-up.</strong> A self-chosen username with no real name or school email
+    is materially lower risk &mdash; but "no email required" is not the same as "no personal data
+    collected". Plenty of free platforms monetise behavioural data. Read the privacy policy first.</li>
+  </ul>
+
+  <div class="note">
+    <h4>The single most useful thing to build: a vendor list</h4>
+    <p>One document recording every platform students are asked to use, its country of registration,
+    what data is shared, and whether consent has been obtained. Most schools have no such list, which
+    means no one can answer basic questions about their own exposure. It is low effort and it makes
+    every subsequent decision possible.</p>
+  </div>
+
+  <div class="pullquote">
+    Leadership may decide to <strong>accept</strong> the risk of a given platform. That is a legitimate
+    strategic choice. But it has to be a decision that is made, recorded, justified and revisited —
+    not a decision that happens by default because nobody looked.
+  </div>
+
+  <!-- ── 8 ── -->
+  <div class="section-intro" id="apps">
+    <h3>8 &middot; Tools You Build Yourself</h3>
+    <p>Higher obligations, because you become the data controller</p>
+  </div>
+
+  <p class="body">
+    Teachers increasingly build their own tools &mdash; gradebooks, browser extensions, tracking apps.
+    These carry every obligation a purchased platform does, and arguably more, because the school and
+    the person who built it become responsible for the data.
+  </p>
+
+  <div class="warn">
+    <h4>A real example, and it was mine</h4>
+    <p>A gradebook app I built was syncing student first names, class IDs and initials to a Supabase
+    database. Supabase is hosted outside China. Even that minimal data &mdash; enough to identify
+    specific students in context &mdash; made it an unlawful cross-border transfer. The app came offline
+    once I realised.</p>
+    <p>The lesson is not "don't build things". It is that the compliance question belongs at the
+    <strong>architecture stage</strong>, when it costs nothing, rather than after you have built
+    something you then have to switch off.</p>
+  </div>
+
+  <h4 class="sub">What a compliant build looks like</h4>
+  <ol class="body">
+    <li><strong>Keep the data local or domestic.</strong> A local SQLite database on the device, or a
+    China-region cloud database. If devices need to sync, peer-to-peer between school machines avoids a
+    foreign server entirely.</li>
+    <li><strong>Get specific, documented parental consent.</strong> A general IT policy does not cover it.
+    Name the app, say what it collects and why, say where it is stored, and use an active opt-in.</li>
+    <li><strong>Do an impact assessment before it touches student data.</strong> It does not have to be
+    long. It has to exist.</li>
+    <li><strong>Keep a three-year log</strong> of access and changes. A table in the same local database
+    is enough.</li>
+    <li><strong>Avoid foreign backends.</strong> Supabase, Firebase and non-China AWS regions are all
+    outside the mainland.</li>
+  </ol>
+
+  <div class="warn">
+    <h4>No-code builders are the quiet trap</h4>
+    <p>Glide, Bubble, Adalo, AppSheet and similar are almost always hosted in the US or EU. Building a
+    student-data app on one is non-compliant unless it offers a China-hosted option. Check where the
+    data lives <em>before</em> you put a single student on it &mdash; the convenience of no-code does not
+    change the transfer rules.</p>
+  </div>
+
+  <!-- ── 9 ── -->
+  <div class="section-intro" id="action">
+    <h3>9 &middot; Where to Start</h3>
+    <p>Ordered by effort against urgency</p>
+  </div>
+
+  <h4 class="sub">This week &mdash; low effort, high value</h4>
+  <ul class="checklist">
+    <li>Check which Microsoft 365 tenant your school is on. Ten seconds, and it tells you the size of the largest question.</li>
+    <li>Take any staff-built tool that syncs student data to a foreign server offline, or disable the sync.</li>
+    <li>Pause new student sign-ups to foreign platforms until there is a way to review them.</li>
+    <li>Agree who owns this. A named person, not a committee.</li>
+    <li>Ask staff to stop putting student work through foreign AI services until there is an approved list to point them at.</li>
+  </ul>
+
+  <h4 class="sub">This term &mdash; needs coordination</h4>
+  <ul class="checklist">
+    <li>Build the vendor list: every platform, its country, the data shared, the consent status.</li>
+    <li>Draft a parental consent form and privacy notice for the platforms that matter most.</li>
+    <li>Publish a digital tools page for parents, naming the core platforms and linking their privacy policies.</li>
+    <li>Issue an approved list of domestic AI tools, so "don't use that one" comes with "use this instead".</li>
+    <li>Look at whether enrolment agreements say anything about cross-border use of EdTech.</li>
+    <li>If the office suite is the global version, cost out the alternatives before the decision is needed.</li>
+  </ul>
+
+  <h4 class="sub">Ongoing</h4>
+  <ul class="checklist">
+    <li>A review step before any new platform requiring student login is adopted.</li>
+    <li>Impact assessments for the major processing activities.</li>
+    <li>Three-year processing logs on the key systems.</li>
+    <li>Staff-built tools held to the same architecture standard as purchased ones.</li>
+  </ul>
+
+  <div class="pullquote">
+    The goal is not to stop using technology. It is to use it in a way that is transparent with parents,
+    keeps student data where the law requires it, and protects both the school and the individual
+    teacher from a risk nobody chose.
+  </div>
+
+  <!-- ── 10 ── -->
+  <div class="section-intro" id="quickref">
+    <h3>10 &middot; Quick Reference</h3>
+    <p>Is this allowed?</p>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <thead>
+        <tr><th>Scenario</th><th>Allowed?</th><th>Why</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Putting student work through a foreign AI for marking</td><td class="no">No</td><td>Foreign server, no consent, data may train the model</td></tr>
+        <tr><td>Putting student work through a domestic AI via a school API</td><td class="yes">Yes</td><td>China server, enterprise terms</td></tr>
+        <tr><td>Using a foreign AI to write a lesson plan, no student data</td><td class="yes">Yes</td><td>No personal information involved</td></tr>
+        <tr><td>ManageBac on the <code>.cn</code> domain</td><td class="yes">Yes</td><td>Verified China servers, ICP licensed</td></tr>
+        <tr><td>ManageBac on the global domain</td><td class="no">No</td><td>Hosted outside the mainland</td></tr>
+        <tr><td>Student grades in a local file on your laptop</td><td class="yes">Yes</td><td>No cloud sync; keep it encrypted</td></tr>
+        <tr><td>Student grades in OneDrive, global tenant</td><td class="no">No</td><td>Foreign server unless 21Vianet</td></tr>
+        <tr><td>Student grades in Tencent Docs or Alibaba Docs</td><td class="yes">Yes</td><td>China server</td></tr>
+        <tr><td>Students signing up to a foreign platform with school email</td><td class="no">No</td><td>Foreign server, no transfer mechanism</td></tr>
+        <tr><td>A Hong Kong proxy to reach foreign sites for research</td><td class="maybe">Partly</td><td>Fixes access, not data localisation</td></tr>
+        <tr><td>Building a school app on a foreign backend</td><td class="no">No</td><td>Foreign server</td></tr>
+        <tr><td>Building a school app on a China-hosted backend</td><td class="yes">Yes</td><td>China server, with consent</td></tr>
+      </tbody>
+    </table>
+  </div>
 
   </div>
 
@@ -680,7 +1136,9 @@
 // Vercel rewrites these paths to this page; the browser keeps the URL, and the
 // path decides which tab opens.
 const TAB_PATHS = { framework: '/audit', china: '/china', tools: '/tools' };
-const PATH_TABS = { '/audit': 'framework', '/china': 'china', '/tools': 'tools' };
+// /compliance is kept as an address because the guide gets forwarded on its own,
+// but it is a section of the China tab rather than a separate page — one copy.
+const PATH_TABS = { '/audit': 'framework', '/china': 'china', '/compliance': 'china', '/tools': 'tools' };
 
 function switchTab(tab, opts = {}) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -702,8 +1160,13 @@ function openFromPath() {
   const path = location.pathname.replace(/\/+$/, '') || '/';
   const tab = PATH_TABS[path];
   if (!tab) return;                                  // "/" and "/talk" keep the default
-  // /audit promises the tool, so land on it rather than at the top of the framework.
-  switchTab(tab, { silent: true, scrollTo: path === '/audit' ? 'your-audit' : null });
+  // /audit promises the tool and /compliance promises the guide, so land on the
+  // section rather than the top of the tab. An explicit #anchor wins over both —
+  // the browser's own jump fires before the panel is shown, so redo it here.
+  const anchor = (location.hash || '').replace('#', '');
+  const target = anchor || (path === '/audit' ? 'your-audit'
+                         : path === '/compliance' ? 'laws' : null);
+  switchTab(tab, { silent: true, scrollTo: target });
 }
 
 // ── The audit ───────────────────────────────────────────────────
