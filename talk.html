@@ -1022,6 +1022,98 @@
     </a>
 
 
+
+    <!-- ── Local models. Deliberately answers "is this a harness?" first, because
+         that is the question everyone actually has and nobody asks. ── -->
+
+    <div class="section-intro" id="local">
+      <h3>Running AI On Your Own Laptop<span class="h-cn">在本机运行 AI</span></h3>
+      <p>Free, private, and the only option where nothing leaves the machine at all</p>
+    </div>
+
+    <div class="lede">
+      This is the cheapest and most private way in, and it is the one most people skip because the
+      vocabulary is confusing. So, plainly: <strong>Ollama is an engine, not a car.</strong>
+    </div>
+
+    <div class="note">
+      <h4>Engine, harness, and why the difference matters</h4>
+      <p><strong>Ollama runs a model on your computer.</strong> It downloads the model, keeps it, and
+      gives you somewhere to type. That is the whole job. It is the engine.</p>
+      <p><strong>A harness is the program around the model</strong> that can actually do things &mdash;
+      open your files, edit them, run commands, search the web, remember what you did yesterday. The
+      harness holds the tools; the model only decides which to use. bolt.diy is a harness. So is
+      Claude Code. Ollama is not.</p>
+      <p>So on its own, Ollama <strong>cannot make or edit a file</strong>. It can write you the
+      contents of one, which you paste in yourself. To have it edit files directly, you point a harness
+      at it &mdash; and most harnesses have a setting for exactly that, because Ollama exposes the same
+      kind of connection a paid provider does.</p>
+      <p style="color:var(--mid);font-size:14.5px;line-height:1.75;margin-top:10px">
+      简单地说：<strong>Ollama 是“引擎”，不是“整车”</strong>。它只负责在你的电脑上运行模型并提供对话界面，
+      本身<strong>不能直接创建或修改文件</strong>，也不能联网搜索。要让模型真正操作文件，需要在它之上再加一层
+      “工作框架”（harness），例如 bolt.diy。</p>
+    </div>
+
+    <a class="res" href="https://ollama.com/download" target="_blank" rel="noopener">
+      <div class="res-title">Ollama<span class="res-flag">Free</span></div>
+      <div class="res-desc">Download and install like any other application, Mac or Windows. Then pick a
+      model and it downloads once and runs offline from then on. No account, no API key, no card, no
+      subscription. <span style="display:block;margin-top:4px">免费下载，无需注册或付费；模型下载一次后可离线运行。</span></div>
+    </a>
+
+    <div class="good">
+      <h4>What it is genuinely good at</h4>
+      <p>Rewriting a worksheet at a lower reading level. Summarising something long. Drafting comments
+      and messages. Translating. Turning messy pasted text into a clean table. Generating practice
+      questions from material you supply. In other words: <strong>most of the language work in a
+      teaching week.</strong></p>
+      <p>And the compliance position is the simplest available anywhere on this site. The model is on
+      your laptop and the text never leaves it, so there is no transfer, no third party, and nothing to
+      consent to &mdash; even with real student work in front of you. It is the one place where
+      "can I put student names in this?" has an easy yes.</p>
+    </div>
+
+    <div class="warn">
+      <h4>What it is not good at, and what it costs you instead of money</h4>
+      <p><strong>It is weaker than the paid models.</strong> A model small enough to run on a laptop is
+      not as sharp as one running in a data centre. Expect competent rather than excellent, and expect
+      to do more editing.</p>
+      <p><strong>It knows nothing recent and cannot look anything up.</strong> No web access unless a
+      harness gives it some. Never rely on it for facts, figures or anything current &mdash; use it to
+      work on text you have provided.</p>
+      <p><strong>It needs memory.</strong> A rough rule: your computer's RAM in gigabytes is about the
+      largest model you can run comfortably. 8GB runs the small models slowly; 16GB is workable; 32GB
+      or more is comfortable. Apple Silicon Macs do well here.</p>
+      <p><strong>It cannot touch your files by itself.</strong> See above &mdash; that needs a harness.</p>
+    </div>
+
+    <div class="section-intro">
+      <h3>Finding the Current Best Model<span class="h-cn">如何找到当前最好的模型</span></h3>
+      <p>Which changes monthly, so these are places to look rather than names to remember</p>
+    </div>
+
+    <div class="lede">
+      Any page that names today's best model is wrong within a month. These two stay right, because
+      they are lists that update themselves.
+    </div>
+
+    <a class="res" href="https://ollama.com/library" target="_blank" rel="noopener">
+      <div class="res-title">Ollama's model library</div>
+      <div class="res-desc">Everything you can run locally, with the sizes. Start with a small one and
+      only move up if your machine copes. The size in the name is roughly the memory it wants.
+      <span style="display:block;margin-top:4px">可在本机运行的模型清单，含大小参考。</span></div>
+    </a>
+
+    <a class="res" href="https://z.ai" target="_blank" rel="noopener">
+      <div class="res-title">Z.ai &mdash; the GLM models</div>
+      <div class="res-desc">A Chinese lab releasing capable open-weight models, several under permissive
+      licences and some trained on domestic chips. Worth watching if you want a strong model that is
+      both openly available and China-hosted. Their announcements go out on
+      <a href="https://x.com/Zai_org/status/2092616204787626030" target="_blank" rel="noopener"
+         style="color:#8a6d1f">X/Twitter</a>, which needs a VPN from the mainland &mdash; the site
+      itself does not.</div>
+    </a>
+
     <!-- ── Where the ideas came from. Sits before the closing takeaway so the
          reader has the sources before they are told what to do. ── -->
 
