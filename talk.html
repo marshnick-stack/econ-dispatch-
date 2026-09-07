@@ -179,20 +179,14 @@
   .act.ghost:hover { background: var(--warm); color: var(--ink); border-color: var(--gold); }
   .copy-msg { font-size: 13px; color: var(--save); padding: 6px 0 0; min-height: 20px; }
 
-  /* ── Subscribe ── */
+  /* ── Closing call to action ── */
   .subscribe-box { border-top: 1px solid var(--rule); margin-top: 30px; padding: 28px 0 10px; text-align: center; }
   .subscribe-box h3 { font-family: 'Playfair Display', serif; font-size: 21px; font-weight: 700; margin: 0 0 6px; }
   .sub-blurb { font-size: 13.5px; color: #6a6255; line-height: 1.6; max-width: 440px; margin: 0 auto 16px; }
-  .subscribe-form { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
-  .subscribe-form input[type=email] { font-family: inherit; font-size: 15px; padding: 11px 13px; border: 1px solid var(--rule); background: #fff; color: var(--ink); min-width: 240px; flex: 0 1 280px; }
-  .subscribe-form input[type=email]:focus { outline: 2px solid var(--gold); outline-offset: -1px; }
-  .subscribe-form button { font-family: inherit; font-size: 15px; padding: 11px 22px; border: none; background: var(--ink); color: var(--cream); cursor: pointer; }
-  .subscribe-form button:hover { background: var(--gold); color: var(--ink); }
-  .subscribe-form button:disabled { opacity: .5; cursor: default; }
-  .sub-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
-  .sub-msg { font-size: 13px; margin-top: 12px; line-height: 1.5; display: none; }
-  .sub-msg.good { color: var(--save); display: block; }
-  .sub-msg.bad { color: var(--rust); display: block; }
+  .cta-btn { display: inline-block; font-family: inherit; font-size: 15px; padding: 11px 26px; border: none;
+             background: var(--ink); color: var(--cream); text-decoration: none; cursor: pointer; }
+  .cta-btn:hover { background: var(--gold); color: var(--ink); }
+  .cta-url { font-size: 12.5px; color: #8a8070; letter-spacing: .3px; margin-top: 13px; }
   .sub-privacy { font-size: 11px; color: #8a8070; line-height: 1.6; margin-top: 14px; }
 
   /* ── Bio ── */
@@ -1024,7 +1018,7 @@
       <div class="res-title">The Econ Dispatch<span class="res-flag">No VPN</span></div>
       <div class="res-desc">Each weekday morning: three economics news stories &mdash; one micro, one
       macro, one global &mdash; with the IGCSE 0455 and IB syllabus links already drawn. The tool this
-      page is hosted on. Subscribe at the bottom of any tab.</div>
+      page is hosted on. You can subscribe on the dispatch itself &mdash; free, one click to leave.</div>
     </a>
 
     <a class="res" href="https://econ-dispatch.vercel.app" target="_blank" rel="noopener">
@@ -1376,23 +1370,20 @@
   <!-- ══ ALWAYS VISIBLE ══ -->
 
   <div class="subscribe-box">
-    <h3>Get the dispatch every weekday morning</h3>
+    <h3>Get a Heads Up<span style="font-weight:400;color:var(--mid);font-size:16px">&nbsp; 教师之间</span></h3>
     <div class="sub-blurb">
-      Three economics stories, one each from micro, macro and global, with the syllabus links
-      already drawn. Free, and you can leave in one click.
+      Teacher-to-teacher insights on schools &mdash; what a place is actually like to work in, from
+      the people who work there. Across China and worldwide. This is the project I am building next,
+      and it is the best way to stay in touch after today.
     </div>
 
-    <form class="subscribe-form" onsubmit="subscribeToDispatch(event)">
-      <input type="text" name="website" id="subWebsite" class="sub-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
-      <input type="email" id="subEmail" placeholder="you@school.edu" required autocomplete="email">
-      <button type="submit" id="subBtn">Subscribe</button>
-    </form>
+    <a class="cta-btn" href="https://getaheadsup.com/" target="_blank" rel="noopener">Visit Get a Heads Up &rarr;</a>
 
-    <div class="sub-msg" id="subMsg"></div>
+    <div class="cta-url">getaheadsup.com</div>
 
     <div class="sub-privacy">
-      Your address is used only to send this dispatch &mdash; never shared, never sold.<br>
-      Every issue has an unsubscribe link; one click deletes your address.
+      教师之间的真实学校观察 &mdash; 了解一所学校真正的工作环境，来自在那里任教的老师。<br>
+      覆盖中国与全球。这是我接下来要做的项目，也是今天之后保持联系的最好方式。
     </div>
   </div>
 
@@ -1410,10 +1401,7 @@
 
   <div class="page-footer">
     谈经论商 &middot; 5th International Forum on Economics &amp; Business Education<br>
-    Hosted by Huili School Shanghai, co-organised with ASDAN &middot; 12 September 2026<br><br>
-    <a href="https://getaheadsup.com/" target="_blank" rel="noopener">Get a Heads Up &rarr;</a>
-    &mdash; teacher-to-teacher school insights, in China and worldwide<br>
-    教师之间的真实学校观察 &middot; 连接中国与全球的教师
+    Hosted by Huili School Shanghai, co-organised with ASDAN &middot; 12 September 2026
   </div>
 
 </div>
@@ -1741,41 +1729,6 @@ async function copyAudit(mode) {
     ta.focus();
     ta.select();
   }
-}
-
-// ── Subscribe ───────────────────────────────────────────────────
-async function subscribeToDispatch(e) {
-  e.preventDefault();
-  const btn = document.getElementById('subBtn');
-  const msg = document.getElementById('subMsg');
-  const email = document.getElementById('subEmail').value.trim();
-
-  btn.disabled = true;
-  btn.textContent = 'Sending...';
-  msg.className = 'sub-msg';
-
-  try {
-    const r = await fetch('/api/subscribe', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, website: document.getElementById('subWebsite').value })
-    });
-    const data = await r.json();
-
-    if (r.ok) {
-      msg.className = 'sub-msg good';
-      msg.textContent = data.message || 'Check your inbox for a confirmation link.';
-      document.getElementById('subEmail').value = '';
-    } else {
-      msg.className = 'sub-msg bad';
-      msg.textContent = data.error || 'Something went wrong. Try again shortly.';
-    }
-  } catch (err) {
-    msg.className = 'sub-msg bad';
-    msg.textContent = 'Could not reach the server. Check your connection and try again.';
-  }
-  btn.disabled = false;
-  btn.textContent = 'Subscribe';
 }
 
 load();
