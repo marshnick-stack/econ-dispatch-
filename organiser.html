@@ -595,7 +595,7 @@ function render() {
     <div class="app-header">
       <span class="app-logo">📐</span>
       <h1 class="app-title">Graphic Organiser Generator</h1>
-      <p class="app-subtitle">Build prompts for Nano Banana Pro in 2 minutes</p>
+      <p class="app-subtitle">Build prompts for any image model in 2 minutes</p>
     </div>
     ${renderScreen()}
     ${state.showModal ? renderModal() : ''}
@@ -619,7 +619,7 @@ function renderStart() {
       <div class="start-screen">
         <span class="start-emoji">🖨️</span>
         <h2 class="start-title">Ready to build a graphic organiser?</h2>
-        <p class="start-desc">Answer a few quick questions and get a polished prompt to paste straight into Nano Banana Pro.</p>
+        <p class="start-desc">Answer a few quick questions and get a polished prompt to paste straight into any image model.</p>
         <div class="features-row">
           <span class="feature-chip">Step-by-step wizard</span>
           <span class="feature-chip">Multi-select purposes</span>
@@ -1006,8 +1006,8 @@ function renderOutput() {
   const templates = getTemplates();
   return `
     <div class="card animate-in">
-      <div class="output-title">Your Nano Banana Pro prompt</div>
-      <div class="output-subtitle">Copy and paste this directly into Nano Banana Pro.</div>
+      <div class="output-title">Your graphic organiser prompt</div>
+      <div class="output-subtitle">Copy and paste this into Nano Banana, NotebookLM, or any image model.</div>
       <div class="prompt-box" id="promptBox">${esc(state.generatedPrompt)}</div>
       <div class="output-actions">
         <button class="btn btn-primary" onclick="copyPrompt()">📋 Copy prompt</button>
