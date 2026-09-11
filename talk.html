@@ -210,6 +210,15 @@
   .good ul, .good ol { margin: 8px 0 0 21px; }
   .good li { margin-bottom: 7px; }
 
+  /* ── WeChat QR codes ── */
+  .qr-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; margin: 18px 0 6px; }
+  .qr-card { border: 1px solid var(--rule); background: #fffdf8; padding: 17px 17px 19px; text-align: center; }
+  .qr-card img { display: block; width: 100%; max-width: 236px; height: auto; margin: 0 auto 13px; border: 1px solid var(--rule); }
+  .qr-card h4 { font-family: 'Playfair Display', serif; font-size: 16.5px; font-weight: 700; margin-bottom: 3px; }
+  .qr-card .qr-cn { font-size: 14px; color: var(--mid); margin-bottom: 8px; }
+  .qr-card p { font-size: 13.5px; line-height: 1.6; color: #2a1f0a; }
+  .qr-card p.qr-note { font-size: 12.5px; color: var(--mid); margin-top: 7px; }
+
   .note { border: 1px solid var(--rule); background: #fffdf8; padding: 16px 19px; margin: 18px 0; }
   .note h4 { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; margin-bottom: 7px; color: var(--mid); }
   .note p, .note li { font-size: 15px; line-height: 1.65; color: #2a1f0a; }
@@ -1407,6 +1416,42 @@
       questions, and it is not marking anybody. That is the sort the whole talk is about.</p>
       <p style="color:var(--mid);font-size:14px">用你所在考点有权使用的真题自行搭建：切图、标注、
       一个本地HTML页面。标注是全部工作量所在。</p>
+    </div>
+
+    <div class="section-intro" id="wechat">
+      <h3>Carry On the Conversation<span class="h-cn">保持联系</span></h3>
+      <p>Scan either code in WeChat &mdash; questions after today are welcome</p>
+    </div>
+
+    <div class="lede">
+      Most of what is on this site came out of other teachers telling me what broke for them. If you
+      try the audit, or build one of these and it goes wrong, I would genuinely like to hear about it.
+      <span style="display:block;margin-top:6px;color:var(--mid);font-size:15px">本站内容大多源于其他教师
+      分享的失败经验。如果你做了这个审视练习，或者动手搭建后遇到问题，欢迎告诉我。</span>
+    </div>
+
+    <div class="qr-grid">
+
+      <div class="qr-card">
+        <img src="/wechat-group.png" alt="WeChat QR code for the group Automate Augment Keep" loading="lazy">
+        <h4>Group: Automate Augment Keep</h4>
+        <div class="qr-cn">群聊：自动化、辅助、保留人工</div>
+        <p>The group for this talk. Post what you automated, what you kept, and what went wrong.</p>
+        <p class="qr-note">WeChat group codes expire every seven days, so this one is refreshed
+        periodically. If it will not scan, add me on the right and I will add you.<br>
+        群二维码每七天失效，会定期更新；若无法扫描，请先加我，我拉你进群。</p>
+      </div>
+
+      <div class="qr-card">
+        <img src="/wechat-nick.png" alt="WeChat QR code to add Nick Marsh" loading="lazy">
+        <h4>Nick Marsh 马喜</h4>
+        <div class="qr-cn">YCIS Puxi, Shanghai &middot; 上海耀中浦西</div>
+        <p>Add me directly. A note saying which school you teach at helps &mdash; I get a lot of
+        requests after these things.</p>
+        <p class="qr-note">Happy to talk through any of this, in English or Chinese.<br>
+        中英文皆可，欢迎交流。</p>
+      </div>
+
     </div>
 
   </div>
