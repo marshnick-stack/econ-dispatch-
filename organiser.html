@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Graphic Organiser Prompt Generator</title>
+  <style>
+    :root {
+      --primary: #4F46E5;
+      --primary-hover: #4338CA;
+      --primary-light: #EEF2FF;
+      --success: #059669;
+      --danger: #DC2626;
+      --gray-50: #F9FAFB;
+      --gray-100: #F3F4F6;
+      --gray-200: #E5E7EB;
+      --gray-300: #D1D5DB;
+      --gray-400: #9CA3AF;
+      --gray-500: #6B7280;
+      --gray-600: #4B5563;
+      --gray-700: #374151;
+      --gray-800: #1F2937;
+      --gray-900: #111827;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      background: #EDEEFF;
+      color: var(--gray-800);
+      min-height: 100vh;
+      padding: 32px 16px 80px;
+    }
+    #app { max-width: 660px; margin: 0 auto; }
+
+    /* ── Header ── */
+    .app-header { text-align: center; margin-bottom: 28px; }
+    .app-logo { font-size: 2.2rem; display: block; margin-bottom: 8px; }
+    .app-title { font-size: 1.5rem; font-weight: 700; color: var(--gray-900); margin-bottom: 4px; }
+    .app-subtitle { font-size: 0.875rem; color: var(--gray-500); }
+
+    /* ── Card ── */
+    .card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 8px 24px rgba(79,70,229,0.07);
+      padding: 32px;
+      margin-bottom: 12px;
+    }
+
+    /* ── Progress ── */
+    .progress-section { margin-bottom: 24px; }
+    .progress-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .progress-step-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--primary); }
+    .progress-step-count { font-size: 0.72rem; color: var(--gray-400); }
+    .progress-bar-track { height: 4px; background: var(--gray-100); border-radius: 2px; overflow: hidden; }
+    .progress-bar-fill { height: 100%; background: var(--primary); border-radius: 2px; transition: width 0.4s ease; }
+
+    /* ── Step content ── */
+    .step-question { font-size: 1.2rem; font-weight: 700; color: var(--gray-900); margin-bottom: 6px; line-height: 1.4; }
+    .step-hint { font-size: 0.8rem; color: var(--gray-500); margin-bottom: 20px; line-height: 1.5; }
+    .optional-tag {
+      font-size: 0.68rem; background: var(--gray-100); color: var(--gray-500);
+      padding: 2px 8px; border-radius: 12px; font-weight: 500;
+      vertical-align: middle; margin-left: 6px;
+    }
+
+    /* ── Inputs ── */
+    .text-input {
+      width: 100%; border: 1.5px solid var(--gray-200); border-radius: 10px;
+      padding: 12px 16px; font-size: 1rem; font-family: inherit;
+      color: var(--gray-900); background: white; transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .text-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,0.12); }
+    textarea.text-input { min-height: 110px; resize: vertical; }
+
+    /* ── Option cards ── */
+    .options-list { display: flex; flex-direction: column; gap: 8px; }
+    .options-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .option-card {
+      display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+      border: 1.5px solid var(--gray-200); border-radius: 10px; cursor: pointer;
+      background: white; text-align: left; font-family: inherit; transition: all 0.15s; width: 100%;
+    }
+    .option-card:hover { border-color: var(--primary); background: var(--primary-light); }
+    .option-card.active { border-color: var(--primary); background: var(--primary-light); box-shadow: 0 0 0 3px rgba(79,70,229,0.1); }
+    .option-icon { font-size: 1.25rem; flex-shrink: 0; width: 28px; text-align: center; }
+    .option-text { flex: 1; }
+    .option-name { font-weight: 600; font-size: 0.875rem; color: var(--gray-900); }
+    .option-desc { font-size: 0.775rem; color: var(--gray-500); margin-top: 1px; }
+    .option-check {
+      width: 18px; height: 18px; border: 2px solid var(--gray-300); border-radius: 50%;
+      flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+      font-size: 0.6rem; color: white; background: white; transition: all 0.15s;
+    }
+    .option-card.active .option-check { background: var(--primary); border-color: var(--primary); }
+    .multi-hint { font-size: 0.78rem; color: var(--gray-400); text-align: center; margin-top: 10px; }
+
+    /* ── Content chips ── */
+    .chips-section { margin-bottom: 14px; }
+    .chips-label { font-size: 0.75rem; font-weight: 600; color: var(--gray-500); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .chips-row { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chip {
+      padding: 5px 12px; border-radius: 20px; border: 1.5px solid var(--gray-200);
+      background: var(--gray-50); color: var(--gray-700); font-size: 0.8rem;
+      font-family: inherit; cursor: pointer; transition: all 0.15s; font-weight: 500;
+    }
+    .chip:hover { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
+    .chip.econ-chip { border-color: #FCD34D; background: #FFFBEB; color: #78350F; }
+    .chip.econ-chip:hover { border-color: #F59E0B; background: #FEF3C7; }
+
+    /* ── Image paste zone ── */
+    .paste-section { margin-top: 20px; }
+    .paste-divider {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 0.78rem; color: var(--gray-400); margin-bottom: 12px;
+    }
+    .paste-divider::before, .paste-divider::after { content: ''; flex: 1; height: 1px; background: var(--gray-200); }
+    .paste-zone {
+      border: 2px dashed var(--gray-300); border-radius: 10px;
+      padding: 20px; text-align: center; cursor: pointer;
+      transition: all 0.15s; background: var(--gray-50);
+      outline: none;
+    }
+    .paste-zone:focus, .paste-zone:hover { border-color: var(--primary); background: var(--primary-light); }
+    .paste-zone.has-image { border-style: solid; border-color: var(--gray-200); background: white; padding: 12px; }
+    .paste-zone-icon { font-size: 1.8rem; margin-bottom: 8px; }
+    .paste-zone-text { font-size: 0.85rem; color: var(--gray-500); line-height: 1.5; }
+    .paste-zone-text strong { color: var(--gray-700); }
+    .pasted-image { max-width: 100%; max-height: 220px; border-radius: 6px; display: block; margin: 0 auto 10px; }
+    .paste-actions { display: flex; gap: 8px; justify-content: center; margin-top: 8px; }
+
+    /* ── Image reference panel (persistent) ── */
+    .img-ref-panel {
+      border: 1.5px solid #FCD34D; border-radius: 10px;
+      overflow: hidden; margin-bottom: 16px; background: #FFFBEB;
+    }
+    .img-ref-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 14px; cursor: pointer;
+    }
+    .img-ref-header-left { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; font-weight: 600; color: #78350F; }
+    .img-ref-toggle { font-size: 0.75rem; color: #92400E; background: none; border: none; cursor: pointer; font-family: inherit; }
+    .img-ref-body { padding: 0 14px 14px; }
+    .img-ref-img { max-width: 100%; border-radius: 6px; display: block; }
+
+    /* ── OR divider ── */
+    .or-divider { text-align: center; position: relative; margin: 14px 0; color: var(--gray-400); font-size: 0.8rem; }
+    .or-divider::before, .or-divider::after { content: ''; position: absolute; top: 50%; width: 42%; height: 1px; background: var(--gray-200); }
+    .or-divider::before { left: 0; } .or-divider::after { right: 0; }
+
+    /* ── Economics badge ── */
+    .econ-hint { background: #FFFBEB; border: 1px solid #FCD34D; border-radius: 10px; padding: 12px 16px; margin-bottom: 16px; display: flex; gap: 10px; align-items: flex-start; }
+    .econ-hint-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+    .econ-hint-text { font-size: 0.8rem; color: #78350F; }
+    .econ-hint-text strong { display: block; margin-bottom: 2px; font-size: 0.82rem; }
+
+    /* ── Nav ── */
+    .nav-row { display: flex; align-items: center; gap: 10px; margin-top: 24px; }
+    .nav-row .spacer { flex: 1; }
+
+    /* ── Buttons ── */
+    .btn { padding: 10px 22px; border-radius: 8px; font-size: 0.875rem; font-weight: 600; cursor: pointer; border: none; font-family: inherit; transition: all 0.15s; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-primary:disabled { background: var(--gray-300); cursor: not-allowed; }
+    .btn-secondary { background: white; color: var(--gray-700); border: 1.5px solid var(--gray-200); }
+    .btn-secondary:hover { background: var(--gray-50); }
+    .btn-ghost { background: transparent; color: var(--primary); padding: 10px 4px; font-weight: 600; border: none; }
+    .btn-ghost:hover { text-decoration: underline; }
+    .btn-success { background: var(--success); color: white; }
+    .btn-success:hover { background: #047857; }
+    .btn-danger-outline { background: white; color: var(--danger); border: 1.5px solid #FECACA; }
+    .btn-danger-outline:hover { background: #FEF2F2; }
+    .btn-sm { padding: 5px 12px; font-size: 0.775rem; border-radius: 6px; }
+    .btn-xs { padding: 4px 10px; font-size: 0.72rem; border-radius: 6px; }
+
+    /* ── Option pills (for sheet options step) ── */
+    .option-pill {
+      padding: 8px 18px; border-radius: 20px; border: 1.5px solid var(--gray-200);
+      background: white; cursor: pointer; font-family: inherit; font-size: 0.875rem;
+      font-weight: 600; color: var(--gray-700); transition: all 0.15s;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .option-pill:hover { border-color: var(--primary); background: var(--primary-light); }
+    .option-pill.active { border-color: var(--primary); background: var(--primary-light); color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,0.1); }
+
+    /* ── Sheet option groups ── */
+    .sheet-opt-group { margin-bottom: 22px; }
+    .sheet-opt-label {
+      font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.06em; color: var(--gray-500); margin-bottom: 10px; display: block;
+    }
+    .sheet-opt-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    /* ── Summary ── */
+    .summary-title { font-size: 1.2rem; font-weight: 700; color: var(--gray-900); margin-bottom: 4px; }
+    .summary-subtitle { font-size: 0.85rem; color: var(--gray-500); margin-bottom: 20px; }
+    .summary-items { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+    .summary-row { display: flex; align-items: flex-start; gap: 14px; padding: 12px 14px; background: var(--gray-50); border-radius: 10px; border: 1.5px solid transparent; cursor: pointer; transition: border-color 0.15s; }
+    .summary-row:hover { border-color: var(--gray-200); }
+    .summary-row-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gray-400); min-width: 100px; padding-top: 1px; flex-shrink: 0; }
+    .summary-row-value { font-size: 0.875rem; color: var(--gray-800); flex: 1; line-height: 1.5; }
+    .summary-row-edit { font-size: 0.75rem; color: var(--primary); opacity: 0; flex-shrink: 0; padding-top: 1px; transition: opacity 0.15s; }
+    .summary-row:hover .summary-row-edit { opacity: 1; }
+    .auto-badge { display: inline-block; font-size: 0.68rem; background: #DBEAFE; color: #1E40AF; padding: 1px 7px; border-radius: 10px; font-weight: 600; margin-left: 6px; vertical-align: middle; }
+
+    /* ── Layout override inline ── */
+    .layout-override-panel { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--gray-200); }
+    .layout-override-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; }
+    .layout-opt-btn {
+      padding: 8px 10px; border: 1.5px solid var(--gray-200); border-radius: 8px;
+      background: white; cursor: pointer; text-align: left; font-family: inherit; font-size: 0.78rem;
+      font-weight: 600; color: var(--gray-700); transition: all 0.15s; display: flex; align-items: center; gap: 6px;
+    }
+    .layout-opt-btn:hover { border-color: var(--primary); background: var(--primary-light); }
+    .layout-opt-btn.active { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
+
+    /* ── Output ── */
+    .output-title { font-size: 1.2rem; font-weight: 700; color: var(--gray-900); margin-bottom: 4px; }
+    .output-subtitle { font-size: 0.85rem; color: var(--gray-500); margin-bottom: 20px; }
+    .prompt-box { background: var(--gray-900); color: #D1D5DB; border-radius: 10px; padding: 20px; font-size: 0.82rem; line-height: 1.8; font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace; white-space: pre-wrap; word-break: break-word; margin-bottom: 14px; max-height: 420px; overflow-y: auto; }
+    .output-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .copy-feedback { font-size: 0.82rem; color: var(--success); font-weight: 600; opacity: 0; transition: opacity 0.3s; }
+    .copy-feedback.visible { opacity: 1; }
+
+    /* ── Templates ── */
+    .templates-section { margin-top: 24px; border-top: 1px solid var(--gray-100); padding-top: 20px; }
+    .templates-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .templates-title { font-size: 0.875rem; font-weight: 700; color: var(--gray-700); }
+    .template-list { display: flex; flex-direction: column; gap: 8px; }
+    .template-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--gray-50); border: 1.5px solid var(--gray-200); border-radius: 10px; }
+    .template-icon { font-size: 1rem; flex-shrink: 0; }
+    .template-info { flex: 1; min-width: 0; }
+    .template-name { font-size: 0.875rem; font-weight: 600; color: var(--gray-800); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .template-meta { font-size: 0.75rem; color: var(--gray-400); }
+    .template-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+    /* ── Modal ── */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 16px; }
+    .modal { background: white; border-radius: 16px; padding: 28px; max-width: 420px; width: 100%; box-shadow: 0 24px 60px rgba(0,0,0,0.2); }
+    .modal-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; color: var(--gray-900); }
+    .modal-desc { font-size: 0.85rem; color: var(--gray-500); margin-bottom: 18px; }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+    /* ── Start screen ── */
+    .start-screen { text-align: center; padding: 12px 0 4px; }
+    .start-emoji { font-size: 3.5rem; display: block; margin-bottom: 16px; }
+    .start-title { font-size: 1.35rem; font-weight: 700; color: var(--gray-900); margin-bottom: 8px; }
+    .start-desc { font-size: 0.9rem; color: var(--gray-500); max-width: 380px; margin: 0 auto 28px; line-height: 1.6; }
+    .features-row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 28px; }
+    .feature-chip { background: var(--gray-100); color: var(--gray-600); font-size: 0.8rem; padding: 4px 12px; border-radius: 20px; font-weight: 500; }
+
+    /* ── Animations ── */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-in { animation: fadeUp 0.22s ease both; }
+    .animate-in-2 { animation: fadeUp 0.22s ease 0.08s both; }
+  </style>
+<link rel="icon" type="image/png" href="/talk-icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/talk-icon.png">
+</head>
+<body>
+<!-- Back link added when this tool was published alongside the talk. The app renders
+     into #app below, so nothing here is touched by its JavaScript. -->
+<div style="font:13px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+            background:#f0e8d5;border-bottom:1px solid #c8b89a;padding:9px 16px;text-align:center">
+  <a href="/tools" style="color:#5c4a2a;text-decoration:none;letter-spacing:1.5px;
+     text-transform:uppercase;font-weight:600;font-size:11.5px">&larr; Automate, Augment, or Keep?</a>
+</div>
+<div id="app"></div>
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  CONSTANTS
+// ═══════════════════════════════════════════════════════════════
+
+const STEPS = [
+  {
+    id: 'subject',
+    question: 'What subject is this for?',
+    type: 'text',
+    placeholder: 'e.g. IGCSE Economics, IB Biology, MYP English, A-Level History',
+  },
+  {
+    id: 'level',
+    question: 'What level are your students?',
+    type: 'buttons_or_text',
+    options: [
+      { value: 'IGCSE', icon: '📘', desc: 'Cambridge International' },
+      { value: 'IB Diploma', icon: '🌍', desc: 'Years 12–13' },
+      { value: 'MYP', icon: '🏫', desc: 'Years 6–10' },
+      { value: 'A-Level', icon: '🎓', desc: 'UK Sixth Form' },
+      { value: 'KS3', icon: '📚', desc: 'Years 7–9' },
+    ],
+    placeholder: 'Or type your own level...',
+  },
+  {
+    id: 'topic',
+    question: 'What is the topic?',
+    type: 'text',
+    placeholder: 'e.g. Market Failure, Genetics, Narrative Writing',
+  },
+  {
+    id: 'subtopic',
+    question: 'What is the subtopic or specific skill?',
+    type: 'text_image',
+    placeholder: 'e.g. Negative Externalities, Mutation, Writing a story opening',
+    hint: 'Type it in — or paste a screenshot of your syllabus / scheme of work below as a reference.',
+  },
+  // Economics-only — inserted when subject contains "economics"
+  {
+    id: 'ao_level',
+    question: 'What assessment objective level does this target?',
+    type: 'buttons',
+    economics_only: true,
+    options: [], // populated dynamically
+    hint: 'This shapes the organiser design — e.g. whether to include evaluation scaffolds, star ratings, and CLASPP.',
+  },
+  {
+    id: 'purpose',
+    question: 'What is this organiser for?',
+    type: 'buttons_multi',
+    hint: 'Select one or more.',
+    options: [
+      { value: 'Note-taking', icon: '📝', desc: 'Students record new content as they learn it' },
+      { value: 'Exam technique practice', icon: '✍️', desc: 'Structured scaffold for an exam-style answer' },
+      { value: 'Concept map / connections', icon: '🔗', desc: 'Show links and relationships between ideas' },
+      { value: 'Vocabulary / key terms', icon: '📖', desc: 'Definitions, examples, and usage in context' },
+      { value: 'Diagram labelling', icon: '🖼️', desc: 'Label and annotate diagrams' },
+      { value: 'Compare and contrast', icon: '⚖️', desc: 'Side-by-side comparison of two or more items' },
+      { value: 'Revision summary', icon: '🔄', desc: 'Consolidate and review a completed topic' },
+    ],
+  },
+  {
+    id: 'content',
+    question: 'What key content, concepts, or prompts should it include?',
+    type: 'textarea_chips',
+    placeholder: 'Describe the sections, prompts, and structure you want...\n\ne.g. "Include: definition box, diagram space, real-world example, T-chart for advantages/disadvantages, and a conclusion box"',
+    hint: 'Click the suggestion chips below to add common elements, or type your own.',
+  },
+  {
+    id: 'sheet_options',
+    question: 'Sheet formatting options',
+    type: 'sheet_options',
+    hint: 'Defaults are already selected — change anything you like, or just click Next.',
+    optional: true,
+  },
+  {
+    id: 'other',
+    question: 'Any other details?',
+    type: 'textarea',
+    optional: true,
+    placeholder: 'e.g. "Use A3 size", "Add a model answer excerpt at the top", "Two-column layout", "Word count guide of 3–4 sentences per box"...',
+    hint: 'Optional — press Next to skip.',
+  },
+];
+
+const IGCSE_AO_OPTIONS = [
+  { value: 'AO1 — Knowledge', icon: '📌', desc: 'Define, state, identify — factual recall' },
+  { value: 'AO2 — Analysis', icon: '🔍', desc: 'Explain, analyse — chains of reasoning' },
+  { value: 'AO3 — Evaluation', icon: '⚖️', desc: 'Discuss, evaluate, assess — judgment and balance' },
+];
+
+const IB_AO_OPTIONS = [
+  { value: 'AO1+AO2 — Knowledge & Understanding', icon: '📌', desc: 'Recall, define, describe, explain concepts' },
+  { value: 'AO2+AO3 — Application & Analysis', icon: '🔍', desc: 'Apply to context, develop chains of reasoning' },
+  { value: 'AO4 — Evaluation & Synthesis', icon: '⚖️', desc: 'Evaluate, synthesise, make supported judgments' },
+];
+
+const LAYOUT_OPTIONS = [
+  { value: 'Clean and minimal', icon: '🗒️', desc: 'Lots of writing space, simple structure' },
+  { value: 'Structured with clear boxes and labels', icon: '📋', desc: 'Distinct sections, borders, bold headers' },
+  { value: 'Visual / diagram-heavy', icon: '🎨', desc: 'Large diagram areas, visual prompts' },
+  { value: 'Mixed (diagrams + writing space)', icon: '🔀', desc: 'Balance of visual and writing areas' },
+];
+
+const GENERIC_CHIPS = [
+  'Definition box', 'Diagram / sketch space', 'Advantages column',
+  'Disadvantages column', 'Real-world example', 'Chain of reasoning scaffold',
+  'Key terms banner', 'Conclusion / synthesis box', 'Sentence starters / scaffolds',
+  'Comparison columns', 'Step-by-step structure', 'Blank table / grid',
+];
+
+const ECON_CHIPS = [
+  '10-star effectiveness rating ☆☆☆☆☆☆☆☆☆☆', 'T-chart (pros/cons)',
+  'Evaluation judgment box', 'CLASPP reminder footer',
+  '"It depends because…" conclusion', 'Real-world country example',
+];
+
+// ═══════════════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════════════
+
+let state = {
+  screen: 'start',
+  stepIndex: 0,
+  answers: {},
+  syllabusImage: null,
+  imageRefOpen: false,
+  layoutOverride: null,
+  summaryEditingLayout: false,
+  generatedPrompt: '',
+  showModal: false,
+  templateName: '',
+};
+
+// ═══════════════════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════════════════
+
+function isEconomicsMode() {
+  return (state.answers.subject || '').toLowerCase().includes('economics');
+}
+
+function getVisibleSteps() {
+  const econ = isEconomicsMode();
+  return STEPS.filter(s => !s.economics_only || econ).map(s => {
+    if (s.id === 'ao_level') {
+      const combo = (state.answers.subject || '') + (state.answers.level || '');
+      return { ...s, options: combo.toLowerCase().includes('ib') ? IB_AO_OPTIONS : IGCSE_AO_OPTIONS };
+    }
+    return s;
+  });
+}
+
+function getCurrentStep() { return getVisibleSteps()[state.stepIndex]; }
+
+function canProceed() {
+  const step = getCurrentStep();
+  if (!step) return false;
+  if (step.optional) return true;
+  // Subtopic: can proceed if typed text OR image pasted
+  if (step.id === 'subtopic') {
+    const val = state.answers.subtopic;
+    return !!(state.syllabusImage || (val && val.trim().length > 0));
+  }
+  const val = state.answers[step.id];
+  if (step.type === 'buttons_multi') {
+    return Array.isArray(val) && val.length > 0;
+  }
+  return !!(val && String(val).trim().length > 0);
+}
+
+function computeAutoLayout(purposes) {
+  if (!purposes || purposes.length === 0) return 'Structured with clear boxes and labels';
+  if (purposes.includes('Diagram labelling')) return 'Visual / diagram-heavy';
+  if (purposes.includes('Concept map / connections') || purposes.length > 2) return 'Mixed (diagrams + writing space)';
+  if (purposes.includes('Note-taking') && purposes.length === 1) return 'Clean and minimal';
+  return 'Structured with clear boxes and labels';
+}
+
+function getEffectiveLayout() {
+  return state.layoutOverride || computeAutoLayout(
+    Array.isArray(state.answers.purpose) ? state.answers.purpose : [state.answers.purpose].filter(Boolean)
+  );
+}
+
+function getTemplates() {
+  try { return JSON.parse(localStorage.getItem('go_templates') || '[]'); }
+  catch { return []; }
+}
+function saveTemplates(t) { localStorage.setItem('go_templates', JSON.stringify(t)); }
+function formatDate(iso) {
+  return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+function esc(str) {
+  return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
+function displayVal(val) {
+  if (Array.isArray(val)) return val.join(', ');
+  return val || '—';
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  PROMPT GENERATION
+// ═══════════════════════════════════════════════════════════════
+
+const PURPOSE_DESCS = {
+  'Note-taking': 'Students fill this in as new content is introduced. All sections are blank with generous writing lines.',
+  'Exam technique practice': 'Scaffolds an exam-style answer, breaking the required response into clearly labelled stages.',
+  'Concept map / connections': 'Maps connections between ideas using linked boxes and relational prompts.',
+  'Vocabulary / key terms': 'Each key term has a dedicated box with space for definition, example, and use in context.',
+  'Diagram labelling': 'Students draw, label, and annotate diagrams in clearly marked spaces.',
+  'Compare and contrast': 'Parallel columns or rows allow structured comparison across consistent criteria.',
+  'Revision summary': 'Students distil their knowledge into summaries, key terms, and evaluation points.',
+};
+
+const LAYOUT_DESCS = {
+  'Clean and minimal': 'generous white space and long ruled lines. Avoid heavy borders or complex subdivisions.',
+  'Structured with clear boxes and labels': 'clearly defined boxes, bold section headings, and visible borders throughout.',
+  'Visual / diagram-heavy': 'large spaces for diagrams with pre-drawn guide shapes where relevant. Writing sections compact but clear.',
+  'Mixed (diagrams + writing space)': 'a balance of diagram space and writing lines, alternating in a logical flow.',
+};
+
+function getEconOrganizerHint(aoLevel) {
+  if (!aoLevel) return '';
+  if (aoLevel.includes('AO3') || aoLevel.includes('AO4') || aoLevel.includes('Evaluation')) {
+    return `
+ECONOMICS ORGANISER TYPE — EVALUATIVE (AO3/AO4):
+For each concept or policy zone, include:
+  • Advantages / Disadvantages T-chart
+  • Chain of reasoning: "Because… → Therefore… → As a result…"
+  • 10-star effectiveness rating row: ☆☆☆☆☆☆☆☆☆☆
+  • "Why this rating?" justification box (3–4 writing lines)
+End with a conclusion box: "Overall, which is most effective? It depends because…" (4–5 lines)`;
+  }
+  if (aoLevel.includes('AO2') || aoLevel.includes('Analysis') || aoLevel.includes('Application')) {
+    return `
+ECONOMICS ORGANISER TYPE — ANALYSIS (AO2/AO3):
+For each concept zone, include:
+  • "What is it?" (1–2 lines)
+  • "How does this affect the economy?" (2–3 lines)
+  • "Real-world example:" (1 line)
+  • Chain of reasoning: "X causes… → This means… → The effect is…"
+End with: "Which factor is most significant? I think… because…" (4 lines)`;
+  }
+  if (aoLevel.includes('AO1') || aoLevel.includes('Knowledge')) {
+    return `
+ECONOMICS ORGANISER TYPE — KNOWLEDGE-BUILDING (AO1/AO2):
+For each concept zone, include:
+  • Definition box (1–2 lines)
+  • Example (1 line)
+  • Diagram or sketch space
+  • "How does this connect to prior knowledge?" (2 lines)
+End with a linking question across all new concepts.`;
+  }
+  return '';
+}
+
+function generatePrompt() {
+  const a = state.answers;
+  const econ = isEconomicsMode();
+  const purposes = Array.isArray(a.purpose) ? a.purpose : [a.purpose].filter(Boolean);
+  const layout = getEffectiveLayout();
+  const purposeLines = purposes.map(p => `  • ${p}: ${PURPOSE_DESCS[p] || p}`).join('\n');
+  const layoutDesc = LAYOUT_DESCS[layout] || layout;
+  const econHint = econ ? getEconOrganizerHint(a.ao_level) : '';
+  const aoNote = (econ && a.ao_level) ? `\nAssessment objective focus: ${a.ao_level}` : '';
+  // Sheet options
+  ensureSheetOptionDefaults();
+  const colourMap = {
+    'Black & white only': 'Black and white only — no colour fills whatsoever (ink-saving for standard laser printers)',
+    'Colour accents':     'Colour accents — use light pastel fills for section backgrounds and coloured headers; keep body text black; suitable for colour printing',
+    'Bright & bold':      'Bright and bold — use vivid, high-contrast colours for section headers, borders, and zone fills; designed for colour printing or digital display on a screen',
+  };
+  const colourInstruction = colourMap[a.opt_colour] || colourMap['Black & white only'];
+
+  const nameBarLine  = a.opt_name_bar !== 'Omit'
+    ? '• HEADER BAR: Include a student info bar — Student Name: ________________ | Class: ________ | Date: ________'
+    : '• HEADER BAR: Omit the student name / class / date bar';
+
+  const subjectLine  = a.opt_subject_label !== 'Omit'
+    ? `• SUBJECT LABEL: Include the subject and level prominently in the title area: "${(a.level || '') + (a.level && a.subject ? ' ' : '') + (a.subject || '')}"`
+    : '• SUBJECT LABEL: Omit the subject/level label — title the sheet with the topic only';
+
+  const econFooter = econ ? `\n• CLASPP FOOTER: Include a slim footer — CLASPP: Consequences | Limitations | Assumptions | Stakeholders | Priorities | Prior Knowledge` : '';
+  const imageNote = state.syllabusImage ? `\n• CURRICULUM CONTEXT: The teacher has provided a syllabus / scheme of work extract as a reference image — design the organiser to match the scope of that content.` : '';
+  const otherSection = (a.other && a.other.trim()) ? `\n━━━ ADDITIONAL DETAILS ━━━\n${a.other.trim()}\n` : '';
+  const levelStr = a.level ? `${a.level} ` : '';
+
+  return `Design a printable A4 graphic organiser for ${levelStr}${a.subject || 'student'} students.
+
+━━━ OVERVIEW ━━━
+Title: ${a.topic || ''}${a.subtopic ? ` — ${a.subtopic}` : ''}${aoNote}
+Purpose(s): ${purposes.join(', ')}
+
+${purposeLines}
+${econHint}
+━━━ CONTENT TO INCLUDE ━━━
+${a.content || '(Design content appropriate for the topic and purposes above)'}
+
+━━━ LAYOUT & VISUAL STYLE ━━━
+Style: ${layout}
+Use ${layoutDesc}
+${otherSection}
+━━━ DESIGN REQUIREMENTS ━━━
+• FORMAT: A4 portrait, print-ready, high resolution
+• COLOUR: ${colourInstruction}
+• BLANK TEMPLATE: All response areas = blank ruled lines or empty boxes only — DO NOT pre-fill any answers or model text
+• WRITING SPACE: Generous — students handwrite in class; err on the side of more space
+• HIERARCHY: Main title → section headers → sub-prompts → writing lines
+• LABELS: Every section labelled with borders, dividers, or box outlines
+${nameBarLine}
+${subjectLine}
+• STYLE: Clean, professional, classroom-appropriate — no clipart or decorative backgrounds${econFooter}${imageNote}
+
+━━━ TECHNICAL SPECS ━━━
+Minimalist vector / flat design. High contrast. Professional classroom aesthetic. Print-ready A4.`.trim();
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════════════════════════════
+
+function render() {
+  document.getElementById('app').innerHTML = `
+    <div class="app-header">
+      <span class="app-logo">📐</span>
+      <h1 class="app-title">Graphic Organiser Generator</h1>
+      <p class="app-subtitle">Build prompts for Nano Banana Pro in 2 minutes</p>
+    </div>
+    ${renderScreen()}
+    ${state.showModal ? renderModal() : ''}
+  `;
+  attachListeners();
+}
+
+function renderScreen() {
+  if (state.screen === 'start')   return renderStart();
+  if (state.screen === 'step')    return renderStep();
+  if (state.screen === 'summary') return renderSummary();
+  if (state.screen === 'output')  return renderOutput();
+  return '';
+}
+
+// ── Start ──────────────────────────────────────────────────────
+function renderStart() {
+  const templates = getTemplates();
+  return `
+    <div class="card animate-in">
+      <div class="start-screen">
+        <span class="start-emoji">🖨️</span>
+        <h2 class="start-title">Ready to build a graphic organiser?</h2>
+        <p class="start-desc">Answer a few quick questions and get a polished prompt to paste straight into Nano Banana Pro.</p>
+        <div class="features-row">
+          <span class="feature-chip">Step-by-step wizard</span>
+          <span class="feature-chip">Multi-select purposes</span>
+          <span class="feature-chip">Paste syllabus image</span>
+          <span class="feature-chip">Economics-smart</span>
+          <span class="feature-chip">Save templates</span>
+        </div>
+        <button class="btn btn-primary" onclick="startNew()" style="font-size:1rem;padding:13px 36px;">
+          Start new organiser →
+        </button>
+      </div>
+    </div>
+    ${templates.length > 0 ? `
+      <div class="card animate-in-2">
+        <div class="templates-header">
+          <span class="templates-title">📁 Saved Templates</span>
+          <span style="font-size:0.78rem;color:var(--gray-400)">${templates.length} saved</span>
+        </div>
+        <div class="template-list">
+          ${templates.map((t, i) => `
+            <div class="template-item">
+              <span class="template-icon">📄</span>
+              <div class="template-info">
+                <div class="template-name">${esc(t.name)}</div>
+                <div class="template-meta">${esc(t.answers.subject || '')}${t.answers.topic ? ' · ' + esc(t.answers.topic) : ''} · ${formatDate(t.savedAt)}</div>
+              </div>
+              <div class="template-actions">
+                <button class="btn btn-secondary btn-sm" onclick="loadTemplate(${i})">Use</button>
+                <button class="btn btn-danger-outline btn-sm" onclick="deleteTemplate(${i})">Delete</button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    ` : ''}
+  `;
+}
+
+// ── Step ───────────────────────────────────────────────────────
+function renderStep() {
+  const visibleSteps = getVisibleSteps();
+  const step = visibleSteps[state.stepIndex];
+  const total = visibleSteps.length;
+  const current = state.stepIndex + 1;
+  const isLast = state.stepIndex === total - 1;
+  const isFirst = state.stepIndex === 0;
+  const pct = (current / total) * 100;
+
+  return `
+    <div class="card animate-in">
+      <div class="progress-section">
+        <div class="progress-meta">
+          <span class="progress-step-label">Step ${current} of ${total}</span>
+          <span class="progress-step-count">${total - current} left</span>
+        </div>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" style="width:${pct}%"></div>
+        </div>
+      </div>
+
+      ${state.syllabusImage && state.stepIndex > 3 ? renderImageRefPanel() : ''}
+      ${isEconomicsMode() && !step.economics_only ? `
+        <div class="econ-hint">
+          <span class="econ-hint-icon">⚡</span>
+          <div class="econ-hint-text">
+            <strong>Economics mode active</strong>
+            AO-level guidance, organiser type hints, and CLASPP footer will be included in your final prompt.
+          </div>
+        </div>
+      ` : ''}
+
+      <div class="step-question">
+        ${esc(step.question)}
+        ${step.optional ? '<span class="optional-tag">optional</span>' : ''}
+      </div>
+      ${step.hint ? `<p class="step-hint">${esc(step.hint)}</p>` : ''}
+
+      ${renderStepInput(step)}
+
+      <div class="nav-row">
+        ${isFirst
+          ? `<button class="btn btn-ghost" onclick="goToStart()">← Back</button>`
+          : `<button class="btn btn-secondary" onclick="prevStep()">← Back</button>`
+        }
+        <div class="spacer"></div>
+        <button class="btn btn-primary" id="nextBtn" onclick="nextStep()" ${canProceed() ? '' : 'disabled'}>
+          ${isLast ? 'Review answers →' : 'Next →'}
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function renderImageRefPanel() {
+  return `
+    <div class="img-ref-panel" style="margin-bottom:16px">
+      <div class="img-ref-header" onclick="toggleImageRef()">
+        <span class="img-ref-header-left">📄 Curriculum reference image</span>
+        <button class="img-ref-toggle">${state.imageRefOpen ? 'Hide ▲' : 'Show ▼'}</button>
+      </div>
+      ${state.imageRefOpen ? `
+        <div class="img-ref-body">
+          <img src="${state.syllabusImage}" class="img-ref-img" alt="Curriculum reference" />
+        </div>
+      ` : ''}
+    </div>
+  `;
+}
+
+function renderStepInput(step) {
+  const val = state.answers[step.id] || '';
+
+  if (step.type === 'text') {
+    return `<input type="text" class="text-input" id="stepInput"
+      value="${esc(val)}" placeholder="${esc(step.placeholder || '')}"
+      oninput="handleText(this.value)" onkeydown="handleEnter(event)" />`;
+  }
+
+  if (step.type === 'textarea') {
+    return `<textarea class="text-input" id="stepInput"
+      placeholder="${esc(step.placeholder || '')}"
+      oninput="handleText(this.value)">${esc(val)}</textarea>`;
+  }
+
+  if (step.type === 'text_image') {
+    return `
+      <input type="text" class="text-input" id="stepInput"
+        value="${esc(val)}" placeholder="${esc(step.placeholder || '')}"
+        oninput="handleText(this.value)" onkeydown="handleEnter(event)" />
+      <div class="paste-section">
+        <div class="paste-divider">or paste a curriculum image for reference</div>
+        ${state.syllabusImage ? `
+          <div class="paste-zone has-image">
+            <img src="${state.syllabusImage}" class="pasted-image" alt="Pasted curriculum" />
+            <div class="paste-actions">
+              <button class="btn btn-secondary btn-xs" onclick="pasteImage()">Replace image</button>
+              <button class="btn btn-danger-outline btn-xs" onclick="clearImage()">Remove</button>
+            </div>
+          </div>
+        ` : `
+          <div class="paste-zone" id="pasteZone" tabindex="0"
+            onclick="document.getElementById('pasteZone').focus()"
+            onkeydown="if(event.key==='v'&&(event.ctrlKey||event.metaKey)){handlePasteKey(event)}"
+            onpaste="handlePasteEvent(event)">
+            <div class="paste-zone-icon">📋</div>
+            <div class="paste-zone-text">
+              <strong>Click here, then paste (Ctrl+V / ⌘V)</strong><br>
+              a screenshot of your syllabus or scheme of work
+            </div>
+          </div>
+          <div style="text-align:center;margin-top:8px">
+            <button class="btn btn-secondary btn-sm" onclick="pasteImage()">
+              📋 Paste from clipboard
+            </button>
+          </div>
+        `}
+      </div>
+    `;
+  }
+
+  if (step.type === 'buttons') {
+    return `<div class="options-list">
+      ${step.options.map(o => `
+        <button class="option-card ${val === o.value ? 'active' : ''}"
+          onclick="handleOption('${esc(o.value)}', true)">
+          <span class="option-icon">${o.icon || '•'}</span>
+          <div class="option-text">
+            <div class="option-name">${esc(o.value)}</div>
+            ${o.desc ? `<div class="option-desc">${esc(o.desc)}</div>` : ''}
+          </div>
+          <span class="option-check">${val === o.value ? '✓' : ''}</span>
+        </button>
+      `).join('')}
+    </div>`;
+  }
+
+  if (step.type === 'buttons_multi') {
+    const selected = Array.isArray(state.answers[step.id]) ? state.answers[step.id] : [];
+    return `
+      <div class="options-list">
+        ${step.options.map(o => `
+          <button class="option-card ${selected.includes(o.value) ? 'active' : ''}"
+            onclick="handleMultiOption('${esc(o.value)}')">
+            <span class="option-icon">${o.icon || '•'}</span>
+            <div class="option-text">
+              <div class="option-name">${esc(o.value)}</div>
+              ${o.desc ? `<div class="option-desc">${esc(o.desc)}</div>` : ''}
+            </div>
+            <span class="option-check">${selected.includes(o.value) ? '✓' : ''}</span>
+          </button>
+        `).join('')}
+      </div>
+      <p class="multi-hint">Select one or more — tap to toggle</p>
+    `;
+  }
+
+  if (step.type === 'textarea_chips') {
+    const econ = isEconomicsMode();
+    return `
+      <div class="chips-section">
+        <div class="chips-label">Quick-add elements</div>
+        <div class="chips-row">
+          ${GENERIC_CHIPS.map(c => `<button class="chip" onclick="addChip('${esc(c)}')">${esc(c)}</button>`).join('')}
+          ${econ ? ECON_CHIPS.map(c => `<button class="chip econ-chip" onclick="addChip('${esc(c)}')">${esc(c)}</button>`).join('') : ''}
+        </div>
+      </div>
+      <textarea class="text-input" id="stepInput"
+        placeholder="${esc(step.placeholder || '')}"
+        oninput="handleText(this.value)">${esc(val)}</textarea>
+    `;
+  }
+
+  if (step.type === 'sheet_options') {
+    ensureSheetOptionDefaults();
+    return renderSheetOptions();
+  }
+
+  if (step.type === 'buttons_or_text') {
+    return `
+      <div class="options-grid-2" style="margin-bottom:14px">
+        ${step.options.map(o => `
+          <button class="option-card ${val === o.value ? 'active' : ''}"
+            onclick="handleOption('${esc(o.value)}', false)">
+            <span class="option-icon">${o.icon || ''}</span>
+            <div class="option-text">
+              <div class="option-name">${esc(o.value)}</div>
+              ${o.desc ? `<div class="option-desc">${esc(o.desc)}</div>` : ''}
+            </div>
+          </button>
+        `).join('')}
+      </div>
+      <div class="or-divider">or type your own</div>
+      <input type="text" class="text-input" id="stepInput"
+        value="${esc(val)}" placeholder="${esc(step.placeholder || '')}"
+        oninput="handleText(this.value)" onkeydown="handleEnter(event)" />
+    `;
+  }
+
+  return '';
+}
+
+// ── Sheet options step ─────────────────────────────────────────
+function ensureSheetOptionDefaults() {
+  if (!state.answers.opt_name_bar)      state.answers.opt_name_bar      = 'Include';
+  if (!state.answers.opt_subject_label) state.answers.opt_subject_label = 'Include';
+  if (!state.answers.opt_colour)        state.answers.opt_colour        = 'Black & white only';
+}
+
+function renderSheetOptions() {
+  ensureSheetOptionDefaults();
+  const a = state.answers;
+
+  const pillGroup = (label, key, choices) => `
+    <div class="sheet-opt-group">
+      <span class="sheet-opt-label">${label}</span>
+      <div class="sheet-opt-pills">
+        ${choices.map(c => `
+          <button class="option-pill ${a[key] === c.value ? 'active' : ''}"
+            onclick="setSheetOption('${esc(key)}','${esc(c.value)}')">
+            ${c.icon} ${esc(c.label)}
+          </button>
+        `).join('')}
+      </div>
+    </div>
+  `;
+
+  return `
+    ${pillGroup('Student info bar', 'opt_name_bar', [
+      { value: 'Include', label: 'Include', icon: '✅' },
+      { value: 'Omit',    label: 'Omit',    icon: '⬜' },
+    ])}
+    ${pillGroup('Subject & level label', 'opt_subject_label', [
+      { value: 'Include', label: 'Include', icon: '✅' },
+      { value: 'Omit',    label: 'Omit',    icon: '⬜' },
+    ])}
+    ${pillGroup('Colour scheme', 'opt_colour', [
+      { value: 'Black & white only', label: 'Black & white',  icon: '🖤' },
+      { value: 'Colour accents',     label: 'Colour accents', icon: '🎨' },
+      { value: 'Bright & bold',      label: 'Bright & bold',  icon: '🌈' },
+    ])}
+    <p style="font-size:0.78rem;color:var(--gray-400);margin-top:4px">
+      <strong>Colour accents</strong> = light pastel fills, works on colour printers.<br>
+      <strong>Bright & bold</strong> = vivid headers and borders, great for display or colour printing.
+    </p>
+  `;
+}
+
+function setSheetOption(key, val) {
+  state.answers[key] = val;
+  render();
+}
+
+// ── Summary ────────────────────────────────────────────────────
+function renderSummary() {
+  const visibleSteps = getVisibleSteps();
+  const layout = getEffectiveLayout();
+  const isAutoLayout = !state.layoutOverride;
+  const labels = { subject:'Subject', level:'Level', topic:'Topic', subtopic:'Subtopic',
+    ao_level:'AO Level', purpose:'Purpose(s)', content:'Content', sheet_options:'Sheet options', other:'Extra details' };
+
+  return `
+    <div class="card animate-in">
+      <div class="summary-title">Review your answers</div>
+      <div class="summary-subtitle">Click any row to edit. Layout is auto-suggested — override it below if needed.</div>
+      <div class="summary-items">
+        ${visibleSteps.map((step, i) => {
+          const val = state.answers[step.id];
+          if (!val && step.id !== 'subtopic' && step.id !== 'sheet_options' && step.optional) return '';
+          if (!val && step.id === 'subtopic' && !state.syllabusImage) return '';
+
+          // Sheet options — always show as combined row
+          if (step.id === 'sheet_options') {
+            ensureSheetOptionDefaults();
+            const a = state.answers;
+            const parts = [
+              a.opt_name_bar === 'Omit' ? 'No name bar' : 'Name bar ✓',
+              a.opt_subject_label === 'Omit' ? 'No subject label' : 'Subject label ✓',
+              a.opt_colour || 'Black & white only',
+            ];
+            return `
+              <div class="summary-row" onclick="editStep(${i})">
+                <span class="summary-row-label">Sheet options</span>
+                <span class="summary-row-value">${esc(parts.join(' · '))}</span>
+                <span class="summary-row-edit">Edit ✏️</span>
+              </div>
+            `;
+          }
+
+          let displayValue = displayVal(val);
+          if (step.id === 'subtopic' && !val && state.syllabusImage) displayValue = '(image provided)';
+          if (step.id === 'subtopic' && val && state.syllabusImage) displayValue = val + ' (+ image)';
+          return `
+            <div class="summary-row" onclick="editStep(${i})">
+              <span class="summary-row-label">${labels[step.id] || step.id}</span>
+              <span class="summary-row-value">${esc(displayValue)}</span>
+              <span class="summary-row-edit">Edit ✏️</span>
+            </div>
+          `;
+        }).join('')}
+
+        <!-- Layout row (computed, not a wizard step) -->
+        <div class="summary-row" style="cursor:default" onclick="toggleLayoutEdit()">
+          <span class="summary-row-label">Layout</span>
+          <div style="flex:1">
+            <span class="summary-row-value">${esc(layout)}</span>
+            ${isAutoLayout ? '<span class="auto-badge">auto</span>' : ''}
+            ${state.summaryEditingLayout ? `
+              <div class="layout-override-panel">
+                <div style="font-size:0.75rem;color:var(--gray-500);margin-bottom:2px">Choose a layout:</div>
+                <div class="layout-override-grid">
+                  ${LAYOUT_OPTIONS.map(o => `
+                    <button class="layout-opt-btn ${layout === o.value ? 'active' : ''}"
+                      onclick="setLayoutOverride('${esc(o.value)}');event.stopPropagation()">
+                      ${o.icon} ${esc(o.value)}
+                    </button>
+                  `).join('')}
+                </div>
+                ${!isAutoLayout ? `
+                  <button class="btn btn-ghost" style="font-size:0.78rem;margin-top:8px;padding:6px 0"
+                    onclick="clearLayoutOverride();event.stopPropagation()">
+                    Reset to auto
+                  </button>
+                ` : ''}
+              </div>
+            ` : ''}
+          </div>
+          <span class="summary-row-edit" style="opacity:1;color:var(--gray-400)">Override ✏️</span>
+        </div>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn btn-secondary" onclick="editStep(${getVisibleSteps().length - 1})">← Back</button>
+        <div class="spacer"></div>
+        <button class="btn btn-primary" onclick="generateAndShow()" style="font-size:0.95rem;padding:11px 28px;">
+          Generate prompt ✨
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+// ── Output ─────────────────────────────────────────────────────
+function renderOutput() {
+  const templates = getTemplates();
+  return `
+    <div class="card animate-in">
+      <div class="output-title">Your Nano Banana Pro prompt</div>
+      <div class="output-subtitle">Copy and paste this directly into Nano Banana Pro.</div>
+      <div class="prompt-box" id="promptBox">${esc(state.generatedPrompt)}</div>
+      <div class="output-actions">
+        <button class="btn btn-primary" onclick="copyPrompt()">📋 Copy prompt</button>
+        <span class="copy-feedback" id="copyFeedback">✓ Copied to clipboard!</span>
+        <div class="spacer"></div>
+        <button class="btn btn-secondary" onclick="goToSummary()">← Edit</button>
+      </div>
+
+      <div class="templates-section">
+        <div class="templates-header"><span class="templates-title">💾 Save as template</span></div>
+        <p style="font-size:0.82rem;color:var(--gray-500);margin-bottom:12px">
+          Reuse this setup next time — great for recurring types like "IGCSE Economics evaluate scaffold".
+        </p>
+        <button class="btn btn-secondary" onclick="openSaveModal()" style="width:100%">Save as template...</button>
+        ${templates.length > 0 ? `
+          <div style="margin-top:20px;border-top:1px solid var(--gray-100);padding-top:16px">
+            <div class="templates-title" style="margin-bottom:10px">Your saved templates</div>
+            <div class="template-list">
+              ${templates.map((t, i) => `
+                <div class="template-item">
+                  <span class="template-icon">📄</span>
+                  <div class="template-info">
+                    <div class="template-name">${esc(t.name)}</div>
+                    <div class="template-meta">${esc(t.answers.subject || '')} · ${formatDate(t.savedAt)}</div>
+                  </div>
+                  <div class="template-actions">
+                    <button class="btn btn-secondary btn-sm" onclick="loadTemplate(${i})">Use</button>
+                    <button class="btn btn-danger-outline btn-sm" onclick="deleteTemplate(${i})">Delete</button>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        ` : ''}
+      </div>
+
+      <div style="margin-top:20px;border-top:1px solid var(--gray-100);padding-top:16px;text-align:center">
+        <button class="btn btn-ghost" onclick="startNew()">Start a new organiser →</button>
+      </div>
+    </div>
+  `;
+}
+
+// ── Modal ──────────────────────────────────────────────────────
+function renderModal() {
+  return `
+    <div class="modal-overlay" onclick="closeModal()">
+      <div class="modal" onclick="event.stopPropagation()">
+        <div class="modal-title">Save as template</div>
+        <div class="modal-desc">Give this setup a name so you can reuse it easily.</div>
+        <input type="text" class="text-input" id="tplNameInput"
+          value="${esc(state.templateName)}"
+          placeholder="e.g. IGCSE Economics — Evaluate question scaffold"
+          oninput="state.templateName = this.value"
+          onkeydown="if(event.key==='Enter') saveTemplate()" />
+        <div class="modal-actions">
+          <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+          <button class="btn btn-success" onclick="saveTemplate()">Save template</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  EVENT HANDLERS
+// ═══════════════════════════════════════════════════════════════
+
+function attachListeners() {
+  if (state.screen === 'step') {
+    setTimeout(() => {
+      const inp = document.getElementById('stepInput');
+      if (inp) inp.focus();
+    }, 80);
+  }
+  if (state.showModal) {
+    setTimeout(() => { const i = document.getElementById('tplNameInput'); if(i) i.focus(); }, 50);
+  }
+}
+
+function handleText(val) {
+  const step = getCurrentStep();
+  if (!step) return;
+  state.answers[step.id] = val;
+  const btn = document.getElementById('nextBtn');
+  if (btn) btn.disabled = !canProceed();
+}
+
+function handleOption(val, autoAdvance) {
+  const step = getCurrentStep();
+  if (!step) return;
+  state.answers[step.id] = val;
+  if (autoAdvance) {
+    render();
+    setTimeout(() => nextStep(), 260);
+  } else {
+    const inp = document.getElementById('stepInput');
+    if (inp) inp.value = val;
+    render();
+  }
+}
+
+function handleMultiOption(val) {
+  const step = getCurrentStep();
+  if (!step) return;
+  let current = Array.isArray(state.answers[step.id]) ? state.answers[step.id] : [];
+  state.answers[step.id] = current.includes(val) ? current.filter(v => v !== val) : [...current, val];
+  render();
+}
+
+function handleEnter(e) {
+  if (e.key === 'Enter' && !e.shiftKey && canProceed()) { e.preventDefault(); nextStep(); }
+}
+
+function addChip(text) {
+  const current = state.answers.content || '';
+  state.answers.content = current ? `${current}\n• ${text}` : `• ${text}`;
+  render();
+  setTimeout(() => {
+    const ta = document.getElementById('stepInput');
+    if (ta) { ta.scrollTop = ta.scrollHeight; ta.focus(); }
+  }, 50);
+}
+
+// ── Image paste ────────────────────────────────────────────────
+async function pasteImage() {
+  try {
+    const items = await navigator.clipboard.read();
+    for (const item of items) {
+      const imgType = item.types.find(t => t.startsWith('image/'));
+      if (imgType) {
+        const blob = await item.getType(imgType);
+        const reader = new FileReader();
+        reader.onload = (e) => { state.syllabusImage = e.target.result; render(); };
+        reader.readAsDataURL(blob);
+        return;
+      }
+    }
+    alert('No image found in clipboard. Copy a screenshot first, then try again.');
+  } catch {
+    alert('Could not access clipboard.\n\nTo paste: click the dashed box above, then press Ctrl+V (Windows) or ⌘V (Mac).');
+  }
+}
+
+function handlePasteEvent(e) {
+  const items = e.clipboardData?.items;
+  if (!items) return;
+  for (const item of items) {
+    if (item.type.startsWith('image/')) {
+      const blob = item.getAsFile();
+      const reader = new FileReader();
+      reader.onload = (ev) => { state.syllabusImage = ev.target.result; render(); };
+      reader.readAsDataURL(blob);
+      e.preventDefault();
+      return;
+    }
+  }
+}
+
+function handlePasteKey(e) {
+  // Handled by onpaste — just suppress default on paste zone
+  e.preventDefault();
+}
+
+function clearImage() { state.syllabusImage = null; render(); }
+function toggleImageRef() { state.imageRefOpen = !state.imageRefOpen; render(); }
+
+// ── Navigation ─────────────────────────────────────────────────
+function startNew() {
+  state = { screen:'step', stepIndex:0, answers:{}, syllabusImage:null, imageRefOpen:false,
+    layoutOverride:null, summaryEditingLayout:false, generatedPrompt:'', showModal:false, templateName:'' };
+  render();
+}
+function goToStart() { state.screen = 'start'; render(); }
+function goToSummary() { state.screen = 'summary'; state.summaryEditingLayout = false; render(); }
+
+function nextStep() {
+  if (!canProceed()) return;
+  const visible = getVisibleSteps();
+  if (state.stepIndex < visible.length - 1) { state.stepIndex++; }
+  else { state.screen = 'summary'; }
+  render();
+}
+function prevStep() { if (state.stepIndex > 0) { state.stepIndex--; render(); } }
+function editStep(i) { state.screen = 'step'; state.stepIndex = i; render(); }
+function generateAndShow() { state.generatedPrompt = generatePrompt(); state.screen = 'output'; render(); }
+
+// ── Layout override ────────────────────────────────────────────
+function toggleLayoutEdit() { state.summaryEditingLayout = !state.summaryEditingLayout; render(); }
+function setLayoutOverride(val) { state.layoutOverride = val; state.summaryEditingLayout = false; render(); }
+function clearLayoutOverride() { state.layoutOverride = null; state.summaryEditingLayout = false; render(); }
+
+// ── Copy ───────────────────────────────────────────────────────
+function copyPrompt() {
+  navigator.clipboard.writeText(state.generatedPrompt).then(() => {
+    const el = document.getElementById('copyFeedback');
+    if (el) { el.classList.add('visible'); setTimeout(() => el.classList.remove('visible'), 2500); }
+  }).catch(() => {
+    const box = document.getElementById('promptBox');
+    if (box) {
+      const sel = window.getSelection(); const range = document.createRange();
+      range.selectNodeContents(box); sel.removeAllRanges(); sel.addRange(range);
+      document.execCommand('copy');
+    }
+  });
+}
+
+// ── Templates ──────────────────────────────────────────────────
+function openSaveModal() {
+  const a = state.answers;
+  const purposes = Array.isArray(a.purpose) ? a.purpose.join(', ') : (a.purpose || '');
+  state.templateName = [a.subject, a.topic, purposes].filter(Boolean).join(' — ');
+  state.showModal = true;
+  render();
+}
+function closeModal() { state.showModal = false; render(); }
+function saveTemplate() {
+  const name = state.templateName.trim();
+  if (!name) { document.getElementById('tplNameInput')?.focus(); return; }
+  const templates = getTemplates();
+  templates.unshift({ name, answers: { ...state.answers }, savedAt: new Date().toISOString() });
+  saveTemplates(templates);
+  state.showModal = false;
+  render();
+}
+function loadTemplate(i) {
+  const t = getTemplates()[i]; if (!t) return;
+  state.answers = { ...t.answers };
+  state.screen = 'summary'; state.summaryEditingLayout = false;
+  render();
+}
+function deleteTemplate(i) {
+  if (!confirm('Delete this template?')) return;
+  const templates = getTemplates(); templates.splice(i, 1); saveTemplates(templates); render();
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  GLOBAL PASTE LISTENER (catches Ctrl+V anywhere on subtopic step)
+// ═══════════════════════════════════════════════════════════════
+document.addEventListener('paste', (e) => {
+  if (state.screen !== 'step') return;
+  const step = getCurrentStep();
+  if (!step || step.id !== 'subtopic') return;
+  const items = e.clipboardData?.items;
+  if (!items) return;
+  for (const item of items) {
+    if (item.type.startsWith('image/')) {
+      const blob = item.getAsFile();
+      const reader = new FileReader();
+      reader.onload = (ev) => { state.syllabusImage = ev.target.result; render(); };
+      reader.readAsDataURL(blob);
+      e.preventDefault();
+      return;
+    }
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════════════
+render();
+</script>
+</body>
+</html>

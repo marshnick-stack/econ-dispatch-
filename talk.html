@@ -218,6 +218,12 @@
   .qr-card .qr-cn { font-size: 14px; color: var(--mid); margin-bottom: 8px; }
   .qr-card p { font-size: 13.5px; line-height: 1.6; color: #2a1f0a; }
   .qr-card p.qr-note { font-size: 12.5px; color: var(--mid); margin-top: 7px; }
+  .qr-card p.qr-note a { color: #8a6d1f; text-decoration: none; border-bottom: 1px dotted var(--rule); }
+  .qr-card p.qr-note a:hover { color: var(--gold); }
+  /* Wide variant: same card, but for landscape sheets rather than square QR codes. */
+  .qr-card.wide img { max-width: 100%; }
+  .qr-card.wide { text-align: left; }
+  .qr-card.wide h4, .qr-card.wide .qr-cn { text-align: left; }
 
   .note { border: 1px solid var(--rule); background: #fffdf8; padding: 16px 19px; margin: 18px 0; }
   .note h4 { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; margin-bottom: 7px; color: var(--mid); }
@@ -1431,6 +1437,76 @@
       questions, and it is not marking anybody. That is the sort the whole talk is about.</p>
       <p style="color:var(--mid);font-size:14px">用你所在考点有权使用的真题自行搭建：切图、标注、
       一个本地HTML页面。标注是全部工作量所在。</p>
+    </div>
+
+    <div class="section-intro" id="organisers">
+      <h3>Graphic Organisers<span class="h-cn">图形组织器</span></h3>
+      <p>A prompt builder you can use on this page, and two sheets it was written to produce</p>
+    </div>
+
+    <div class="lede">
+      A graphic organiser is a printable sheet that gives a student the <em>shape</em> of a good
+      answer without giving them the answer. Getting an image model to draw one is easy to describe
+      and hard to get right: the prompt has to carry the subject, the level, the assessment
+      objective, and the layout all at once. So I built the prompt instead of writing it each time.
+      <span style="display:block;margin-top:6px;color:var(--mid);font-size:15px">图形组织器是一张可打印的
+      表单，给学生一个好答案的<em>结构</em>，而不是答案本身。难点在于提示词，所以我把提示词做成了工具。</span>
+    </div>
+
+    <a class="res" href="/organiser" target="_blank" rel="noopener">
+      <div class="res-title">Graphic Organiser Prompt Generator<span class="res-flag">Use it now</span></div>
+      <div class="res-desc">Nine questions &mdash; subject, level, topic, subtopic, assessment
+      objective, purpose, what to include, formatting, anything else &mdash; and it writes the prompt
+      for you to paste into an image model. I built it for the other teachers in my department, so it
+      is not Economics-only: put in any subject and any level. <strong>It runs entirely in your
+      browser</strong> &mdash; no account, no key, nothing sent anywhere, and it remembers your
+      previous organisers on your own machine only.
+      <span style="display:block;margin-top:4px">九个问题生成提示词，适用于任何学科与年级 &middot;
+      完全在浏览器内运行，无需账号，数据不外传</span></div>
+    </a>
+
+    <div class="res-sub">Opens in a new tab. Works offline once loaded &mdash; save the page and it
+    still runs.</div>
+
+    <div class="note">
+      <h4>Which image tool, and what it costs 用哪个工具，花多少钱</h4>
+      <p>I made the two sheets below myself in <strong>Nano Banana</strong>, with help refining the
+      wording of the prompt. My school pays for several AI platforms and that is one of them &mdash;
+      which is exactly the sort of access most teachers do not have, so it is worth saying plainly
+      rather than demonstrating something you cannot go home and repeat.</p>
+      <p><strong>The free route is Google NotebookLM.</strong> If you have a Google account you
+      already have it, and it will generate this kind of sheet at no cost. The generator above does
+      not care which one you use &mdash; it writes the prompt, you paste it wherever you can.</p>
+      <p><strong>From the mainland, both need a VPN.</strong> Google accounts and NotebookLM are not
+      reachable without one, so treat this as a tool for when you have that access rather than a
+      Monday-morning one.</p>
+      <p style="color:var(--mid);font-size:14px">下方两张表由我本人用 Nano Banana 制作（学校购买了该平台）。
+      免费替代方案是 <strong>Google NotebookLM</strong>：有谷歌账号即可使用，效果相当。
+      注意：两者在内地均需VPN。</p>
+    </div>
+
+    <div class="qr-grid">
+      <div class="qr-card wide">
+        <a href="/organiser-10mark-print.jpg" target="_blank" rel="noopener">
+          <img src="/organiser-10mark.jpg" alt="The Top-Band IB Economics Essay Organizer, a printable sheet for 10-mark answers" loading="lazy"></a>
+        <h4>The 10-mark answer</h4>
+        <div class="qr-cn">10分题组织表</div>
+        <p>Unpack the question &rarr; draw and explain the diagram &rarr; develop the theory &rarr;
+        apply and evaluate. Four columns, in the order a good answer is actually built.</p>
+        <p class="qr-note"><a href="/organiser-10mark-print.jpg" target="_blank" rel="noopener">Full
+        size for printing &rarr;</a> &middot; A3 works best</p>
+      </div>
+
+      <div class="qr-card wide">
+        <a href="/organiser-15mark-print.jpg" target="_blank" rel="noopener">
+          <img src="/organiser-15mark.jpg" alt="15-Mark Economics Essay Evaluator, a printable sheet for 15-mark evaluation answers" loading="lazy"></a>
+        <h4>The 15-mark answer</h4>
+        <div class="qr-cn">15分题组织表</div>
+        <p>Built around the thing candidates lose marks on: stakeholders, advantages against
+        disadvantages, short run against long run, and a final judgement that has to be written down.</p>
+        <p class="qr-note"><a href="/organiser-15mark-print.jpg" target="_blank" rel="noopener">Full
+        size for printing &rarr;</a> &middot; A3 works best</p>
+      </div>
     </div>
 
     <div class="section-intro" id="wechat">
